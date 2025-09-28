@@ -76,116 +76,131 @@ const EVENT_TEMPLATES = [
     interval: 'Quarterly',
     impactRange: [2, 3],
     source: 'Bureau of Economic Analysis',
-    detail: 'The GDP Growth Rate measures the annualized change in the inflation-adjusted value of all goods and services produced by the economy. It is one of the most comprehensive indicators of economic activity and health. A positive GDP growth rate indicates economic expansion, while a negative rate signals contraction. This metric is closely watched by policymakers, investors, and economists as it influences monetary policy decisions, investment strategies, and consumer confidence. Higher than expected growth can lead to currency appreciation and stock market gains.'
+    detail:
+      'The GDP Growth Rate measures the annualized change in the inflation-adjusted value of all goods and services produced by the economy. It is one of the most comprehensive indicators of economic activity and health. A positive GDP growth rate indicates economic expansion, while a negative rate signals contraction. This metric is closely watched by policymakers, investors, and economists as it influences monetary policy decisions, investment strategies, and consumer confidence. Higher than expected growth can lead to currency appreciation and stock market gains.',
   },
   {
     name: 'Interest Rate Decision',
     interval: 'Monthly',
     impactRange: [3],
     source: 'Central Bank',
-    detail: 'The Interest Rate Decision represents the official interest rate at which banks can borrow money from the central bank, directly influencing borrowing costs throughout the economy. This policy tool is used to control inflation, stimulate economic growth, or cool down an overheating economy. Central banks raise rates to combat inflation by making borrowing more expensive, thereby reducing spending and investment. Conversely, they lower rates to encourage economic activity during slowdowns. Rate decisions have immediate and profound effects on currency valuations, bond yields, stock markets, and economic growth prospects.'
+    detail:
+      'The Interest Rate Decision represents the official interest rate at which banks can borrow money from the central bank, directly influencing borrowing costs throughout the economy. This policy tool is used to control inflation, stimulate economic growth, or cool down an overheating economy. Central banks raise rates to combat inflation by making borrowing more expensive, thereby reducing spending and investment. Conversely, they lower rates to encourage economic activity during slowdowns. Rate decisions have immediate and profound effects on currency valuations, bond yields, stock markets, and economic growth prospects.',
   },
   {
     name: 'Core CPI',
     interval: 'Monthly',
     impactRange: [2, 3],
     source: 'Bureau of Labor Statistics',
-    detail: 'The Core Consumer Price Index measures changes in the price level of consumer goods and services while excluding volatile food and energy prices. This exclusion provides a clearer picture of underlying inflation trends by removing short-term price fluctuations. Central banks closely monitor Core CPI when making monetary policy decisions, as it better reflects persistent inflationary pressures in the economy. Rising Core CPI may prompt interest rate hikes to prevent the economy from overheating, while declining figures could signal the need for monetary easing.'
+    detail:
+      'The Core Consumer Price Index measures changes in the price level of consumer goods and services while excluding volatile food and energy prices. This exclusion provides a clearer picture of underlying inflation trends by removing short-term price fluctuations. Central banks closely monitor Core CPI when making monetary policy decisions, as it better reflects persistent inflationary pressures in the economy. Rising Core CPI may prompt interest rate hikes to prevent the economy from overheating, while declining figures could signal the need for monetary easing.',
   },
   {
     name: 'Inflation Rate',
     interval: 'Monthly',
     impactRange: [2, 3],
     source: 'Bureau of Labor Statistics',
-    detail: 'The Inflation Rate measures the percentage change in the general level of prices for goods and services over time, reflecting the rate at which purchasing power erodes. It encompasses a broad basket of consumer items including food, housing, transportation, and medical care. Central banks typically target an inflation rate of around 2% as optimal for economic stability. High inflation reduces purchasing power and can destabilize the economy, while deflation can lead to decreased spending and economic stagnation. This indicator directly influences central bank policy decisions and affects everything from wages to investment returns.'
+    detail:
+      'The Inflation Rate measures the percentage change in the general level of prices for goods and services over time, reflecting the rate at which purchasing power erodes. It encompasses a broad basket of consumer items including food, housing, transportation, and medical care. Central banks typically target an inflation rate of around 2% as optimal for economic stability. High inflation reduces purchasing power and can destabilize the economy, while deflation can lead to decreased spending and economic stagnation. This indicator directly influences central bank policy decisions and affects everything from wages to investment returns.',
   },
   {
     name: 'Unemployment Rate',
     interval: 'Monthly',
     impactRange: [3],
     source: 'Bureau of Labor Statistics',
-    detail: 'The Unemployment Rate represents the percentage of the total labor force that is jobless and actively seeking employment. It serves as a critical indicator of labor market health and overall economic well-being. A low unemployment rate typically indicates a strong economy with robust job creation, potentially leading to wage growth and increased consumer spending. Conversely, high unemployment signals economic weakness and can result in reduced consumer confidence and spending. Central banks monitor this metric closely when setting monetary policy, as persistently low unemployment can trigger inflationary pressures requiring interest rate adjustments.'
+    detail:
+      'The Unemployment Rate represents the percentage of the total labor force that is jobless and actively seeking employment. It serves as a critical indicator of labor market health and overall economic well-being. A low unemployment rate typically indicates a strong economy with robust job creation, potentially leading to wage growth and increased consumer spending. Conversely, high unemployment signals economic weakness and can result in reduced consumer confidence and spending. Central banks monitor this metric closely when setting monetary policy, as persistently low unemployment can trigger inflationary pressures requiring interest rate adjustments.',
   },
   {
     name: 'Manufacturing PMI',
     interval: 'Monthly',
     impactRange: [2, 3],
     source: 'Institute for Supply Management',
-    detail: 'The Manufacturing Purchasing Managers\' Index is a diffusion index calculated from surveys of purchasing managers across the manufacturing sector. It synthesizes data on new orders, production levels, employment, supplier deliveries, and inventories to gauge whether manufacturing conditions are expanding, contracting, or remaining stable. A PMI reading above 50 indicates expansion, while below 50 signals contraction. This forward-looking indicator provides early signals about economic trends as manufacturing activity often precedes broader economic changes. Investors and policymakers closely watch PMI data to anticipate shifts in economic momentum and potential impacts on employment, inflation, and GDP growth.'
+    detail:
+      "The Manufacturing Purchasing Managers' Index is a diffusion index calculated from surveys of purchasing managers across the manufacturing sector. It synthesizes data on new orders, production levels, employment, supplier deliveries, and inventories to gauge whether manufacturing conditions are expanding, contracting, or remaining stable. A PMI reading above 50 indicates expansion, while below 50 signals contraction. This forward-looking indicator provides early signals about economic trends as manufacturing activity often precedes broader economic changes. Investors and policymakers closely watch PMI data to anticipate shifts in economic momentum and potential impacts on employment, inflation, and GDP growth.",
   },
   {
     name: 'Services PMI',
     interval: 'Monthly',
     impactRange: [1, 2],
     source: 'Institute for Supply Management',
-    detail: 'The Services Purchasing Managers\' Index measures the health of the services sector, which typically accounts for the largest portion of developed economies. Based on surveys of purchasing and supply executives, it tracks business activity, new orders, employment, and prices in industries such as finance, healthcare, retail, and hospitality. A reading above 50 indicates expansion while below 50 signals contraction. Since services dominate modern economies, this indicator provides crucial insights into economic trends, employment conditions, and inflationary pressures. Strong services PMI readings generally indicate robust consumer demand and economic growth.'
+    detail:
+      "The Services Purchasing Managers' Index measures the health of the services sector, which typically accounts for the largest portion of developed economies. Based on surveys of purchasing and supply executives, it tracks business activity, new orders, employment, and prices in industries such as finance, healthcare, retail, and hospitality. A reading above 50 indicates expansion while below 50 signals contraction. Since services dominate modern economies, this indicator provides crucial insights into economic trends, employment conditions, and inflationary pressures. Strong services PMI readings generally indicate robust consumer demand and economic growth.",
   },
   {
     name: 'Retail Sales',
     interval: 'Monthly',
     impactRange: [2],
     source: 'Census Bureau',
-    detail: 'Retail Sales measures the total receipts of retail stores and is one of the earliest indicators of consumer spending patterns, which drives approximately 70% of economic activity in developed nations. This data encompasses purchases at stores selling durable and non-durable goods, reflecting consumer confidence and disposable income levels. Strong retail sales growth indicates healthy consumer demand and economic expansion, while declining sales may signal economic weakness or reduced consumer confidence. Seasonal variations, especially during holiday periods, can significantly impact monthly figures. Economists and investors monitor retail sales trends to gauge economic momentum and predict GDP growth.'
+    detail:
+      'Retail Sales measures the total receipts of retail stores and is one of the earliest indicators of consumer spending patterns, which drives approximately 70% of economic activity in developed nations. This data encompasses purchases at stores selling durable and non-durable goods, reflecting consumer confidence and disposable income levels. Strong retail sales growth indicates healthy consumer demand and economic expansion, while declining sales may signal economic weakness or reduced consumer confidence. Seasonal variations, especially during holiday periods, can significantly impact monthly figures. Economists and investors monitor retail sales trends to gauge economic momentum and predict GDP growth.',
   },
   {
     name: 'Trade Balance',
     interval: 'Monthly',
     impactRange: [1, 2],
     source: 'Census Bureau',
-    detail: 'The Trade Balance represents the difference between the monetary value of a country\'s exports and imports of goods and services over a specific period. A trade surplus occurs when exports exceed imports, indicating strong international demand for domestic products and potentially strengthening the currency. Conversely, a trade deficit means imports surpass exports, which can weaken the currency but may also reflect strong domestic demand and economic growth. The trade balance affects currency valuations, GDP calculations, and can influence monetary policy decisions. Persistent trade imbalances may lead to political tensions and policy interventions.'
+    detail:
+      "The Trade Balance represents the difference between the monetary value of a country's exports and imports of goods and services over a specific period. A trade surplus occurs when exports exceed imports, indicating strong international demand for domestic products and potentially strengthening the currency. Conversely, a trade deficit means imports surpass exports, which can weaken the currency but may also reflect strong domestic demand and economic growth. The trade balance affects currency valuations, GDP calculations, and can influence monetary policy decisions. Persistent trade imbalances may lead to political tensions and policy interventions.",
   },
   {
     name: 'Consumer Confidence',
     interval: 'Monthly',
     impactRange: [2],
     source: 'Conference Board',
-    detail: 'Consumer Confidence measures the degree of optimism consumers express about the overall state of the economy and their personal financial situations through surveys. This forward-looking indicator reflects consumers\' willingness to spend, which is crucial since consumer spending accounts for the majority of economic activity. High consumer confidence typically correlates with increased spending on discretionary items, while low confidence often leads to increased savings and reduced expenditures. The index incorporates views on current economic conditions and expectations for the next six months, providing insights into future consumption patterns and potential economic trends.'
+    detail:
+      "Consumer Confidence measures the degree of optimism consumers express about the overall state of the economy and their personal financial situations through surveys. This forward-looking indicator reflects consumers' willingness to spend, which is crucial since consumer spending accounts for the majority of economic activity. High consumer confidence typically correlates with increased spending on discretionary items, while low confidence often leads to increased savings and reduced expenditures. The index incorporates views on current economic conditions and expectations for the next six months, providing insights into future consumption patterns and potential economic trends.",
   },
   {
     name: 'Industrial Production',
     interval: 'Monthly',
     impactRange: [1, 2],
     source: 'Federal Reserve',
-    detail: 'Industrial Production measures the physical output of the nation\'s factories, mines, and utilities, capturing the real output of the industrial sector adjusted for price changes. This indicator reflects the productive capacity utilization of the economy and serves as a gauge of economic strength in the manufacturing and production sectors. Rising industrial production typically indicates economic expansion, increased demand for goods, and potential job creation, while declining production may signal economic weakness or reduced demand. The metric also helps assess inflationary pressures, as operating near full capacity can lead to price increases. Policymakers and investors monitor this data to evaluate economic momentum.'
+    detail:
+      "Industrial Production measures the physical output of the nation's factories, mines, and utilities, capturing the real output of the industrial sector adjusted for price changes. This indicator reflects the productive capacity utilization of the economy and serves as a gauge of economic strength in the manufacturing and production sectors. Rising industrial production typically indicates economic expansion, increased demand for goods, and potential job creation, while declining production may signal economic weakness or reduced demand. The metric also helps assess inflationary pressures, as operating near full capacity can lead to price increases. Policymakers and investors monitor this data to evaluate economic momentum.",
   },
   {
     name: 'Housing Starts',
     interval: 'Monthly',
     impactRange: [1],
     source: 'Census Bureau',
-    detail: 'Housing Starts measures the number of new residential construction projects that have begun during a particular month, serving as a leading indicator of economic activity in the construction and real estate sectors. This metric reflects builder confidence in future economic conditions and consumer demand for housing. Increased housing starts generate significant economic ripple effects through job creation in construction, demand for building materials, and purchases of appliances and furnishings. The indicator also provides insights into consumer confidence, mortgage market conditions, and overall economic health. Strong housing start numbers typically signal economic optimism and expansion.'
+    detail:
+      'Housing Starts measures the number of new residential construction projects that have begun during a particular month, serving as a leading indicator of economic activity in the construction and real estate sectors. This metric reflects builder confidence in future economic conditions and consumer demand for housing. Increased housing starts generate significant economic ripple effects through job creation in construction, demand for building materials, and purchases of appliances and furnishings. The indicator also provides insights into consumer confidence, mortgage market conditions, and overall economic health. Strong housing start numbers typically signal economic optimism and expansion.',
   },
   {
     name: 'Building Permits',
     interval: 'Monthly',
     impactRange: [1],
     source: 'Census Bureau',
-    detail: 'Building Permits tracks the number of permits issued for new residential construction projects and serves as a forward-looking indicator of future construction activity. Since permits must be obtained before construction begins, this data provides early signals about upcoming housing starts and builder confidence in market conditions. A rising trend in permits suggests optimism about housing demand, economic growth, and credit availability. Conversely, declining permits may indicate concerns about future market conditions or economic headwinds. This indicator helps forecast construction employment trends, materials demand, and broader economic activity several months ahead.'
+    detail:
+      'Building Permits tracks the number of permits issued for new residential construction projects and serves as a forward-looking indicator of future construction activity. Since permits must be obtained before construction begins, this data provides early signals about upcoming housing starts and builder confidence in market conditions. A rising trend in permits suggests optimism about housing demand, economic growth, and credit availability. Conversely, declining permits may indicate concerns about future market conditions or economic headwinds. This indicator helps forecast construction employment trends, materials demand, and broader economic activity several months ahead.',
   },
   {
     name: 'Existing Home Sales',
     interval: 'Monthly',
     impactRange: [1, 2],
     source: 'National Association of Realtors',
-    detail: 'Existing Home Sales measures the number of previously owned homes that changed hands during the month, reflecting current activity in the resale housing market which constitutes the bulk of total home sales. This indicator provides insights into housing market health, consumer confidence, and wealth effects, as existing home sales generate significant economic activity through real estate commissions, home improvements, and purchases of furniture and appliances. Strong sales typically indicate buyer confidence in economic conditions and job security, while weak sales may reflect affordability concerns, high mortgage rates, or economic uncertainty. The data also influences monetary policy decisions and economic growth projections.'
+    detail:
+      'Existing Home Sales measures the number of previously owned homes that changed hands during the month, reflecting current activity in the resale housing market which constitutes the bulk of total home sales. This indicator provides insights into housing market health, consumer confidence, and wealth effects, as existing home sales generate significant economic activity through real estate commissions, home improvements, and purchases of furniture and appliances. Strong sales typically indicate buyer confidence in economic conditions and job security, while weak sales may reflect affordability concerns, high mortgage rates, or economic uncertainty. The data also influences monetary policy decisions and economic growth projections.',
   },
   {
     name: 'New Home Sales',
     interval: 'Monthly',
     impactRange: [1],
     source: 'Census Bureau',
-    detail: 'New Home Sales measures the number of newly constructed homes sold during the month, providing a timely indicator of demand for new housing and builder confidence in market conditions. This metric is more sensitive to economic changes than existing home sales because it reflects current market dynamics and builder expectations. Strong new home sales signal robust consumer demand, economic optimism, and typically lead to increased construction activity, job creation, and purchases of building materials and home furnishings. The indicator also reflects credit market conditions, as new home purchases require mortgage financing. Trends in new home sales help forecast future construction activity and broader economic momentum.'
+    detail:
+      'New Home Sales measures the number of newly constructed homes sold during the month, providing a timely indicator of demand for new housing and builder confidence in market conditions. This metric is more sensitive to economic changes than existing home sales because it reflects current market dynamics and builder expectations. Strong new home sales signal robust consumer demand, economic optimism, and typically lead to increased construction activity, job creation, and purchases of building materials and home furnishings. The indicator also reflects credit market conditions, as new home purchases require mortgage financing. Trends in new home sales help forecast future construction activity and broader economic momentum.',
   },
 ];
 
 const COUNTRIES = ['US', 'EU', 'JP', 'GB', 'CN'];
 
 const CURRENCY_MAP: Record<string, string> = {
-  'US': 'USD',
-  'EU': 'EUR',
-  'JP': 'JPY',
-  'GB': 'GBP',
-  'CN': 'CNY',
+  US: 'USD',
+  EU: 'EUR',
+  JP: 'JPY',
+  GB: 'GBP',
+  CN: 'CNY',
 };
 
 function generateDummyEvents(): EconomicEvent[] {

@@ -1,24 +1,26 @@
-import { Card, Stack, Group, Text, Badge, Anchor, Divider, SimpleGrid } from '@mantine/core';
+import {
+  Card,
+  Stack,
+  Group,
+  Text,
+  Badge,
+  Anchor,
+  Divider,
+  SimpleGrid,
+  Button,
+} from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Flag } from '@/components/common/Flag';
+import { getImpactColor, getImpactLabel, formatDate, formatValue } from '@/utils/economicCalendar';
 import type { EconomicEvent } from '@/services/economicCalendar';
 
 interface EventCardProps {
   event: EconomicEvent;
-  formatDate: (timestamp: number) => string;
-  getImpactColor: (impact: number) => string;
-  getImpactLabel: (impact: number) => string;
-  formatValue: (value: number | undefined, isPercentage: boolean) => string;
+  onActionsClick: (eventCode: string, eventName: string) => void;
 }
 
-export function EventCard({
-  event,
-  formatDate,
-  getImpactColor,
-  getImpactLabel,
-  formatValue,
-}: EventCardProps) {
+export function EventCard({ event, onActionsClick }: EventCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -29,7 +31,7 @@ export function EventCard({
             {formatDate(event.ts)}
           </Text>
           <Badge color={getImpactColor(event.impact)} size="sm">
-            {getImpactLabel(event.impact)}
+            {getImpactLabel(event.impact, t)}
           </Badge>
         </Group>
 
@@ -77,6 +79,15 @@ export function EventCard({
             </Text>
           </Stack>
         </SimpleGrid>
+
+        <Button
+          size="xs"
+          variant="light"
+          fullWidth
+          onClick={() => onActionsClick(event.eventCode, event.name)}
+        >
+          {t('action.manageActions')}
+        </Button>
       </Stack>
     </Card>
   );

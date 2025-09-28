@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Title, Stack, Alert, Text, Group, Paper, Pagination } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useEconomicCalendarStore } from '@/store/economicCalendarStore';
@@ -8,6 +9,7 @@ import { EventCard } from '@/components/economic-calendar/EventCard';
 import { EventTable } from '@/components/economic-calendar/EventTable';
 import { QuickFilters } from '@/components/economic-calendar/QuickFilters';
 import { FilterControls } from '@/components/economic-calendar/FilterControls';
+import { ActionDrawer } from '@/components/economic-calendar/ActionDrawer';
 import type { EconomicCalendarFilters } from '@/services/economicCalendar';
 
 const COUNTRY_OPTIONS = [
@@ -21,7 +23,7 @@ const COUNTRY_OPTIONS = [
 function EconomicCalendar() {
   const { t } = useTranslation();
   const { events, pagination, isLoading, error, fetchEvents } = useEconomicCalendarStore();
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useIsMobile();
 
   const [countryFilter, setCountryFilter] = useState<string[]>([]);
   const [eventNameFilter, setEventNameFilter] = useState('');
@@ -29,6 +31,9 @@ function EconomicCalendar() {
   const [periodFromFilter, setPeriodFromFilter] = useState<Date | null>(null);
   const [periodToFilter, setPeriodToFilter] = useState<Date | null>(null);
   const [page, setPage] = useState(1);
+  const [actionDrawerOpened, setActionDrawerOpened] = useState(false);
+  const [selectedEventCode, setSelectedEventCode] = useState('');
+  const [selectedEventName, setSelectedEventName] = useState('');
 
   const [debouncedEventNameFilter] = useDebouncedValue(eventNameFilter, 500);
 
@@ -120,33 +125,16 @@ function EconomicCalendar() {
     setPage(1);
   };
 
-  const getImpactColor = (impact: number): string => {
-    if (impact === 3) return 'red';
-    if (impact === 2) return 'yellow';
-    return 'gray';
-  };
-
-  const getImpactLabel = (impact: number): string => {
-    if (impact === 3) return t('impactHigh');
-    if (impact === 2) return t('impactMedium');
-    return t('impactLow');
-  };
-
-  const formatDate = (timestamp: number): string => {
-    return new Date(timestamp).toLocaleString();
-  };
-
-  const formatValue = (value: number | undefined, isPercentage: boolean): string => {
-    if (value === undefined) return '-';
-    return isPercentage ? `${value}%` : value.toString();
+  const handleActionsClick = (eventCode: string, eventName: string) => {
+    setSelectedEventCode(eventCode);
+    setSelectedEventName(eventName);
+    setActionDrawerOpened(true);
   };
 
   return (
     <>
       <LoadingOverlay visible={isLoading} />
-      <Stack gap="lg" py="xl" w={
-        isMobile ? '100%' : '80vw'
-      }>
+      <Stack gap="lg" py="xl" w={isMobile ? '100%' : '80vw'}>
         <Title order={1}>{t('economicCalendar')}</Title>
 
         {error && (
@@ -200,24 +188,11 @@ function EconomicCalendar() {
             {isMobile ? (
               <Stack gap="md">
                 {events.map((event) => (
-                  <EventCard
-                    key={event.ts}
-                    event={event}
-                    formatDate={formatDate}
-                    getImpactColor={getImpactColor}
-                    getImpactLabel={getImpactLabel}
-                    formatValue={formatValue}
-                  />
+                  <EventCard key={event.ts} event={event} onActionsClick={handleActionsClick} />
                 ))}
               </Stack>
             ) : (
-              <EventTable
-                events={events}
-                formatDate={formatDate}
-                getImpactColor={getImpactColor}
-                getImpactLabel={getImpactLabel}
-                formatValue={formatValue}
-              />
+              <EventTable events={events} onActionsClick={handleActionsClick} />
             )}
 
             {pagination && pagination.totalPages > 1 && (
@@ -232,6 +207,13 @@ function EconomicCalendar() {
           </>
         )}
       </Stack>
+
+      <ActionDrawer
+        opened={actionDrawerOpened}
+        onClose={() => setActionDrawerOpened(false)}
+        eventCode={selectedEventCode}
+        eventName={selectedEventName}
+      />
     </>
   );
 }

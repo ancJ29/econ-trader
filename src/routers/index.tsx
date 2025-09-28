@@ -7,12 +7,12 @@ import { Layout } from '@/components/layouts/Layout';
 const Home = lazy(() => import('@/pages/Home'));
 const EconomicCalendar = lazy(() => import('@/pages/EconomicCalendar'));
 const EconomicIndexDetail = lazy(() => import('@/pages/EconomicIndexDetail'));
-const DemoHome = lazy(() => import('@/pages/DemoHome'));
-const DatesDemo = lazy(() => import('@/pages/DatesDemo'));
-const FormDemo = lazy(() => import('@/pages/FormDemo'));
-const HooksDemo = lazy(() => import('@/pages/HooksDemo'));
-const ModalsDemo = lazy(() => import('@/pages/ModalsDemo'));
-const NotificationsDemo = lazy(() => import('@/pages/NotificationsDemo'));
+const DemoHome = lazy(() => import('@/pages/demo/DemoHome'));
+const DatesDemo = lazy(() => import('@/pages/demo/DatesDemo'));
+const FormDemo = lazy(() => import('@/pages/demo/FormDemo'));
+const HooksDemo = lazy(() => import('@/pages/demo/HooksDemo'));
+const ModalsDemo = lazy(() => import('@/pages/demo/ModalsDemo'));
+const NotificationsDemo = lazy(() => import('@/pages/demo/NotificationsDemo'));
 
 // Loading fallback element
 const loadingFallback = <LoadingOverlay visible={true} />;

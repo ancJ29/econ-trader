@@ -1,6 +1,7 @@
 {
   "name": "app",
   "type": "module",
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -12,6 +13,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@mantine/charts": "^8.3.2",
     "@mantine/core": "^8.3.2",
     "@mantine/dates": "^8.3.2",
     "@mantine/form": "^8.3.2",
@@ -23,7 +25,9 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-i18next": "^16.0.0",
+    "react-is": "^19.1.1",
     "react-router-dom": "^7.9.3",
+    "recharts": "^3.2.1",
     "zod": "^4.0.0",
     "zustand": "^5.0.8"
   },
@@ -31,6 +35,7 @@
     "@eslint/js": "^9.36.0",
     "@types/react": "^19.1.14",
     "@types/react-dom": "^19.1.9",
+    "@types/react-is": "^19",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
     "@vitejs/plugin-react": "^5.0.3",
