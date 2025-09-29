@@ -9,7 +9,6 @@ import {
   Group,
   Badge,
   Switch,
-  TextInput,
   Select,
   NumberInput,
   Alert,
@@ -19,7 +18,12 @@ import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useActionStore } from '@/store/actionStore';
+import { useAccountStore } from '@/store/accountStore';
+import { AccountSelector } from './AccountSelector';
+import { MarketSelector } from './MarketSelector';
+import { InstrumentSelector } from './InstrumentSelector';
 import type { CreateActionInput } from '@/services/action';
+import type { Account, TradingMarket, TradingSymbol } from '@/types/account';
 
 interface ActionDrawerProps {
   opened: boolean;
@@ -41,16 +45,20 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
     deleteAction,
     toggleEnabled,
   } = useActionStore();
+  const { accounts, fetchAccounts } = useAccountStore();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<Account | undefined>();
 
   const form = useForm<CreateActionInput>({
     initialValues: {
       eventCode,
       eventName,
+      accountId: '',
+      market: '' as TradingMarket,
       triggerType: 'actual_vs_forecast',
       condition: 'greater',
-      instrument: '',
+      instrument: '' as TradingSymbol,
       side: 'buy',
       quantity: 1,
       orderType: 'market',
@@ -58,6 +66,8 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
       enabled: true,
     },
     validate: {
+      accountId: (value) => (!value ? t('action.accountRequired') : null),
+      market: (value) => (!value ? t('action.marketRequired') : null),
       instrument: (value) => (!value ? t('action.instrumentRequired') : null),
       quantity: (value) => (value <= 0 ? t('action.quantityPositive') : null),
       limitPrice: (value, values) =>
@@ -70,8 +80,14 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
   useEffect(() => {
     if (opened) {
       fetchActions(eventCode);
+      fetchAccounts();
     }
-  }, [opened, eventCode, fetchActions]);
+  }, [opened, eventCode, fetchActions, fetchAccounts]);
+
+  const getAccountName = (accountId: string) => {
+    const account = accounts.find((a) => a.id === accountId);
+    return account ? `${account.name} (${account.exchange})` : accountId;
+  };
 
   const handleSubmit = async (values: CreateActionInput) => {
     try {
@@ -94,6 +110,8 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
       form.setValues({
         eventCode: action.eventCode,
         eventName: action.eventName,
+        accountId: action.accountId,
+        market: action.market,
         triggerType: action.triggerType,
         condition: action.condition,
         instrument: action.instrument,
@@ -182,14 +200,53 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
                   required
                 />
 
-                <Divider label={t('action.orderDetails')} />
+                <Divider label={t('action.tradingAccount')} />
 
-                <TextInput
-                  label={t('action.instrument')}
-                  placeholder="EUR/USD, BTC/USD, etc."
-                  {...form.getInputProps('instrument')}
-                  required
+                <AccountSelector
+                  value={form.values.accountId}
+                  onChange={(accountId, account) => {
+                    form.setFieldValue('accountId', accountId || '');
+                    setSelectedAccount(account);
+                    // Reset market and instrument when account changes
+                    if (accountId !== form.values.accountId) {
+                      form.setFieldValue('market', '' as TradingMarket);
+                      form.setFieldValue('instrument', '' as TradingSymbol);
+                    }
+                  }}
+                  error={form.errors.accountId as string | undefined}
                 />
+
+                <MarketSelector
+                  value={form.values.market}
+                  onChange={(market) => {
+                    form.setFieldValue('market', market || ('' as TradingMarket));
+                    // Reset instrument when market changes
+                    if (market !== form.values.market) {
+                      form.setFieldValue('instrument', '' as TradingSymbol);
+                    }
+                  }}
+                  availableMarkets={selectedAccount?.availableMarkets}
+                  disabled={!form.values.accountId}
+                  error={form.errors.market as string | undefined}
+                />
+
+                <InstrumentSelector
+                  value={form.values.instrument}
+                  onChange={(instrument) => {
+                    form.setFieldValue('instrument', instrument || ('' as TradingSymbol));
+                  }}
+                  availableInstruments={
+                    form.values.market && selectedAccount?.availableMarkets
+                      ? (selectedAccount.availableMarkets[form.values.market] as
+                          | TradingSymbol[]
+                          | undefined)
+                      : undefined
+                  }
+                  disabled={!form.values.market}
+                  error={form.errors.instrument as string | undefined}
+                />
+
+                <Divider label={t('action.orderDetails')} />
 
                 <Select
                   label={t('action.side')}
@@ -264,6 +321,9 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
                       </Badge>
                       <Text fw={500}>{action.instrument}</Text>
                       <Badge variant="light">{action.quantity}</Badge>
+                      <Badge variant="dot" color="blue">
+                        {action.market}
+                      </Badge>
                     </Group>
                     <Group gap="xs">
                       <Switch
@@ -284,6 +344,13 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
                         {t('action.delete')}
                       </Button>
                     </Group>
+                  </Group>
+
+                  <Group gap="xs">
+                    <Text size="sm" c="dimmed">
+                      {t('action.account')}:
+                    </Text>
+                    <Text size="sm">{getAccountName(action.accountId)}</Text>
                   </Group>
 
                   <Group gap="xs">

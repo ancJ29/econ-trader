@@ -1,14 +1,17 @@
 import { z } from 'zod';
 import { BaseApiClient } from './base';
 import { delay } from '@/utils/time';
+import type { TradingMarket, TradingSymbol } from '@/types/account';
 
 export const ActionSchema = z.object({
   id: z.string(),
   eventCode: z.string(),
   eventName: z.string(),
+  accountId: z.string(),
+  market: z.string() as z.ZodType<TradingMarket>,
   triggerType: z.enum(['actual_vs_forecast', 'actual_vs_previous']),
   condition: z.enum(['greater', 'less']),
-  instrument: z.string(),
+  instrument: z.string() as z.ZodType<TradingSymbol>,
   side: z.enum(['buy', 'sell']),
   quantity: z.number().positive(),
   orderType: z.enum(['market', 'limit']),

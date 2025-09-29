@@ -241,7 +241,7 @@ export class BaseApiClient {
   private invalidateRelatedCache(endpoint: string): void {
     if (!this.cacheEnabled) return;
 
-    // Extract the resource path from endpoint (e.g., '/users/123' -> '/users')
+    // Extract the resource path from endpoint (e.g., '/users/123' → '/users')
     const resourcePath = endpoint.split('/').slice(0, 2).join('/');
 
     for (const key of this.cache.keys()) {

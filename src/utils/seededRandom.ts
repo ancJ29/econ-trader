@@ -40,7 +40,9 @@ class SeededRandom {
    */
   string(length: number): string {
     const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
-    return Array.from({ length }, () => alphabet[Math.floor(this.next() * alphabet.length)]).join('');
+    return Array.from({ length }, () => alphabet[Math.floor(this.next() * alphabet.length)]).join(
+      ''
+    );
   }
 
   /**

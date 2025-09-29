@@ -486,7 +486,16 @@ function generateAccount1(): Account {
     name: 'Binance Futures Pro',
     exchange: 'Binance',
     availableMarkets: {
-      BN_USDS_M: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'ADAUSDT', 'XRPUSDT', 'DOGEUSDT', 'LTCUSDT'],
+      BN_USDS_M: [
+        'BTCUSDT',
+        'ETHUSDT',
+        'SOLUSDT',
+        'BNBUSDT',
+        'ADAUSDT',
+        'XRPUSDT',
+        'DOGEUSDT',
+        'LTCUSDT',
+      ],
       BN_COIN_M: ['BTCUSD_PERPETUAL', 'ETHUSD_PERPETUAL', 'BNBUSD_PERPETUAL', 'SOLUSD_PERPETUAL'],
     },
     apiKey: randomString(64),
@@ -1066,12 +1075,8 @@ function generateAccount3(): Account {
     apiKey: randomString(64),
     secretKey: randomString(64),
     balanceInformation: {
-      BB_USDT_PERP: [
-        { symbol: 'USDT', balance: 50000, available: 35000, inOrder: 15000 },
-      ],
-      BB_USDC_PERP: [
-        { symbol: 'USDC', balance: 20000, available: 15000, inOrder: 5000 },
-      ],
+      BB_USDT_PERP: [{ symbol: 'USDT', balance: 50000, available: 35000, inOrder: 15000 }],
+      BB_USDC_PERP: [{ symbol: 'USDC', balance: 20000, available: 15000, inOrder: 5000 }],
       BB_Perpetual: [
         { symbol: 'BTC', balance: 2, available: 1.5, inOrder: 0.5 },
         { symbol: 'ETH', balance: 15, available: 12, inOrder: 3 },
@@ -1475,9 +1480,7 @@ function generateAccount4(): Account {
         { symbol: 'BTC', balance: 1.5, available: 1.2, inOrder: 0.3 },
         { symbol: 'ETH', balance: 8, available: 6, inOrder: 2 },
       ],
-      BN_USDS_M: [
-        { symbol: 'USDT', balance: 80000, available: 60000, inOrder: 20000 },
-      ],
+      BN_USDS_M: [{ symbol: 'USDT', balance: 80000, available: 60000, inOrder: 20000 }],
     },
     positionInformation: {
       BN_USDS_M: [
@@ -1516,7 +1519,7 @@ function generateAccount4(): Account {
         id: generateStableId('account-4-order', i),
         symbol: (['BTC_USDT', 'ETH_USDT', 'BNB_USDT', 'SOL_USDT'] as const)[i % 4],
         market: 'BN_SPOT' as const,
-        side: i % 2 === 0 ? 'buy' as const : 'sell' as const,
+        side: i % 2 === 0 ? ('buy' as const) : ('sell' as const),
         type: 'limit' as const,
         status: 'open' as const,
         quantity: [0.01, 0.1, 2, 10][i % 4],
@@ -1532,14 +1535,14 @@ function generateAccount4(): Account {
         id: generateStableId('account-4-order-hist', i),
         symbol: (['BTC_USDT', 'ETH_USDT', 'SOL_USDT', 'BNB_USDT', 'LINK_USDT'] as const)[i % 5],
         market: 'BN_SPOT' as const,
-        side: i % 2 === 0 ? 'buy' as const : 'sell' as const,
-        type: i % 3 === 0 ? 'market' as const : 'limit' as const,
+        side: i % 2 === 0 ? ('buy' as const) : ('sell' as const),
+        type: i % 3 === 0 ? ('market' as const) : ('limit' as const),
         status: 'filled' as const,
         quantity: [0.02, 0.5, 5, 3, 20][i % 5],
         filledQuantity: [0.02, 0.5, 5, 3, 20][i % 5],
         price: i % 3 === 0 ? undefined : [49500, 3050, 112, 545, 14.8][i % 5],
         averagePrice: [49500, 3050, 112, 545, 14.8][i % 5],
-        timeInForce: i % 3 === 0 ? 'IOC' as const : 'GTC' as const,
+        timeInForce: i % 3 === 0 ? ('IOC' as const) : ('GTC' as const),
         createdAt: BASE_TIME - 86400000 * (i / 4 + 0.5),
         updatedAt: BASE_TIME - 86400000 * (i / 4 + 0.5),
       })),
@@ -1549,7 +1552,7 @@ function generateAccount4(): Account {
         id: generateStableId('account-4-position', i),
         symbol: (['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'LINKUSDT', 'AVAXUSDT'] as const)[i % 5],
         market: 'BN_USDS_M' as const,
-        side: i % 2 === 0 ? 'long' as const : 'short' as const,
+        side: i % 2 === 0 ? ('long' as const) : ('short' as const),
         quantity: [0.1, 2, 20, 50, 10][i % 5],
         entryPrice: [48000, 2900, 105, 14, 35][i % 5],
         exitPrice: [49000, 3000, 110, 13.5, 37][i % 5],
@@ -1562,12 +1565,13 @@ function generateAccount4(): Account {
     transactionHistory: {
       BN_SPOT: Array.from({ length: 15 }, (_, i) => ({
         id: generateStableId('account-4-transaction', i),
-        type: i % 3 === 2 ? 'fee' as const : 'trade' as const,
+        type: i % 3 === 2 ? ('fee' as const) : ('trade' as const),
         symbol: (['BTC_USDT', 'ETH_USDT', 'SOL_USDT'] as const)[i % 3],
         market: 'BN_SPOT' as const,
-        amount: i % 3 === 2 ? -[49.5, 3.05, 0.112][i % 3] : -[4950, 1525, 560][Math.floor(i / 3) % 3],
+        amount:
+          i % 3 === 2 ? -[49.5, 3.05, 0.112][i % 3] : -[4950, 1525, 560][Math.floor(i / 3) % 3],
         coin: 'USDT' as const,
-        side: i % 3 !== 2 ? (i % 2 === 0 ? 'buy' as const : 'sell' as const) : undefined,
+        side: i % 3 !== 2 ? (i % 2 === 0 ? ('buy' as const) : ('sell' as const)) : undefined,
         price: i % 3 !== 2 ? [49500, 3050, 112][i % 3] : undefined,
         quantity: i % 3 !== 2 ? [0.1, 0.5, 5][i % 3] : undefined,
         description: i % 3 === 2 ? 'Trading fee (0.1%)' : `HFT trade ${i}`,
@@ -1598,9 +1602,7 @@ function generateAccount5(): Account {
         { symbol: 'ETH', balance: 3, available: 2.5, inOrder: 0.5 },
         { symbol: 'XRP', balance: 5000, available: 4000, inOrder: 1000 },
       ],
-      BB_USDT_PERP: [
-        { symbol: 'USDT', balance: 25000, available: 18000, inOrder: 7000 },
-      ],
+      BB_USDT_PERP: [{ symbol: 'USDT', balance: 25000, available: 18000, inOrder: 7000 }],
     },
     positionInformation: {
       BB_USDT_PERP: [
@@ -1639,9 +1641,9 @@ function generateAccount5(): Account {
         id: generateStableId('account-5-order', i),
         symbol: (['BTC_USDT', 'ETH_USDT', 'XRP_USDT', 'ADA_USDT', 'DOGE_USDT'] as const)[i],
         market: 'BB_SPOT' as const,
-        side: i % 2 === 0 ? 'buy' as const : 'sell' as const,
+        side: i % 2 === 0 ? ('buy' as const) : ('sell' as const),
         type: (['limit', 'limit', 'stop_loss', 'take_profit', 'limit'] as const)[i],
-        status: i === 2 ? 'partially_filled' as const : 'open' as const,
+        status: i === 2 ? ('partially_filled' as const) : ('open' as const),
         quantity: [0.02, 0.5, 1000, 2000, 10000][i],
         filledQuantity: i === 2 ? 300 : 0,
         price: [47000, 3200, 0.52, 0.5, 0.09][i],
@@ -1655,14 +1657,14 @@ function generateAccount5(): Account {
         id: generateStableId('account-5-order-hist', i),
         symbol: (['BTC_USDT', 'ETH_USDT', 'XRP_USDT', 'ADA_USDT'] as const)[i % 4],
         market: 'BB_SPOT' as const,
-        side: i % 2 === 0 ? 'buy' as const : 'sell' as const,
-        type: i % 3 === 0 ? 'market' as const : 'limit' as const,
-        status: i === 8 ? 'cancelled' as const : 'filled' as const,
+        side: i % 2 === 0 ? ('buy' as const) : ('sell' as const),
+        type: i % 3 === 0 ? ('market' as const) : ('limit' as const),
+        status: i === 8 ? ('cancelled' as const) : ('filled' as const),
         quantity: [0.05, 1, 2000, 3000][i % 4],
         filledQuantity: i === 8 ? 0 : [0.05, 1, 2000, 3000][i % 4],
         price: i % 3 === 0 ? undefined : [48500, 3000, 0.56, 0.47][i % 4],
         averagePrice: i === 8 ? undefined : [48500, 3000, 0.56, 0.47][i % 4],
-        timeInForce: i % 3 === 0 ? 'IOC' as const : 'GTC' as const,
+        timeInForce: i % 3 === 0 ? ('IOC' as const) : ('GTC' as const),
         createdAt: BASE_TIME - 86400000 * (10 - i),
         updatedAt: BASE_TIME - 86400000 * (10 - i),
       })),
@@ -1672,7 +1674,7 @@ function generateAccount5(): Account {
         id: generateStableId('account-5-position', i),
         symbol: (['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'ADAUSDT'] as const)[i % 4],
         market: 'BB_USDT_PERP' as const,
-        side: i % 2 === 0 ? 'long' as const : 'short' as const,
+        side: i % 2 === 0 ? ('long' as const) : ('short' as const),
         quantity: [0.2, 3, 8000, 4000][i % 4],
         entryPrice: [46000, 2800, 0.5, 0.45][i % 4],
         exitPrice: [48000, 2900, 0.55, 0.42][i % 4],
@@ -1685,12 +1687,15 @@ function generateAccount5(): Account {
     transactionHistory: {
       BB_SPOT: Array.from({ length: 10 }, (_, i) => ({
         id: generateStableId('account-5-transaction', i),
-        type: i % 4 === 3 ? 'fee' as const : 'trade' as const,
+        type: i % 4 === 3 ? ('fee' as const) : ('trade' as const),
         symbol: (['BTC_USDT', 'ETH_USDT', 'XRP_USDT'] as const)[i % 3],
         market: 'BB_SPOT' as const,
-        amount: i % 4 === 3 ? -[2.425, 1.5, 0.28][i % 3] : [2425, 1500, 280][Math.floor(i / 4) % 3] * (i % 2 === 0 ? -1 : 1),
+        amount:
+          i % 4 === 3
+            ? -[2.425, 1.5, 0.28][i % 3]
+            : [2425, 1500, 280][Math.floor(i / 4) % 3] * (i % 2 === 0 ? -1 : 1),
         coin: 'USDT' as const,
-        side: i % 4 !== 3 ? (i % 2 === 0 ? 'buy' as const : 'sell' as const) : undefined,
+        side: i % 4 !== 3 ? (i % 2 === 0 ? ('buy' as const) : ('sell' as const)) : undefined,
         price: i % 4 !== 3 ? [48500, 3000, 0.56][i % 3] : undefined,
         quantity: i % 4 !== 3 ? [0.05, 0.5, 500][i % 3] : undefined,
         description: i % 4 === 3 ? 'Trading fee (0.1%)' : `Swing trade ${i}`,
@@ -1698,12 +1703,12 @@ function generateAccount5(): Account {
       })),
       BB_USDT_PERP: Array.from({ length: 5 }, (_, i) => ({
         id: generateStableId('account-5-transaction', 10 + i),
-        type: i === 0 || i === 3 ? 'funding' as const : 'trade' as const,
+        type: i === 0 || i === 3 ? ('funding' as const) : ('trade' as const),
         symbol: (['XRPUSDT', 'ADAUSDT'] as const)[i % 2],
         market: 'BB_USDT_PERP' as const,
         amount: i === 0 || i === 3 ? [-2.75, 1.6][i % 2] : -[5500, 2400][i % 2],
         coin: 'USDT' as const,
-        side: i !== 0 && i !== 3 ? (i % 2 === 0 ? 'buy' as const : 'sell' as const) : undefined,
+        side: i !== 0 && i !== 3 ? (i % 2 === 0 ? ('buy' as const) : ('sell' as const)) : undefined,
         price: i !== 0 && i !== 3 ? [0.55, 0.48][i % 2] : undefined,
         quantity: i !== 0 && i !== 3 ? [10000, 5000][i % 2] : undefined,
         description: i === 0 || i === 3 ? 'Funding rate' : 'Position open',
@@ -1732,12 +1737,8 @@ function generateAccount6(): Account {
         { symbol: 'USDT', balance: 50000, available: 45000, inOrder: 5000 },
         { symbol: 'BTC', balance: 0.8, available: 0.7, inOrder: 0.1 },
       ],
-      BN_USDS_M: [
-        { symbol: 'USDT', balance: 50000, available: 40000, inOrder: 10000 },
-      ],
-      BN_COIN_M: [
-        { symbol: 'BTC', balance: 1, available: 0.8, inOrder: 0.2 },
-      ],
+      BN_USDS_M: [{ symbol: 'USDT', balance: 50000, available: 40000, inOrder: 10000 }],
+      BN_COIN_M: [{ symbol: 'BTC', balance: 1, available: 0.8, inOrder: 0.2 }],
     },
     positionInformation: {
       BN_USDS_M: [
@@ -1778,7 +1779,7 @@ function generateAccount6(): Account {
         id: generateStableId('account-6-order', i),
         symbol: 'BTC_USDT' as const,
         market: 'BN_SPOT' as const,
-        side: i % 2 === 0 ? 'buy' as const : 'sell' as const,
+        side: i % 2 === 0 ? ('buy' as const) : ('sell' as const),
         type: 'limit' as const,
         status: 'open' as const,
         quantity: 0.01,
@@ -1794,7 +1795,7 @@ function generateAccount6(): Account {
         id: generateStableId('account-6-order-hist', i),
         symbol: 'BTC_USDT' as const,
         market: 'BN_SPOT' as const,
-        side: i % 2 === 0 ? 'buy' as const : 'sell' as const,
+        side: i % 2 === 0 ? ('buy' as const) : ('sell' as const),
         type: 'limit' as const,
         status: 'filled' as const,
         quantity: 0.01,
@@ -1811,7 +1812,7 @@ function generateAccount6(): Account {
         id: generateStableId('account-6-position', i),
         symbol: 'BTCUSDT' as const,
         market: 'BN_USDS_M' as const,
-        side: i % 2 === 0 ? 'long' as const : 'short' as const,
+        side: i % 2 === 0 ? ('long' as const) : ('short' as const),
         quantity: 0.1,
         entryPrice: 49000 + i * 100,
         exitPrice: 49000 + i * 100 + (i % 2 === 0 ? 50 : -50),
@@ -1824,12 +1825,12 @@ function generateAccount6(): Account {
     transactionHistory: {
       BN_SPOT: Array.from({ length: 20 }, (_, i) => ({
         id: generateStableId('account-6-transaction', i),
-        type: i % 5 === 4 ? 'fee' as const : 'trade' as const,
+        type: i % 5 === 4 ? ('fee' as const) : ('trade' as const),
         symbol: 'BTC_USDT' as const,
         market: 'BN_SPOT' as const,
         amount: i % 5 === 4 ? -0.498 : 498 * (i % 2 === 0 ? -1 : 1),
         coin: 'USDT' as const,
-        side: i % 5 !== 4 ? (i % 2 === 0 ? 'buy' as const : 'sell' as const) : undefined,
+        side: i % 5 !== 4 ? (i % 2 === 0 ? ('buy' as const) : ('sell' as const)) : undefined,
         price: i % 5 !== 4 ? 49800 : undefined,
         quantity: i % 5 !== 4 ? 0.01 : undefined,
         description: i % 5 === 4 ? 'Arbitrage fee' : `Arbitrage trade ${i}`,
@@ -1896,15 +1897,16 @@ function generateAccount7(): Account {
     transactionHistory: {
       BB_SPOT: Array.from({ length: 50 }, (_, i) => ({
         id: generateStableId('account-7-transaction', i),
-        type: i % 10 === 9 ? 'fee' as const : 'trade' as const,
+        type: i % 10 === 9 ? ('fee' as const) : ('trade' as const),
         symbol: (['BTC_USDT', 'ETH_USDT', 'SOL_USDT', 'LINK_USDT'] as const)[i % 4],
         market: 'BB_SPOT' as const,
-        amount: i % 10 === 9
-          ? -[4.7, 0.42, 0.3, 0.104][i % 4]
-          : -[470, 420, 300, 104][i % 4],
+        amount: i % 10 === 9 ? -[4.7, 0.42, 0.3, 0.104][i % 4] : -[470, 420, 300, 104][i % 4],
         coin: 'USDT' as const,
         side: i % 10 !== 9 ? ('buy' as const) : undefined,
-        price: i % 10 !== 9 ? [47000 + i * 100, 2800 + i * 10, 100 + i * 0.5, 13 + i * 0.1][i % 4] : undefined,
+        price:
+          i % 10 !== 9
+            ? [47000 + i * 100, 2800 + i * 10, 100 + i * 0.5, 13 + i * 0.1][i % 4]
+            : undefined,
         quantity: i % 10 !== 9 ? [0.01, 0.15, 3, 8][i % 4] : undefined,
         description: i % 10 === 9 ? 'DCA fee' : `DCA purchase #${Math.floor(i / 4) + 1}`,
         timestamp: BASE_TIME - 86400000 * (50 - i),
