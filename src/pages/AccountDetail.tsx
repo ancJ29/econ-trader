@@ -28,6 +28,7 @@ import { TransactionHistoryTable } from '@/components/accounts/TransactionHistor
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { MARKET_LABELS } from '@/constants/markets';
 import type { TradingMarket, TradingSymbol } from '@/types/account';
+import { maskString } from '@/utils/string';
 
 function AccountDetailContent() {
   const { t } = useTranslation();
@@ -149,7 +150,7 @@ function AccountDetailContent() {
               {t('apiKey')}
             </Text>
             <Text size="md" fw={500} style={{ fontFamily: 'monospace' }}>
-              {selectedAccount.apiKey}
+              {maskString(selectedAccount.apiKey, 8)}
             </Text>
           </div>
 

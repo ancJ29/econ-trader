@@ -3,6 +3,7 @@ import { IconDots, IconEdit, IconTrash, IconPower } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { Account } from '@/services/account';
+import { maskString } from '@/utils/string';
 
 interface AccountCardProps {
   account: Account;
@@ -78,7 +79,7 @@ export function AccountCard({ account, onEdit, onDelete, onToggleStatus }: Accou
               {t('apiKey')}
             </Text>
             <Text size="sm" fw={500} style={{ fontFamily: 'monospace' }}>
-              {account.apiKey.substring(0, 16)}...
+              {maskString(account.apiKey, 8)}...
             </Text>
           </div>
         </Group>

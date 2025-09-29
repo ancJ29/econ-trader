@@ -3,6 +3,7 @@ import { IconEdit, IconTrash, IconPower } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { Account } from '@/services/account';
+import { maskString } from '@/utils/string';
 
 interface AccountTableProps {
   accounts: Account[];
@@ -46,7 +47,7 @@ export function AccountTable({ accounts, onEdit, onDelete, onToggleStatus }: Acc
             </Table.Td>
             <Table.Td>{getMarketCount(account)}</Table.Td>
             <Table.Td style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>
-              {account.apiKey.substring(0, 20)}...
+              {maskString(account.apiKey, 8)}
             </Table.Td>
             <Table.Td>
               <Group gap="xs" wrap="nowrap">

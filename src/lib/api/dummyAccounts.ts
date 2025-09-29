@@ -8,6 +8,8 @@ const BASE_TIME = new Date('2024-01-01T00:00:00Z').getTime();
  * Generate dummy accounts with deterministic data
  * Each account is generated with stable IDs and fixed timestamps
  */
+import { randomString } from '@/utils/seededRandom';
+
 export function generateDummyAccounts(): Account[] {
   return [
     generateAccount0(),
@@ -30,7 +32,7 @@ function generateAccount0(): Account {
       BN_SPOT: ['BTC_USDT', 'ETH_USDT', 'BNB_USDT', 'SOL_USDT', 'XRP_USDT', 'ADA_USDT'],
       BN_USDS_M: ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'DOGEUSDT'],
     },
-    apiKey: 'binance_api_key_example_1234567890',
+    apiKey: randomString(64),
     balanceInformation: {
       BN_SPOT: [
         { symbol: 'USDT', balance: 10000, available: 9500, inOrder: 500 },
@@ -487,7 +489,7 @@ function generateAccount1(): Account {
       BN_USDS_M: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'ADAUSDT', 'XRPUSDT', 'DOGEUSDT', 'LTCUSDT'],
       BN_COIN_M: ['BTCUSD_PERPETUAL', 'ETHUSD_PERPETUAL', 'BNBUSD_PERPETUAL', 'SOLUSD_PERPETUAL'],
     },
-    apiKey: 'binance_futures_api_key_0987654321',
+    apiKey: randomString(64),
     balanceInformation: {
       BN_USDS_M: [
         { symbol: 'USDT', balance: 35000, available: 28000, inOrder: 7000 },
@@ -781,8 +783,8 @@ function generateAccount2(): Account {
       BB_SPOT: ['BTC_USDT', 'ETH_USDT', 'SOL_USDT', 'XRP_USDT', 'DOGE_USDT'],
       BB_USDT_PERP: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'DOGEUSDT'],
     },
-    apiKey: 'bybit_spot_api_key_1122334455',
-    secretKey: 'bybit_spot_secret_key_5544332211',
+    apiKey: randomString(64),
+    secretKey: randomString(64),
     balanceInformation: {
       BB_SPOT: [
         { symbol: 'USDT', balance: 20000, available: 18000, inOrder: 2000 },
@@ -790,9 +792,7 @@ function generateAccount2(): Account {
         { symbol: 'ETH', balance: 5, available: 4.5, inOrder: 0.5 },
         { symbol: 'SOL', balance: 100, available: 90, inOrder: 10 },
       ],
-      BB_USDT_PERP: [
-        { symbol: 'USDT', balance: 15000, available: 12000, inOrder: 3000 },
-      ],
+      BB_USDT_PERP: [{ symbol: 'USDT', balance: 15000, available: 12000, inOrder: 3000 }],
     },
     positionInformation: {
       BB_USDT_PERP: [
@@ -1063,8 +1063,8 @@ function generateAccount3(): Account {
       BB_USDC_PERP: ['BTC-PERP', 'ETH-PERP', 'SOL-PERP'],
       BB_Perpetual: ['BTCUSD', 'ETHUSD', 'SOLUSD'],
     },
-    apiKey: 'bybit_derivatives_api_key_9988776655',
-    secretKey: 'bybit_derivatives_secret_key_5566778899',
+    apiKey: randomString(64),
+    secretKey: randomString(64),
     balanceInformation: {
       BB_USDT_PERP: [
         { symbol: 'USDT', balance: 50000, available: 35000, inOrder: 15000 },
@@ -1468,7 +1468,7 @@ function generateAccount4(): Account {
       BN_SPOT: ['BTC_USDT', 'ETH_USDT', 'BNB_USDT', 'SOL_USDT', 'LINK_USDT', 'AVAX_USDT'],
       BN_USDS_M: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'LINKUSDT', 'AVAXUSDT'],
     },
-    apiKey: 'binance_hft_api_key_high_freq_2024',
+    apiKey: randomString(64),
     balanceInformation: {
       BN_SPOT: [
         { symbol: 'USDT', balance: 100000, available: 75000, inOrder: 25000 },
@@ -1589,8 +1589,8 @@ function generateAccount5(): Account {
       BB_SPOT: ['BTC_USDT', 'ETH_USDT', 'XRP_USDT', 'ADA_USDT', 'DOGE_USDT'],
       BB_USDT_PERP: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'ADAUSDT'],
     },
-    apiKey: 'bybit_swing_api_key_swing_2024',
-    secretKey: 'bybit_swing_secret_key_2024_swing',
+    apiKey: randomString(64),
+    secretKey: randomString(64),
     balanceInformation: {
       BB_SPOT: [
         { symbol: 'USDT', balance: 30000, available: 22000, inOrder: 8000 },
@@ -1726,7 +1726,7 @@ function generateAccount6(): Account {
       BN_USDS_M: ['BTCUSDT', 'ETHUSDT', 'BNBUSDT'],
       BN_COIN_M: ['BTCUSD_PERPETUAL', 'ETHUSD_PERPETUAL'],
     },
-    apiKey: 'binance_arb_api_key_arbitrage_bot',
+    apiKey: randomString(64),
     balanceInformation: {
       BN_SPOT: [
         { symbol: 'USDT', balance: 50000, available: 45000, inOrder: 5000 },
@@ -1802,8 +1802,8 @@ function generateAccount6(): Account {
         price: 49800 + (i % 10) * 20,
         averagePrice: 49800 + (i % 10) * 20,
         timeInForce: 'IOC' as const,
-        createdAt: BASE_TIME - 3600000 * Math.floor(i / 10),
-        updatedAt: BASE_TIME - 3600000 * Math.floor(i / 10),
+        createdAt: BASE_TIME - 3600000 * (i / 10),
+        updatedAt: BASE_TIME - 3600000 * (i / 10),
       })),
     },
     positionHistory: {
@@ -1850,8 +1850,8 @@ function generateAccount7(): Account {
     availableMarkets: {
       BB_SPOT: ['BTC_USDT', 'ETH_USDT', 'SOL_USDT', 'LINK_USDT'],
     },
-    apiKey: 'bybit_dca_api_key_dollar_cost_avg',
-    secretKey: 'bybit_dca_secret_key_dollar_cost',
+    apiKey: randomString(64),
+    secretKey: randomString(64),
     balanceInformation: {
       BB_SPOT: [
         { symbol: 'USDT', balance: 40000, available: 38000, inOrder: 2000 },

@@ -36,6 +36,14 @@ class SeededRandom {
   }
 
   /**
+   * Generate random string
+   */
+  string(length: number): string {
+    const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+    return Array.from({ length }, () => alphabet[Math.floor(this.next() * alphabet.length)]).join('');
+  }
+
+  /**
    * Generate random float between min and max
    */
   nextFloat(min: number, max: number): number {
@@ -107,6 +115,7 @@ export const randomInt = (min: number, max: number) => seededRandom.nextInt(min,
 export const randomFloat = (min: number, max: number) => seededRandom.nextFloat(min, max);
 export const randomPick = <T>(array: T[]) => seededRandom.pick(array);
 export const randomUUID = () => seededRandom.uuid();
+export const randomString = (length: number) => seededRandom.string(length);
 
 // Export the class for cases where separate instances are needed
 export { SeededRandom };
