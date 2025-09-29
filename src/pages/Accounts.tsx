@@ -65,7 +65,7 @@ function Accounts() {
   }
 
   return (
-    <Stack gap="lg" py="xl" w={isMobile ? '100%' : '80vw'}>
+    <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'}>
       <Group justify="space-between" align="center">
         <Title order={1}>{t('accounts')}</Title>
         <Button leftSection={<IconPlus size={18} />} onClick={handleAddAccount}>

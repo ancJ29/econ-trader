@@ -50,7 +50,7 @@ function EconomicIndexDetail() {
   const [index, setIndex] = useState<EconomicIndex | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [detailsOpened, setDetailsOpened] = useState(true);
+  const [detailsOpened, setDetailsOpened] = useState(false);
 
   useEffect(() => {
     if (!eventCode) {
@@ -88,7 +88,7 @@ function EconomicIndexDetail() {
   return (
     <>
       <LoadingOverlay visible={isLoading} />
-      <Stack gap="lg" py="xl" w={isMobile ? '100%' : '70vw'}>
+      <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '70vw'}>
         <Group justify="space-between" wrap={isMobile ? 'wrap' : 'nowrap'}>
           <Title order={isMobile ? 2 : 1}>{t('economicIndexDetail')}</Title>
           <Anchor onClick={() => navigate('/economic-calendar')} style={{ cursor: 'pointer' }}>
@@ -231,7 +231,7 @@ function EconomicIndexDetail() {
                                   <SimpleGrid cols={3}>
                                     <Stack gap={4}>
                                       <Text size="xs" c="dimmed">
-                                        {t('actual')}
+                                        {t('economicCalendars.actual')}
                                       </Text>
                                       <Text size="sm" fw={500}>
                                         {formatValue(record.actual, index.isPercentage)}
@@ -239,7 +239,7 @@ function EconomicIndexDetail() {
                                     </Stack>
                                     <Stack gap={4}>
                                       <Text size="xs" c="dimmed">
-                                        {t('forecast')}
+                                        {t('economicCalendars.forecast')}
                                       </Text>
                                       <Text size="sm" fw={500}>
                                         {formatValue(record.forecast, index.isPercentage)}
@@ -247,7 +247,7 @@ function EconomicIndexDetail() {
                                     </Stack>
                                     <Stack gap={4}>
                                       <Text size="xs" c="dimmed">
-                                        {t('previous')}
+                                        {t('economicCalendars.previous')}
                                       </Text>
                                       <Text size="sm" fw={500}>
                                         {formatValue(record.previous, index.isPercentage)}
@@ -367,9 +367,9 @@ function EconomicIndexDetail() {
                           <Table.Tr>
                             <Table.Th>{t('date')}</Table.Th>
                             <Table.Th>{t('period')}</Table.Th>
-                            <Table.Th>{t('actual')}</Table.Th>
-                            <Table.Th>{t('forecast')}</Table.Th>
-                            <Table.Th>{t('previous')}</Table.Th>
+                            <Table.Th>{t('economicCalendars.actual')}</Table.Th>
+                            <Table.Th>{t('economicCalendars.forecast')}</Table.Th>
+                            <Table.Th>{t('economicCalendars.previous')}</Table.Th>
                           </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>

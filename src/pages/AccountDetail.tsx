@@ -98,7 +98,7 @@ function AccountDetailContent() {
   };
 
   return (
-    <Stack gap="lg" py="xl" w={isMobile ? '100%' : '80vw'}>
+    <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'}>
       <Breadcrumbs>
         <Anchor component={Link} to="/accounts">
           {t('accounts')}

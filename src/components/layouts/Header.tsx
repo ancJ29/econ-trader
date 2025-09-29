@@ -1,8 +1,9 @@
 import { Group, Title, ActionIcon, Box, Container, Tooltip, Select, Button } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { useMantineColorScheme, useComputedColorScheme } from '@mantine/core';
+import { useMantineColorScheme } from '@mantine/core';
 import { Link, useLocation } from 'react-router-dom';
 import { Flag } from '@/components/common/Flag';
+import { IconMoon, IconSun } from '@tabler/icons-react';
 
 const LANGUAGE_OPTIONS = [
   { value: 'en', label: 'English', countryCode: 'US' },
@@ -11,12 +12,11 @@ const LANGUAGE_OPTIONS = [
 
 export const Header = () => {
   const { t, i18n } = useTranslation();
-  const { setColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme('light');
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
   const location = useLocation();
 
   const toggleTheme = () => {
-    setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
+    setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -93,9 +93,9 @@ export const Header = () => {
               styles={{ input: { width: 140 } }}
               comboboxProps={{ withinPortal: false }}
             />
-            <Tooltip label={`${t('theme')}: ${t(computedColorScheme)}`}>
+            <Tooltip label={`${t('theme')}: ${t(colorScheme === 'dark' ? 'dark' : 'light')}`}>
               <ActionIcon onClick={toggleTheme} variant="light" size="lg">
-                {computedColorScheme === 'dark' ? '☀️' : '🌙'}
+                {colorScheme === 'dark' ? <IconSun /> : <IconMoon />}
               </ActionIcon>
             </Tooltip>
           </Group>

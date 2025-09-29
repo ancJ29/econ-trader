@@ -1,5 +1,5 @@
 import { Select } from '@mantine/core';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TradingSymbol } from '@/types/account';
 
@@ -20,12 +20,14 @@ export function InstrumentSelector({
 }: InstrumentSelectorProps) {
   const { t } = useTranslation();
 
-  const instrumentOptions = availableInstruments
-    ? availableInstruments.map((instrument) => ({
+  const instrumentOptions = useMemo(() => {
+    return (
+      availableInstruments?.map((instrument) => ({
         value: instrument,
-        label: instrument.replace(/_/g, ' '),
-      }))
-    : [];
+        label: instrument,
+      })) || []
+    );
+  }, [availableInstruments]);
 
   // Auto-select first instrument if none selected
   useEffect(() => {

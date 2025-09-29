@@ -9,7 +9,13 @@ import '@mantine/notifications/styles.css';
 import '@mantine/charts/styles.css';
 import App from './App';
 import { theme } from './theme';
-import './i18n';
+import './theme/globals.scss';
+
+// import './i18n';
+import i18n from '@/lib/i18n';
+
+// Initialize i18n
+void i18n;
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -103,7 +103,7 @@ export function OpenOrdersTable({ ordersData }: OpenOrdersTableProps) {
                           {t('order.timeInForce')}
                         </Text>
                         <Text size="sm" fw={500}>
-                          {t(`order.${order.timeInForce.toLowerCase()}`)}
+                          {t(`order.${order.timeInForce}`)}
                         </Text>
                       </Group>
                       <Group justify="space-between">
@@ -183,7 +183,7 @@ export function OpenOrdersTable({ ordersData }: OpenOrdersTableProps) {
                       <Table.Td style={{ textAlign: 'right', fontFamily: 'monospace' }}>
                         {order.price ? formatNumber(order.price) : '-'}
                       </Table.Td>
-                      <Table.Td>{t(`order.${order.timeInForce.toLowerCase()}`)}</Table.Td>
+                      <Table.Td>{t(`order.${order.timeInForce}`)}</Table.Td>
                       <Table.Td style={{ fontFamily: 'monospace' }}>
                         {formatDateTime(order.createdAt)}
                       </Table.Td>

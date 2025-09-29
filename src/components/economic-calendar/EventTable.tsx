@@ -7,7 +7,7 @@ import type { EconomicEvent } from '@/services/economicCalendar';
 
 interface EventTableProps {
   events: EconomicEvent[];
-  onActionsClick: (eventCode: string, eventName: string) => void;
+  onActionsClick: (event: EconomicEvent) => void;
 }
 
 export function EventTable({ events, onActionsClick }: EventTableProps) {
@@ -22,10 +22,10 @@ export function EventTable({ events, onActionsClick }: EventTableProps) {
           <Table.Th>{t('event')}</Table.Th>
           <Table.Th>{t('period')}</Table.Th>
           <Table.Th>{t('impact')}</Table.Th>
-          <Table.Th>{t('actual')}</Table.Th>
-          <Table.Th>{t('forecast')}</Table.Th>
-          <Table.Th>{t('previous')}</Table.Th>
-          <Table.Th>{t('action.actions')}</Table.Th>
+          <Table.Th>{t('economicCalendars.actual')}</Table.Th>
+          <Table.Th>{t('economicCalendars.forecast')}</Table.Th>
+          <Table.Th>{t('economicCalendars.previous')}</Table.Th>
+          <Table.Th>{t('action.reserveAction')}</Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
@@ -51,12 +51,8 @@ export function EventTable({ events, onActionsClick }: EventTableProps) {
             <Table.Td>{formatValue(event.forecast, event.isPercentage)}</Table.Td>
             <Table.Td>{formatValue(event.previous, event.isPercentage)}</Table.Td>
             <Table.Td>
-              <Button
-                size="xs"
-                variant="light"
-                onClick={() => onActionsClick(event.eventCode, event.name)}
-              >
-                {t('action.manage')}
+              <Button size="xs" variant="light" onClick={() => onActionsClick(event)}>
+                {t('action.register')}
               </Button>
             </Table.Td>
           </Table.Tr>

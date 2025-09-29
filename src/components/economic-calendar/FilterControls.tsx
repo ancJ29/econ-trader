@@ -16,6 +16,8 @@ interface FilterControlsProps {
   periodToFilter: Date | null;
   onPeriodToFilterChange: (value: Date | null) => void;
   onClearFilters: () => void;
+  onApplyFilters: () => void;
+  hasPendingChanges: boolean;
   isMobile: boolean;
   countryOptions: readonly { value: string; label: string }[];
 }
@@ -32,6 +34,8 @@ export function FilterControls({
   periodToFilter,
   onPeriodToFilterChange,
   onClearFilters,
+  onApplyFilters,
+  hasPendingChanges,
   isMobile,
   countryOptions,
 }: FilterControlsProps) {
@@ -103,9 +107,14 @@ export function FilterControls({
             />
           </Stack>
         </Collapse>
-        <Button onClick={onClearFilters} variant="outline" fullWidth>
-          {t('clearFilters')}
-        </Button>
+        <Group gap="xs" grow>
+          <Button onClick={onClearFilters} variant="outline">
+            {t('clearFilters')}
+          </Button>
+          <Button onClick={onApplyFilters} variant="filled" disabled={!hasPendingChanges}>
+            {t('applyFilters')}
+          </Button>
+        </Group>
       </Stack>
     );
   }
@@ -121,9 +130,14 @@ export function FilterControls({
         value={eventNameFilter}
         onChange={(e) => onEventNameFilterChange(e.currentTarget.value)}
       />
-      <Button onClick={onClearFilters} variant="outline">
-        {t('clearFilters')}
-      </Button>
+      <Group gap="md">
+        <Button onClick={onClearFilters} variant="outline">
+          {t('clearFilters')}
+        </Button>
+        <Button onClick={onApplyFilters} variant="filled" disabled={!hasPendingChanges}>
+          {t('applyFilters')}
+        </Button>
+      </Group>
     </Stack>
   );
 }

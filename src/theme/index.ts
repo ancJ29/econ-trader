@@ -40,12 +40,12 @@ export const theme = createTheme({
 
   // Font settings
   fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif',
   fontFamilyMonospace: 'Monaco, Courier, monospace',
 
   headings: {
     fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif',
     fontWeight: '600',
     sizes: {
       h1: { fontSize: '2rem', lineHeight: '1.3' },

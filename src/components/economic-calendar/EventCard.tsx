@@ -17,7 +17,7 @@ import type { EconomicEvent } from '@/services/economicCalendar';
 
 interface EventCardProps {
   event: EconomicEvent;
-  onActionsClick: (eventCode: string, eventName: string) => void;
+  onActionsClick: (event: EconomicEvent) => void;
 }
 
 export function EventCard({ event, onActionsClick }: EventCardProps) {
@@ -56,7 +56,7 @@ export function EventCard({ event, onActionsClick }: EventCardProps) {
         <SimpleGrid cols={3}>
           <Stack gap={4}>
             <Text size="xs" c="dimmed">
-              {t('actual')}
+              {t('economicCalendars.actual')}
             </Text>
             <Text size="sm" fw={500}>
               {formatValue(event.actual, event.isPercentage)}
@@ -64,7 +64,7 @@ export function EventCard({ event, onActionsClick }: EventCardProps) {
           </Stack>
           <Stack gap={4}>
             <Text size="xs" c="dimmed">
-              {t('forecast')}
+              {t('economicCalendars.forecast')}
             </Text>
             <Text size="sm" fw={500}>
               {formatValue(event.forecast, event.isPercentage)}
@@ -72,7 +72,7 @@ export function EventCard({ event, onActionsClick }: EventCardProps) {
           </Stack>
           <Stack gap={4}>
             <Text size="xs" c="dimmed">
-              {t('previous')}
+              {t('economicCalendars.previous')}
             </Text>
             <Text size="sm" fw={500}>
               {formatValue(event.previous, event.isPercentage)}
@@ -80,13 +80,8 @@ export function EventCard({ event, onActionsClick }: EventCardProps) {
           </Stack>
         </SimpleGrid>
 
-        <Button
-          size="xs"
-          variant="light"
-          fullWidth
-          onClick={() => onActionsClick(event.eventCode, event.name)}
-        >
-          {t('action.manageActions')}
+        <Button size="xs" variant="light" fullWidth onClick={() => onActionsClick(event)}>
+          {t('economicCalendars.manageReservations')}
         </Button>
       </Stack>
     </Card>

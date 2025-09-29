@@ -9,8 +9,8 @@ import { EventCard } from '@/components/economic-calendar/EventCard';
 import { EventTable } from '@/components/economic-calendar/EventTable';
 import { QuickFilters } from '@/components/economic-calendar/QuickFilters';
 import { FilterControls } from '@/components/economic-calendar/FilterControls';
-import { ActionDrawer } from '@/components/economic-calendar/ActionDrawer';
-import type { EconomicCalendarFilters } from '@/services/economicCalendar';
+import { ReservationDrawer } from '@/components/economic-calendar/ReservationDrawer';
+import type { EconomicCalendarFilters, EconomicEvent } from '@/services/economicCalendar';
 
 const COUNTRY_OPTIONS = [
   { value: 'US', label: 'US' },
@@ -25,47 +25,82 @@ function EconomicCalendar() {
   const { events, pagination, isLoading, error, fetchEvents } = useEconomicCalendarStore();
   const isMobile = useIsMobile();
 
-  const [countryFilter, setCountryFilter] = useState<string[]>([]);
-  const [eventNameFilter, setEventNameFilter] = useState('');
-  const [impactFilter, setImpactFilter] = useState<string[]>([]);
-  const [periodFromFilter, setPeriodFromFilter] = useState<Date | null>(null);
-  const [periodToFilter, setPeriodToFilter] = useState<Date | null>(null);
+  // Pending filters (user selections, not yet applied)
+  const [pendingCountryFilter, setPendingCountryFilter] = useState<string[]>([]);
+  const [pendingEventNameFilter, setPendingEventNameFilter] = useState('');
+  const [pendingImpactFilter, setPendingImpactFilter] = useState<string[]>([]);
+  const [pendingPeriodFromFilter, setPendingPeriodFromFilter] = useState<Date | null>(null);
+  const [pendingPeriodToFilter, setPendingPeriodToFilter] = useState<Date | null>(null);
+
+  // Applied filters (committed filters that trigger API calls)
+  const [appliedCountryFilter, setAppliedCountryFilter] = useState<string[]>([]);
+  const [appliedEventNameFilter, setAppliedEventNameFilter] = useState('');
+  const [appliedImpactFilter, setAppliedImpactFilter] = useState<string[]>([]);
+  const [appliedPeriodFromFilter, setAppliedPeriodFromFilter] = useState<Date | null>(null);
+  const [appliedPeriodToFilter, setAppliedPeriodToFilter] = useState<Date | null>(null);
+
   const [page, setPage] = useState(1);
   const [actionDrawerOpened, setActionDrawerOpened] = useState(false);
-  const [selectedEventCode, setSelectedEventCode] = useState('');
-  const [selectedEventName, setSelectedEventName] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState<EconomicEvent | null>(null);
 
-  const [debouncedEventNameFilter] = useDebouncedValue(eventNameFilter, 500);
+  const [debouncedAppliedEventNameFilter] = useDebouncedValue(appliedEventNameFilter, 500);
 
+  // Apply pending filters to applied filters
+  const applyFilters = () => {
+    setAppliedCountryFilter(pendingCountryFilter);
+    setAppliedEventNameFilter(pendingEventNameFilter);
+    setAppliedImpactFilter(pendingImpactFilter);
+    setAppliedPeriodFromFilter(pendingPeriodFromFilter);
+    setAppliedPeriodToFilter(pendingPeriodToFilter);
+    setPage(1); // Reset to first page when applying new filters
+  };
+
+  // Check if there are pending changes
+  const hasPendingChanges =
+    JSON.stringify(pendingCountryFilter) !== JSON.stringify(appliedCountryFilter) ||
+    pendingEventNameFilter !== appliedEventNameFilter ||
+    JSON.stringify(pendingImpactFilter) !== JSON.stringify(appliedImpactFilter) ||
+    pendingPeriodFromFilter?.getTime() !== appliedPeriodFromFilter?.getTime() ||
+    pendingPeriodToFilter?.getTime() !== appliedPeriodToFilter?.getTime();
+
+  // Only fetch when applied filters change
   useEffect(() => {
     const filters: EconomicCalendarFilters = {
-      countryCodes: countryFilter.length > 0 ? countryFilter : undefined,
-      eventName: debouncedEventNameFilter || undefined,
+      countryCodes: appliedCountryFilter.length > 0 ? appliedCountryFilter : undefined,
+      eventName: debouncedAppliedEventNameFilter || undefined,
       impactLevels:
-        impactFilter.length > 0 ? (impactFilter.map(Number) as (1 | 2 | 3)[]) : undefined,
-      periodFrom: periodFromFilter?.getTime(),
-      periodTo: periodToFilter?.getTime(),
+        appliedImpactFilter.length > 0
+          ? (appliedImpactFilter.map(Number) as (1 | 2 | 3)[])
+          : undefined,
+      periodFrom: appliedPeriodFromFilter?.getTime(),
+      periodTo: appliedPeriodToFilter?.getTime(),
       page,
       pageSize: 100,
     };
 
     fetchEvents(filters);
   }, [
-    countryFilter,
-    debouncedEventNameFilter,
-    impactFilter,
-    periodFromFilter,
-    periodToFilter,
+    appliedCountryFilter,
+    debouncedAppliedEventNameFilter,
+    appliedImpactFilter,
+    appliedPeriodFromFilter,
+    appliedPeriodToFilter,
     page,
     fetchEvents,
   ]);
 
   const clearFilters = () => {
-    setCountryFilter([]);
-    setEventNameFilter('');
-    setImpactFilter([]);
-    setPeriodFromFilter(null);
-    setPeriodToFilter(null);
+    // Clear both pending and applied filters
+    setPendingCountryFilter([]);
+    setPendingEventNameFilter('');
+    setPendingImpactFilter([]);
+    setPendingPeriodFromFilter(null);
+    setPendingPeriodToFilter(null);
+    setAppliedCountryFilter([]);
+    setAppliedEventNameFilter('');
+    setAppliedImpactFilter([]);
+    setAppliedPeriodFromFilter(null);
+    setAppliedPeriodToFilter(null);
     setPage(1);
   };
 
@@ -115,26 +150,30 @@ function EconomicCalendar() {
         break;
     }
 
-    setPeriodFromFilter(range.start);
-    setPeriodToFilter(range.end);
+    // Set pending filters and immediately apply
+    setPendingPeriodFromFilter(range.start);
+    setPendingPeriodToFilter(range.end);
+    setAppliedPeriodFromFilter(range.start);
+    setAppliedPeriodToFilter(range.end);
     setPage(1);
   };
 
   const applyQuickCountryFilter = (country: string) => {
-    setCountryFilter([country]);
+    // Set pending filter and immediately apply
+    setPendingCountryFilter([country]);
+    setAppliedCountryFilter([country]);
     setPage(1);
   };
 
-  const handleActionsClick = (eventCode: string, eventName: string) => {
-    setSelectedEventCode(eventCode);
-    setSelectedEventName(eventName);
+  const handleActionsClick = (event: EconomicEvent) => {
+    setSelectedEvent(event);
     setActionDrawerOpened(true);
   };
 
   return (
     <>
       <LoadingOverlay visible={isLoading} />
-      <Stack gap="lg" py="xl" w={isMobile ? '100%' : '80vw'}>
+      <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'}>
         <Title order={1}>{t('economicCalendar')}</Title>
 
         {error && (
@@ -154,17 +193,19 @@ function EconomicCalendar() {
                 />
 
                 <FilterControls
-                  countryFilter={countryFilter}
-                  onCountryFilterChange={setCountryFilter}
-                  eventNameFilter={eventNameFilter}
-                  onEventNameFilterChange={setEventNameFilter}
-                  impactFilter={impactFilter}
-                  onImpactFilterChange={setImpactFilter}
-                  periodFromFilter={periodFromFilter}
-                  onPeriodFromFilterChange={setPeriodFromFilter}
-                  periodToFilter={periodToFilter}
-                  onPeriodToFilterChange={setPeriodToFilter}
+                  countryFilter={pendingCountryFilter}
+                  onCountryFilterChange={setPendingCountryFilter}
+                  eventNameFilter={pendingEventNameFilter}
+                  onEventNameFilterChange={setPendingEventNameFilter}
+                  impactFilter={pendingImpactFilter}
+                  onImpactFilterChange={setPendingImpactFilter}
+                  periodFromFilter={pendingPeriodFromFilter}
+                  onPeriodFromFilterChange={setPendingPeriodFromFilter}
+                  periodToFilter={pendingPeriodToFilter}
+                  onPeriodToFilterChange={setPendingPeriodToFilter}
                   onClearFilters={clearFilters}
+                  onApplyFilters={applyFilters}
+                  hasPendingChanges={hasPendingChanges}
                   isMobile={isMobile}
                   countryOptions={COUNTRY_OPTIONS}
                 />
@@ -208,11 +249,10 @@ function EconomicCalendar() {
         )}
       </Stack>
 
-      <ActionDrawer
+      <ReservationDrawer
         opened={actionDrawerOpened}
         onClose={() => setActionDrawerOpened(false)}
-        eventCode={selectedEventCode}
-        eventName={selectedEventName}
+        event={selectedEvent}
       />
     </>
   );

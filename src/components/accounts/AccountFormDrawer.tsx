@@ -185,7 +185,7 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
             {t('action.cancel')}
           </Button>
           <Button onClick={handleSubmit} loading={isLoading}>
-            {isEditMode ? t('save') : t('create')}
+            {isEditMode ? t('action.save') : t('action.create')}
           </Button>
         </Group>
       </Stack>

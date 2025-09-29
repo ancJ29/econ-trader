@@ -1,0 +1,6 @@
+{
+  "description": "Translation keys that should never be marked as unused, even if not found in code",
+  "safeKeys": [
+  ],
+  "patterns": []
+}
