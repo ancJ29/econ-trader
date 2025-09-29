@@ -7,6 +7,8 @@ import { Layout } from '@/components/layouts/Layout';
 const Home = lazy(() => import('@/pages/Home'));
 const EconomicCalendar = lazy(() => import('@/pages/EconomicCalendar'));
 const EconomicIndexDetail = lazy(() => import('@/pages/EconomicIndexDetail'));
+const Accounts = lazy(() => import('@/pages/Accounts'));
+const AccountDetail = lazy(() => import('@/pages/AccountDetail'));
 const DemoHome = lazy(() => import('@/pages/demo/DemoHome'));
 const DatesDemo = lazy(() => import('@/pages/demo/DatesDemo'));
 const FormDemo = lazy(() => import('@/pages/demo/FormDemo'));
@@ -40,6 +42,14 @@ export const router = createBrowserRouter([
       {
         path: '/economic-calendar/:eventCode',
         element: withSuspense(EconomicIndexDetail),
+      },
+      {
+        path: '/accounts',
+        element: withSuspense(Accounts),
+      },
+      {
+        path: '/accounts/:accountId',
+        element: withSuspense(AccountDetail),
       },
       {
         path: '/demos',

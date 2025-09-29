@@ -123,9 +123,11 @@ export function ActionDrawer({ opened, onClose, eventCode, eventName }: ActionDr
   return (
     <Drawer
       styles={{
-        content: isMobile ? {
-          borderRadius: 'var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0',
-        } : undefined,
+        content: isMobile
+          ? {
+              borderRadius: 'var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0',
+            }
+          : undefined,
       }}
       opened={opened}
       onClose={onClose}

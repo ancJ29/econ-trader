@@ -1,6 +1,7 @@
-import { Group, Title, ActionIcon, Box, Container, Tooltip, Select } from '@mantine/core';
+import { Group, Title, ActionIcon, Box, Container, Tooltip, Select, Button } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useMantineColorScheme, useComputedColorScheme } from '@mantine/core';
+import { Link, useLocation } from 'react-router-dom';
 import { Flag } from '@/components/common/Flag';
 
 const LANGUAGE_OPTIONS = [
@@ -12,10 +13,13 @@ export const Header = () => {
   const { t, i18n } = useTranslation();
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light');
+  const location = useLocation();
 
   const toggleTheme = () => {
     setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
   };
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <Box component="header" py="md" mb="lg" style={{ width: '100%' }}>
@@ -40,6 +44,28 @@ export const Header = () => {
               ET
             </Box>
             <Title order={3}>{t('econTrader')}</Title>
+          </Group>
+
+          <Group gap="xs">
+            <Button component={Link} to="/" variant={isActive('/') ? 'filled' : 'subtle'} size="sm">
+              {t('home')}
+            </Button>
+            <Button
+              component={Link}
+              to="/economic-calendar"
+              variant={isActive('/economic-calendar') ? 'filled' : 'subtle'}
+              size="sm"
+            >
+              {t('economicCalendar')}
+            </Button>
+            <Button
+              component={Link}
+              to="/accounts"
+              variant={isActive('/accounts') ? 'filled' : 'subtle'}
+              size="sm"
+            >
+              {t('accounts')}
+            </Button>
           </Group>
 
           <Group gap="sm">

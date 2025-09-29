@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { BaseApiClient } from './base';
 import { delay } from '@/utils/time';
+import { random, randomPick, randomInt } from '@/utils/seededRandom';
 
 export const EconomicEventSchema = z.object({
   ts: z.number(),
@@ -218,11 +219,12 @@ function generateDummyEvents(): EconomicEvent[] {
 
     // Generate events for this day
     for (let i = 0; i < eventsPerDay; i++) {
-      const template = EVENT_TEMPLATES[Math.floor(Math.random() * EVENT_TEMPLATES.length)];
-      const country = COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)];
-      const impact = template.impactRange[
-        Math.floor(Math.random() * template.impactRange.length)
-      ] as 1 | 2 | 3;
+      const template = randomPick(EVENT_TEMPLATES);
+      const country = randomPick(COUNTRIES);
+      const impact = template.impactRange[randomInt(0, template.impactRange.length - 1)] as
+        | 1
+        | 2
+        | 3;
 
       const eventCode = (country + '-' + template.name).toLowerCase().replace(/\s+/g, '-');
       const currencyCode = CURRENCY_MAP[country];
@@ -257,15 +259,15 @@ function generateDummyEvents(): EconomicEvent[] {
       }
 
       // Generate realistic values
-      const isPercentage = Math.random() > 0.3; // 70% are percentages
-      const baseValue = isPercentage ? Math.random() * 10 : Math.random() * 1000;
+      const isPercentage = random() > 0.3; // 70% are percentages
+      const baseValue = isPercentage ? random() * 10 : random() * 1000;
       const variance = baseValue * 0.1;
 
-      const previous = Math.round((baseValue + (Math.random() - 0.5) * variance) * 10) / 10;
-      const forecast = Math.round((previous + (Math.random() - 0.5) * variance * 0.5) * 10) / 10;
+      const previous = Math.round((baseValue + (random() - 0.5) * variance) * 10) / 10;
+      const forecast = Math.round((previous + (random() - 0.5) * variance * 0.5) * 10) / 10;
       const actual =
-        Math.random() > 0.3
-          ? Math.round((forecast + (Math.random() - 0.5) * variance * 0.3) * 10) / 10
+        random() > 0.3
+          ? Math.round((forecast + (random() - 0.5) * variance * 0.3) * 10) / 10
           : undefined;
 
       events.push({
@@ -281,7 +283,7 @@ function generateDummyEvents(): EconomicEvent[] {
         actual,
         forecast,
         previous,
-        reference: `https://www.investing.com/economic-calendar/${template.name.toLowerCase().replace(/\s+/g, '-')}-${Math.floor(Math.random() * 1000)}`,
+        reference: `https://www.investing.com/economic-calendar/${template.name.toLowerCase().replace(/\s+/g, '-')}-${randomInt(1, 999)}`,
       });
     }
   }
