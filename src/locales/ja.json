@@ -1,17 +1,22 @@
 {
+  "account": {
+    "list": "アカウント",
+    "operationFailed": "アカウント操作に失敗しました"
+  },
   "accountDetailFeatures": "取引商品選択、残高情報、ポジション情報、注文、履歴は今後のアップデートで利用可能になります。",
   "accountName": "アカウント名",
   "accountNamePlaceholder": "例: メイントレードアカウント",
   "accountNameRequired": "アカウント名は必須です",
   "accountNotFound": "アカウントが見つかりません",
-  "accountOperationFailed": "アカウント操作に失敗しました",
-  "accounts": "アカウント",
   "action": {
     "accountRequired": "アカウントは必須です",
+    "actualVs": "結果 vs",
     "actualVsForecast": "結果 vs 予想",
     "actualVsPrevious": "結果 vs 前回",
+    "actualVsSpecific": "結果 vs 特定値",
     "actual_vs_forecast": "結果 vs 予想",
     "actual_vs_previous": "結果 vs 前回",
+    "actual_vs_specific": "結果 vs 特定値",
     "apply": "適用",
     "buy": "買い",
     "cancel": "キャンセル",
@@ -22,6 +27,7 @@
     "disabled": "無効",
     "edit": "編集",
     "enabled": "有効",
+    "enterSpecificValue": "特定値を入力してください",
     "greater": "より大きい",
     "instrument": "銘柄",
     "instrumentRequired": "銘柄は必須です",
@@ -52,6 +58,7 @@
     "selectMarketPlaceholder": "取引商品を選択してください",
     "sell": "売り",
     "side": "売買",
+    "specificValue": "特定値",
     "title": "アクション管理",
     "tradingAccount": "取引アカウント",
     "update": "更新"

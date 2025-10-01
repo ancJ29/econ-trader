@@ -75,7 +75,7 @@ function AccountDetailContent() {
       <Stack gap="lg">
         <Breadcrumbs>
           <Anchor component={Link} to="/accounts">
-            {t('accounts')}
+            {t('account.list')}
           </Anchor>
           <Text>{t('notFound')}</Text>
         </Breadcrumbs>
@@ -101,7 +101,7 @@ function AccountDetailContent() {
     <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'}>
       <Breadcrumbs>
         <Anchor component={Link} to="/accounts">
-          {t('accounts')}
+          {t('account.list')}
         </Anchor>
         <Text>{selectedAccount.name}</Text>
       </Breadcrumbs>

@@ -64,7 +64,7 @@ export const Header = () => {
               variant={isActive('/accounts') ? 'filled' : 'subtle'}
               size="sm"
             >
-              {t('accounts')}
+              {t('account.list')}
             </Button>
           </Group>
 

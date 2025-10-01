@@ -63,7 +63,7 @@ export function ReservationCard({
 
         <Group gap="xs">
           <Text size="base" fw="500" c="dimmed">
-            {t('accounts')}:
+            {t('account.list')}:
           </Text>
           <Text size="base" fw="600">
             {getAccountName(reservation.accountId)}
@@ -106,7 +106,9 @@ export function ReservationCard({
               {t('economicCalendars.trigger')}:
             </Text>
             <Text size="sm">
-              {t(`action.${reservation.triggerType}`)} {t(`action.${reservation.condition}`)}
+              {reservation.triggerType === 'actual_vs_specific' && reservation.specificValue
+                ? `${t('action.actualVs')} ${formatNumber(reservation.specificValue, 2)} ${t(`action.${reservation.condition}`)}`
+                : `${t(`action.${reservation.triggerType}`)} ${t(`action.${reservation.condition}`)}`}
             </Text>
           </Group>
 

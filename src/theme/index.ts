@@ -39,13 +39,11 @@ export const theme = createTheme({
   },
 
   // Font settings
-  fontFamily:
-    '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif',
+  fontFamily: '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif',
   fontFamilyMonospace: 'Monaco, Courier, monospace',
 
   headings: {
-    fontFamily:
-      '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif',
+    fontFamily: '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif',
     fontWeight: '600',
     sizes: {
       h1: { fontSize: '2rem', lineHeight: '1.3' },

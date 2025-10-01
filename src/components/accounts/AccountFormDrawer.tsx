@@ -96,7 +96,7 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
       }
       onClose();
     } catch (_err) {
-      setFormError(error || t('accountOperationFailed'));
+      setFormError(error || t('account.operationFailed'));
     }
   };
 

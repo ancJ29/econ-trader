@@ -1,17 +1,22 @@
 {
+  "account": {
+    "list": "Accounts",
+    "operationFailed": "Account operation failed"
+  },
   "accountDetailFeatures": "Market selection, balance information, position information, orders, and history will be available in future updates.",
   "accountName": "Account Name",
   "accountNamePlaceholder": "e.g., Main Trading Account",
   "accountNameRequired": "Account name is required",
   "accountNotFound": "Account not found",
-  "accountOperationFailed": "Account operation failed",
-  "accounts": "Accounts",
   "action": {
     "accountRequired": "Account is required",
+    "actualVs": "Actual vs",
     "actualVsForecast": "Actual vs Forecast",
     "actualVsPrevious": "Actual vs Previous",
+    "actualVsSpecific": "Actual vs Specific Value",
     "actual_vs_forecast": "Actual vs Forecast",
     "actual_vs_previous": "Actual vs Previous",
+    "actual_vs_specific": "Actual vs Specific Value",
     "apply": "Apply",
     "buy": "Buy",
     "cancel": "Cancel",
@@ -22,6 +27,7 @@
     "disabled": "Disabled",
     "edit": "Edit",
     "enabled": "Enabled",
+    "enterSpecificValue": "Enter specific value",
     "greater": "Greater Than",
     "instrument": "Instrument",
     "instrumentRequired": "Instrument is required",
@@ -52,6 +58,7 @@
     "selectMarketPlaceholder": "Choose a market",
     "sell": "Sell",
     "side": "Side",
+    "specificValue": "Specific Value",
     "title": "Manage Actions",
     "tradingAccount": "Trading Account",
     "update": "Update"

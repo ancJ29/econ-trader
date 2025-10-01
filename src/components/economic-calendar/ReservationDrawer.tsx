@@ -1,5 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Drawer, Stack, Title, Button, Alert, Divider, ScrollArea, Collapse, Group, ActionIcon } from '@mantine/core';
+import {
+  Drawer,
+  Stack,
+  Title,
+  Button,
+  Alert,
+  Divider,
+  ScrollArea,
+  Collapse,
+  Group,
+  ActionIcon,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
@@ -165,13 +176,15 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
           {/* Display event details if event is available */}
           {event && (
             <>
-              <Group justify="space-between" align="center" mb="sm">
+              <Group
+                mb="sm"
+                justify="space-between"
+                align="center"
+                onClick={() => setIsEventDetailsOpen(!isEventDetailsOpen)}
+                style={{ cursor: 'pointer' }}
+              >
                 <Title order={5}>{t('economicCalendars.eventDetails')}</Title>
-                <ActionIcon
-                  variant="subtle"
-                  onClick={() => setIsEventDetailsOpen(!isEventDetailsOpen)}
-                  size="lg"
-                >
+                <ActionIcon variant="subtle" size="lg">
                   {isEventDetailsOpen ? <IconChevronUp size={20} /> : <IconChevronDown size={20} />}
                 </ActionIcon>
               </Group>

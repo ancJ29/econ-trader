@@ -43,6 +43,7 @@ export function ReservationForm({
             data={[
               { value: 'actual_vs_forecast', label: t('action.actualVsForecast') },
               { value: 'actual_vs_previous', label: t('action.actualVsPrevious') },
+              { value: 'actual_vs_specific', label: t('action.actualVsSpecific') },
             ]}
             {...form.getInputProps('triggerType')}
             required
@@ -57,6 +58,17 @@ export function ReservationForm({
             {...form.getInputProps('condition')}
             required
           />
+
+          {form.values.triggerType === 'actual_vs_specific' && (
+            <NumberInput
+              label={t('action.specificValue')}
+              placeholder={t('action.enterSpecificValue')}
+              step={0.01}
+              decimalScale={2}
+              {...form.getInputProps('specificValue')}
+              required
+            />
+          )}
 
           <Divider label={t('action.tradingAccount')} />
 
