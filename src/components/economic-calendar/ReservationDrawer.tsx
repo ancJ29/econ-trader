@@ -130,6 +130,7 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
       if (editingId) {
         setUpdatingId(editingId);
       }
+      values.uniqueCode = event?.uniqueCode || '';
       try {
         if (editingId) {
           await updateReservation({ id: editingId, ...values });

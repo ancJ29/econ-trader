@@ -238,7 +238,7 @@
     "IOC": "IOC",
     "averagePrice": "平均価格",
     "BUY": "買い",
-    "cancelled": "キャンセル",
+    "CANCELED": "キャンセル",
     "createdAt": "作成日時",
     "filled": "約定済み",
     "limit": "指値",

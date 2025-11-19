@@ -28,11 +28,11 @@ export function OrderHistoryTable({ ordersData }: OrderHistoryTableProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'filled':
+      case 'FILLED':
         return 'green';
-      case 'cancelled':
+      case 'CANCELED':
         return 'red';
-      case 'partially_filled':
+      case 'PARTIALLY_FILLED':
         return 'yellow';
       default:
         return 'gray';

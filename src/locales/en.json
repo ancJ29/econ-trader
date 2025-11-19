@@ -245,7 +245,7 @@
     "IOC": "IOC",
     "averagePrice": "Avg Price",
     "BUY": "Buy",
-    "cancelled": "Cancelled",
+    "CANCELED": "CANCELED",
     "createdAt": "Created At",
     "filled": "Filled",
     "limit": "Limit",

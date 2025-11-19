@@ -98,7 +98,7 @@ export const TradingSymbolSchema = z.enum([
   // cspell:enable
 ]);
 
-export const OrderStatusSchema = z.enum(['NEW', 'FILLED', 'CANCELLED', 'PARTIALLY_FILLED']);
+export const OrderStatusSchema = z.enum(['NEW', 'FILLED', 'CANCELED', 'PARTIALLY_FILLED']);
 
 export const OrderTypeSchema = z.enum(['market', 'limit', 'stop_loss', 'take_profit']);
 

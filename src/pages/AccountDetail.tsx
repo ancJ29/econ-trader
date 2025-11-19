@@ -2,9 +2,9 @@ import { BalanceTable } from '@/components/accounts/BalanceTable';
 import { MarketSelector } from '@/components/accounts/MarketSelector';
 import { OpenOrdersTable } from '@/components/accounts/OpenOrdersTable';
 import { OrderHistoryTable } from '@/components/accounts/OrderHistoryTable';
-import { PositionHistoryTable } from '@/components/accounts/PositionHistoryTable';
+// import { PositionHistoryTable } from '@/components/accounts/PositionHistoryTable';
 import { PositionTable } from '@/components/accounts/PositionTable';
-import { TransactionHistoryTable } from '@/components/accounts/TransactionHistoryTable';
+// import { TransactionHistoryTable } from '@/components/accounts/TransactionHistoryTable';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
 import { MARKET_LABELS } from '@/constants/markets';
@@ -248,7 +248,7 @@ function AccountDetailContent() {
           <OrderHistoryTable ordersData={selectedAccount.orderHistory || {}} />
         </Paper>
 
-        <Paper withBorder p="lg">
+        {/* <Paper withBorder p="lg">
           <Text size="lg" fw={500} mb="md">
             {t('positionHistory')}
           </Text>
@@ -260,7 +260,7 @@ function AccountDetailContent() {
             {t('transactionHistory')}
           </Text>
           <TransactionHistoryTable transactionData={selectedAccount.transactionHistory || {}} />
-        </Paper>
+        </Paper> */}
 
         <Drawer
           styles={{

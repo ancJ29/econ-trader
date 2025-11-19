@@ -224,7 +224,7 @@ function transformOrderInformation(
       reduceOnly: boolean;
       price?: number;
       stopPrice?: number;
-      status: 'NEW' | 'FILLED' | 'CANCELLED' | 'PARTIALLY_FILLED';
+      status: 'NEW' | 'FILLED' | 'CANCELED' | 'PARTIALLY_FILLED';
       filled: number;
       avgPrice: number;
       entryTimestamp?: number;

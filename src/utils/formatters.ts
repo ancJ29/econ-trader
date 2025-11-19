@@ -41,7 +41,7 @@ export const getOrderStatusColor = (status: string) => {
       return 'blue';
     case 'FILLED':
       return 'green';
-    case 'CANCELLED':
+    case 'CANCELED':
       return 'red';
     case 'PARTIALLY_FILLED':
       return 'yellow';
