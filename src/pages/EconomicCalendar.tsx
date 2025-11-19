@@ -6,12 +6,14 @@ import { ReservationDrawer } from '@/components/economic-calendar/ReservationDra
 import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useAccountStore } from '@/store/accountStore';
+import { useAuthStore } from '@/store/authStore';
 import { useEconomicCalendarStore } from '@/store/economicCalendarStore';
 import type { EconomicCalendarFilters, EconomicEvent } from '@/types/calendar';
 import { Alert, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const COUNTRY_OPTIONS = [
   { value: 'US', label: 'US' },
@@ -25,6 +27,8 @@ function EconomicCalendar() {
   const { t } = useTranslation();
   const { events, pagination, isLoading, error, fetchEvents } = useEconomicCalendarStore();
   const { fetchAccounts } = useAccountStore();
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   // Pending filters (user selections, not yet applied)
@@ -173,6 +177,10 @@ function EconomicCalendar() {
   };
 
   const handleActionsClick = (event: EconomicEvent) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
     setSelectedEvent(event);
     setActionDrawerOpened(true);
   };
