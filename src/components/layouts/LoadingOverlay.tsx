@@ -1,3 +1,4 @@
+import { isDevelopment } from '@/utils/env';
 import { Box, Loader, Stack, Text, Transition } from '@mantine/core';
 
 interface LoadingOverlayProps {
@@ -24,14 +25,16 @@ export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
             justifyContent: 'center',
           }}
         >
-          <Stack align="center" gap="md">
-            <Loader size="xl" />
-            {message && (
-              <Text c="white" size="lg" fw={500}>
-                {message}
-              </Text>
-            )}
-          </Stack>
+          {isDevelopment && (
+            <Stack align="center" gap="md">
+              <Loader size="xl" />
+              {message && (
+                <Text c="white" size="lg" fw={500}>
+                  {message}
+                </Text>
+              )}
+            </Stack>
+          )}
         </Box>
       )}
     </Transition>

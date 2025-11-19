@@ -1,6 +1,6 @@
+import type { Reservation } from '@/services/reservation';
 import { Stack } from '@mantine/core';
 import { ReservationCard } from './ReservationCard';
-import type { Reservation } from '@/services/reservation';
 
 interface ReservationListProps {
   reservations: Reservation[];
@@ -8,6 +8,7 @@ interface ReservationListProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onToggleEnabled: (id: string) => void;
+  updatingId: string | null;
 }
 
 export function ReservationList({
@@ -16,6 +17,7 @@ export function ReservationList({
   onEdit,
   onDelete,
   onToggleEnabled,
+  updatingId,
 }: ReservationListProps) {
   return (
     <Stack gap="md">
@@ -27,6 +29,7 @@ export function ReservationList({
           onEdit={onEdit}
           onDelete={onDelete}
           onToggleEnabled={onToggleEnabled}
+          isToggling={updatingId === reservation.id}
         />
       ))}
     </Stack>

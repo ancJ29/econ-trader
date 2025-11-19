@@ -1,29 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import type { CreateReservationInput } from '@/services/reservation';
+import { useAccountStore } from '@/store/accountStore';
+import { useReservationStore } from '@/store/reservationStore';
+import type { Account, TradingMarket, TradingSymbol } from '@/types/account';
+import type { EconomicEvent } from '@/types/calendar';
 import {
-  Drawer,
-  Stack,
-  Title,
-  Button,
-  Alert,
-  Divider,
-  ScrollArea,
-  Collapse,
-  Group,
   ActionIcon,
+  Alert,
+  Button,
+  Collapse,
+  Divider,
+  Drawer,
+  Group,
+  LoadingOverlay,
+  ScrollArea,
+  Stack,
+  Text,
+  Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useTranslation } from 'react-i18next';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { useReservationStore } from '@/store/reservationStore';
-import { useAccountStore } from '@/store/accountStore';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { EventDetailsCard } from './EventDetailsCard';
+import { ReservationEmptyState } from './ReservationEmptyState';
 import { ReservationForm } from './ReservationForm';
 import { ReservationList } from './ReservationList';
-import { ReservationEmptyState } from './ReservationEmptyState';
-import { EventDetailsCard } from './EventDetailsCard';
-import type { CreateReservationInput } from '@/services/reservation';
-import type { Account, TradingMarket, TradingSymbol } from '@/types/account';
-import type { EconomicEvent } from '@/services/economicCalendar';
 
 interface ReservationDrawerProps {
   opened: boolean;
@@ -49,111 +51,182 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<Account | undefined>();
   const [isEventDetailsOpen, setIsEventDetailsOpen] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const form = useForm<CreateReservationInput>({
     initialValues: {
+      uniqueCode: '',
       eventCode: '',
       eventName: '',
       accountId: '',
       market: '' as TradingMarket,
       triggerType: 'actual_vs_forecast',
       condition: 'greater',
-      instrument: '' as TradingSymbol,
-      side: 'buy',
-      quantity: 1,
-      orderType: 'market',
+      symbol: '' as TradingSymbol,
+      side: 'BUY',
+      volume: 1,
+      orderType: 'MARKET',
       limitPrice: undefined,
       enabled: true,
     },
     validate: {
       accountId: (value) => (!value ? t('action.accountRequired') : null),
       market: (value) => (!value ? t('action.marketRequired') : null),
-      instrument: (value) => (!value ? t('action.instrumentRequired') : null),
-      quantity: (value) => (value <= 0 ? t('action.quantityPositive') : null),
+      symbol: (value) => (!value ? t('action.symbolRequired') : null),
+      volume: (value) => (value <= 0 ? t('action.quantityPositive') : null),
       limitPrice: (value, values) =>
-        values.orderType === 'limit' && (!value || value <= 0)
+        values.orderType === 'LIMIT' && (!value || value <= 0)
           ? t('action.limitPriceRequired')
           : null,
     },
   });
 
+  // Fetch data when drawer opens
   useEffect(() => {
     if (opened && event) {
-      fetchReservations(event.eventCode);
-      fetchAccounts();
-      // Update form with new event data
-      form.setFieldValue('eventCode', event.eventCode);
-      form.setFieldValue('eventName', event.name);
+      setIsInitialLoading(true);
+      Promise.all([fetchReservations(event.uniqueCode), fetchAccounts()]).finally(() => {
+        setIsInitialLoading(false);
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened, event, fetchReservations, fetchAccounts]);
 
+  // Update form when event changes
   useEffect(() => {
-    setIsFormOpen(false);
-    // Reset form when switching events
-    if (!editingId) {
-      form.reset();
-      if (event) {
-        form.setFieldValue('eventCode', event.eventCode);
-        form.setFieldValue('eventName', event.name);
-      }
+    if (event && !editingId) {
+      form.setValues({
+        ...form.values,
+        uniqueCode: event.uniqueCode,
+        eventCode: event.eventCode,
+        eventName: event.name,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event?.eventCode, editingId]);
+  }, [event?.uniqueCode, event?.eventCode, event?.name, editingId]);
 
-  const getAccountName = (accountId: string) => {
-    const account = accounts.find((a) => a.id === accountId);
-    return account ? `${account.name} (${account.exchange})` : accountId;
-  };
-
-  const handleSubmit = async (values: CreateReservationInput) => {
-    try {
-      if (editingId) {
-        await updateReservation({ id: editingId, ...values });
-      } else {
-        await createReservation(values);
-      }
-      form.reset();
+  // Reset form when drawer closes
+  useEffect(() => {
+    if (!opened) {
       setIsFormOpen(false);
       setEditingId(null);
-    } catch (_err) {
-      // Error is handled by store
+      setSelectedAccount(undefined);
+      form.reset();
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened]);
 
-  const handleEdit = (id: string) => {
-    const reservation = reservations.find((r) => r.id === id);
-    if (reservation) {
-      form.setValues({
-        eventCode: reservation.eventCode,
-        eventName: reservation.eventName,
-        accountId: reservation.accountId,
-        market: reservation.market,
-        triggerType: reservation.triggerType,
-        condition: reservation.condition,
-        instrument: reservation.instrument,
-        side: reservation.side,
-        quantity: reservation.quantity,
-        orderType: reservation.orderType,
-        limitPrice: reservation.limitPrice,
-        enabled: reservation.enabled,
-      });
-      setEditingId(id);
-      setIsFormOpen(true);
-    }
-  };
+  const getAccountName = useCallback(
+    (accountId: string) => {
+      const account = accounts.find((a) => a.id === accountId);
+      return account ? `${account.name} (${account.exchange})` : accountId;
+    },
+    [accounts]
+  );
 
-  const handleDelete = async (id: string) => {
-    if (confirm(t('action.confirmDelete'))) {
-      await deleteReservation(id);
-    }
-  };
+  const handleSubmit = useCallback(
+    async (values: CreateReservationInput) => {
+      if (updatingId) return;
+      if (editingId) {
+        setUpdatingId(editingId);
+      }
+      try {
+        if (editingId) {
+          await updateReservation({ id: editingId, ...values });
+        } else {
+          await createReservation(values);
+        }
+        form.reset();
+        setIsFormOpen(false);
+        setEditingId(null);
+        setSelectedAccount(undefined);
+      } catch (_err) {
+        // Error is handled by store
+      } finally {
+        setUpdatingId(null);
+      }
+    },
+    [editingId, updatingId, form, createReservation, updateReservation]
+  );
 
-  const handleCancelEdit = () => {
+  const handleEdit = useCallback(
+    (id: string) => {
+      const reservation = reservations.find((r) => r.id === id);
+      if (reservation) {
+        form.setValues({
+          uniqueCode: reservation.uniqueCode,
+          eventCode: reservation.eventCode,
+          eventName: reservation.eventName,
+          accountId: reservation.accountId,
+          market: reservation.market,
+          triggerType: reservation.triggerType,
+          specificValue: reservation.specificValue,
+          condition: reservation.condition,
+          symbol: reservation.symbol,
+          side: reservation.side,
+          volume: reservation.volume,
+          orderType: reservation.orderType,
+          limitPrice: reservation.limitPrice,
+          enabled: reservation.enabled,
+        });
+        setEditingId(id);
+        setIsFormOpen(true);
+      }
+    },
+    [form, reservations]
+  );
+
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (!event || updatingId) return;
+      setUpdatingId(id);
+      try {
+        await deleteReservation(event.uniqueCode, id);
+      } finally {
+        setUpdatingId(null);
+      }
+    },
+    [event, deleteReservation, updatingId]
+  );
+
+  const handleToggleEnabled = useCallback(
+    async (id: string) => {
+      if (!event || updatingId) return;
+      setUpdatingId(id);
+      try {
+        await toggleEnabled(event.uniqueCode, id);
+      } finally {
+        setUpdatingId(null);
+      }
+    },
+    [event, toggleEnabled, updatingId]
+  );
+
+  const handleCancelEdit = useCallback(() => {
     form.reset();
     setIsFormOpen(false);
     setEditingId(null);
-  };
+    setUpdatingId(null);
+    setSelectedAccount(undefined);
+    if (event) {
+      form.setValues({
+        ...form.values,
+        uniqueCode: event.uniqueCode,
+        eventCode: event.eventCode,
+        eventName: event.name,
+      });
+    }
+  }, [form, event]);
+
+  const handleDrawerClose = useCallback(() => {
+    setIsFormOpen(false);
+    setEditingId(null);
+    setSelectedAccount(undefined);
+    form.reset();
+    onClose();
+  }, [form, onClose]);
+
+  const hasReservations = useMemo(() => reservations.length > 0, [reservations.length]);
 
   return (
     <Drawer
@@ -165,15 +238,20 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
           : undefined,
       }}
       opened={opened}
-      onClose={onClose}
+      onClose={handleDrawerClose}
       withCloseButton={true}
       position={isMobile ? 'bottom' : 'right'}
       size={isMobile ? '95vh' : 'lg'}
-      title={<Title order={3}>{event?.name || t('action.title')}</Title>}
+      title={
+        <Text size="lg" fw={600}>
+          {event?.name || t('action.title')}
+        </Text>
+      }
     >
       <ScrollArea h={isMobile ? '90vh' : 'calc(100vh - 100px)'} scrollbarSize={8}>
+        <LoadingOverlay visible={isInitialLoading || isLoading} />
         <Stack gap="md" pb="xl">
-          {/* Display event details if event is available */}
+          {/* Event Details Section */}
           {event && (
             <>
               <Group
@@ -197,13 +275,14 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
             </>
           )}
 
+          {/* Error Alert */}
           {error && (
             <Alert color="red" title={t('error')}>
               {error}
             </Alert>
           )}
 
-          {/* Actions Section */}
+          {/* Reservations Section */}
           <Stack gap="sm">
             <Title order={4}>{t('economicCalendars.reservationList')}</Title>
 
@@ -217,23 +296,23 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
               <ReservationForm
                 form={form}
                 selectedAccount={selectedAccount}
-                setSelectedAccount={setSelectedAccount}
+                editingId={editingId}
                 onSubmit={handleSubmit}
                 onCancel={handleCancelEdit}
-                isLoading={isLoading}
-                editingId={editingId}
+                setSelectedAccount={setSelectedAccount}
               />
             )}
 
-            {reservations.length === 0 && !isFormOpen && <ReservationEmptyState />}
+            {!hasReservations && !isFormOpen && !isInitialLoading && <ReservationEmptyState />}
 
-            {reservations.length > 0 && (
+            {hasReservations && (
               <ReservationList
                 reservations={reservations}
                 getAccountName={getAccountName}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                onToggleEnabled={toggleEnabled}
+                onToggleEnabled={handleToggleEnabled}
+                updatingId={updatingId ?? ''}
               />
             )}
           </Stack>

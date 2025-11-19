@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
-import { useDebouncedValue } from '@mantine/hooks';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { Title, Stack, Alert, Text, Group, Paper, Pagination } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { useEconomicCalendarStore } from '@/store/economicCalendarStore';
-import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
 import { EventCard } from '@/components/economic-calendar/EventCard';
 import { EventTable } from '@/components/economic-calendar/EventTable';
-import { QuickFilters } from '@/components/economic-calendar/QuickFilters';
 import { FilterControls } from '@/components/economic-calendar/FilterControls';
+import { QuickFilters } from '@/components/economic-calendar/QuickFilters';
 import { ReservationDrawer } from '@/components/economic-calendar/ReservationDrawer';
-import type { EconomicCalendarFilters, EconomicEvent } from '@/services/economicCalendar';
+import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { useAccountStore } from '@/store/accountStore';
+import { useEconomicCalendarStore } from '@/store/economicCalendarStore';
+import type { EconomicCalendarFilters, EconomicEvent } from '@/types/calendar';
+import { Alert, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const COUNTRY_OPTIONS = [
   { value: 'US', label: 'US' },
@@ -23,6 +24,7 @@ const COUNTRY_OPTIONS = [
 function EconomicCalendar() {
   const { t } = useTranslation();
   const { events, pagination, isLoading, error, fetchEvents } = useEconomicCalendarStore();
+  const { fetchAccounts } = useAccountStore();
   const isMobile = useIsMobile();
 
   // Pending filters (user selections, not yet applied)
@@ -44,6 +46,11 @@ function EconomicCalendar() {
   const [selectedEvent, setSelectedEvent] = useState<EconomicEvent | null>(null);
 
   const [debouncedAppliedEventNameFilter] = useDebouncedValue(appliedEventNameFilter, 500);
+
+  // Fetch accounts on mount for reservation drawer
+  useEffect(() => {
+    fetchAccounts();
+  }, [fetchAccounts]);
 
   // Apply pending filters to applied filters
   const applyFilters = () => {
@@ -229,7 +236,11 @@ function EconomicCalendar() {
             {isMobile ? (
               <Stack gap="md">
                 {events.map((event) => (
-                  <EventCard key={event.ts} event={event} onActionsClick={handleActionsClick} />
+                  <EventCard
+                    key={event.uniqueCode}
+                    event={event}
+                    onActionsClick={handleActionsClick}
+                  />
                 ))}
               </Stack>
             ) : (

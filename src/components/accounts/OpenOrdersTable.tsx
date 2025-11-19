@@ -1,14 +1,15 @@
-import { Table, Text, Paper, Stack, Badge, ScrollArea, Group } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
+import { MARKET_LABELS } from '@/constants/markets';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { OrderInformation, TradingMarket } from '@/types/account';
-import { MARKET_LABELS } from '@/constants/markets';
 import {
-  formatNumber,
   formatDateTime,
-  getOrderStatusColor,
+  formatNumber,
   getOrderSideColor,
+  getOrderStatusColor,
 } from '@/utils/formatters';
+import { Badge, Group, Paper, ScrollArea, Stack, Table, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
+import { OrderType } from '../common/OrderType';
 
 interface OpenOrdersTableProps {
   ordersData: Partial<Record<TradingMarket, OrderInformation[]>>;
@@ -57,9 +58,7 @@ export function OpenOrdersTable({ ordersData }: OpenOrdersTableProps) {
                           {t('order.type')}
                         </Text>
                         <Text size="sm" fw={500}>
-                          {t(
-                            `order.${order.type === 'stop_loss' ? 'stopLoss' : order.type === 'take_profit' ? 'takeProfit' : order.type}`
-                          )}
+                          <OrderType type={order.type} />
                         </Text>
                       </Group>
                       <Group justify="space-between">
@@ -163,9 +162,7 @@ export function OpenOrdersTable({ ordersData }: OpenOrdersTableProps) {
                         </Badge>
                       </Table.Td>
                       <Table.Td>
-                        {t(
-                          `order.${order.type === 'stop_loss' ? 'stopLoss' : order.type === 'take_profit' ? 'takeProfit' : order.type}`
-                        )}
+                        <OrderType type={order.type} />
                       </Table.Td>
                       <Table.Td>
                         <Badge color={getOrderStatusColor(order.status)} size="sm">

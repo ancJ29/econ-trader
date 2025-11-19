@@ -1,32 +1,34 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { economicCalendarService } from '@/services/economicCalendar';
+import type { EconomicIndex } from '@/types/calendar';
+import { formatDate, formatValue, getImpactColor, getImpactLabel } from '@/utils/economicCalendar';
+import { capitalize } from '@an-oct/vani-kit';
+import { BarChart } from '@mantine/charts';
 import {
-  Title,
-  Stack,
   Alert,
-  Text,
+  Anchor,
   Badge,
+  Button,
+  Card,
+  Collapse,
+  Divider,
+  Grid,
   Group,
   Paper,
-  Table,
-  Anchor,
-  Grid,
-  Card,
-  Divider,
-  SimpleGrid,
-  Collapse,
-  Button,
-  Tabs,
   ScrollArea,
+  SimpleGrid,
+  Stack,
+  Table,
+  Tabs,
+  Text,
+  Title,
   useComputedColorScheme,
   useMantineTheme,
 } from '@mantine/core';
-import { BarChart } from '@mantine/charts';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { economicCalendarService, type EconomicIndex } from '@/services/economicCalendar';
-import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
-import { getImpactColor, getImpactLabel, formatDate, formatValue } from '@/utils/economicCalendar';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function EconomicIndexDetail() {
   const { t } = useTranslation();
@@ -148,7 +150,7 @@ function EconomicIndexDetail() {
                           <Text size="xs" c="dimmed">
                             {t('interval')}
                           </Text>
-                          <Text size="sm">{index.interval}</Text>
+                          <Text size="sm">{capitalize(index.interval)}</Text>
                         </div>
                         <div>
                           <Text size="xs" c="dimmed">
@@ -301,7 +303,7 @@ function EconomicIndexDetail() {
                             <Text size="xs" c="dimmed">
                               {t('interval')}
                             </Text>
-                            <Text size="sm">{index.interval}</Text>
+                            <Text size="sm">{capitalize(index.interval)}</Text>
                           </div>
                           <div>
                             <Text size="xs" c="dimmed">

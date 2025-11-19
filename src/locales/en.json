@@ -18,7 +18,7 @@
     "actual_vs_previous": "Actual vs Previous",
     "actual_vs_specific": "Actual vs Specific Value",
     "apply": "Apply",
-    "buy": "Buy",
+    "BUY": "Buy",
     "cancel": "Cancel",
     "condition": "Condition",
     "confirmDelete": "Are you sure you want to delete this action?",
@@ -29,8 +29,8 @@
     "enabled": "Enabled",
     "enterSpecificValue": "Enter specific value",
     "greater": "Greater Than",
-    "instrument": "Instrument",
-    "instrumentRequired": "Instrument is required",
+    "symbol": "Instrument",
+    "symbolRequired": "Instrument is required",
     "less": "Less Than",
     "limit": "Limit",
     "limitPrice": "Limit Price",
@@ -40,7 +40,7 @@
     "market": "Market",
     "marketRequired": "Market is required",
     "noActiveAccounts": "No active accounts available",
-    "noInstrumentsAvailable": "No instruments available for this market",
+    "noInstrumentsAvailable": "No symbols available for this market",
     "noMarketsAvailable": "No markets available for this account",
     "order": "Order",
     "orderDetails": "Order Details",
@@ -53,10 +53,10 @@
     "selectAccount": "Select Account",
     "selectAccountPlaceholder": "Choose a trading account",
     "selectInstrument": "Select Instrument",
-    "selectInstrumentPlaceholder": "Choose an instrument",
+    "selectInstrumentPlaceholder": "Choose an symbol",
     "selectMarket": "Select Market",
     "selectMarketPlaceholder": "Choose a market",
-    "sell": "Sell",
+    "SELL": "Sell",
     "side": "Side",
     "specificValue": "Specific Value",
     "title": "Manage Actions",
@@ -73,6 +73,43 @@
   "apiKeyPlaceholder": "Enter your API key",
   "apiKeyRequired": "API key is required",
   "applyFilters": "Apply Filters",
+  "auth": {
+    "checkingStatus": "Checking authentication status...",
+    "errors": {
+      "fillAllFields": "Please fill in all fields",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "title": "Error"
+    },
+    "fields": {
+      "confirmPassword": "Confirm Password",
+      "email": "Email",
+      "password": "Password"
+    },
+    "login": {
+      "createAccount": "Create account",
+      "noAccount": "Don't have an account?",
+      "submit": "Sign In",
+      "title": "Welcome Back"
+    },
+    "logout": "Logout",
+    "menu": {
+      "account": "Account",
+      "profile": "Profile",
+      "settings": "Settings"
+    },
+    "placeholders": {
+      "confirmPassword": "Confirm your password",
+      "email": "your@email.com",
+      "password": "Your password"
+    },
+    "register": {
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "submit": "Create Account",
+      "title": "Create Account"
+    }
+  },
   "backToAccounts": "Back to Accounts",
   "backToCalendar": "Back to Calendar",
   "balance": {
@@ -87,12 +124,11 @@
   "clearFilters": "Clear Filters",
   "comingSoon": "Coming Soon",
   "common": {
-    "instruments": "Symbols",
+    "symbols": "Symbols",
     "volume": "Volume"
   },
   "confirmDelete": "Confirm Delete",
   "confirmDeleteMessage": "Are you sure you want to delete \"{{accountName}}\"? This action cannot be undone.",
-  "confirmSecretKeySaved": "I confirm that I have securely saved my secret key",
   "country": "Country",
   "createdAt": "Created At",
   "currency": "Currency",
@@ -155,13 +191,34 @@
   "hideFilters": "Hide Filters",
   "historicalData": "Historical Data",
   "home": "Home",
+  "homePage": {
+    "title": "Econ Trader",
+    "subtitle": "Your Comprehensive Economic Trading Platform",
+    "description": "Track global economic events and manage your trading accounts with precision and efficiency.",
+    "features": {
+      "economicCalendar": {
+        "title": "Economic Calendar",
+        "description": "Monitor global economic events with real-time data, historical trends, and automated trading actions.",
+        "explore": "Explore Calendar"
+      },
+      "accountManagement": {
+        "title": "Account Management",
+        "description": "Manage multiple exchange accounts across Binance and Bybit with comprehensive balance and position tracking.",
+        "explore": "Manage Accounts"
+      }
+    },
+    "cta": {
+      "getStarted": "Get Started",
+      "login": "Sign In"
+    }
+  },
   "impact": "Impact",
   "impactHigh": "High",
   "impactLow": "Low",
   "impactMedium": "Medium",
   "inactive": "Inactive",
   "increment": "Increment",
-  "instruments": "Symbols",
+  "symbols": "Symbols",
   "interval": "Interval",
   "language": "Language",
   "light": "Light",
@@ -169,7 +226,6 @@
   "manageMarkets": "Manage Markets",
   "marketConfiguration": "Market Configuration",
   "markets": "Markets",
-  "mustConfirmSecretKeySaved": "Please confirm that you have saved your secret key",
   "nextMonth": "Next Month",
   "nextWeek": "Next Week",
   "noAccounts": "No Accounts",
@@ -188,7 +244,7 @@
     "GTC": "GTC",
     "IOC": "IOC",
     "averagePrice": "Avg Price",
-    "buy": "Buy",
+    "BUY": "Buy",
     "cancelled": "Cancelled",
     "createdAt": "Created At",
     "filled": "Filled",
@@ -198,7 +254,7 @@
     "partiallyFilled": "Partially Filled",
     "price": "Price",
     "quantity": "Quantity",
-    "sell": "Sell",
+    "SELL": "Sell",
     "side": "Side",
     "status": "Status",
     "stopLoss": "Stop Loss",
@@ -242,6 +298,7 @@
   "secretKeyEditPlaceholder": "Leave empty to keep current secret key",
   "secretKeyPlaceholder": "Enter your secret key",
   "secretKeyWarning": "Your secret key will be encrypted and never displayed after saving. Please make sure to save it securely.",
+  "ipInformation": "Please allow access for API key from {{ip}}",
   "securityWarning": "Security Warning",
   "selectAll": "Select All",
   "selectCountries": "Select countries",

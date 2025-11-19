@@ -1,8 +1,8 @@
+import { useAccountStore } from '@/store/accountStore';
+import type { Account } from '@/types/account';
 import { Select } from '@mantine/core';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccountStore } from '@/store/accountStore';
-import type { Account } from '@/types/account';
 
 interface AccountSelectorProps {
   value: string | null;
@@ -19,23 +19,20 @@ export function AccountSelector({ value, onChange, disabled, error }: AccountSel
     fetchAccounts();
   }, [fetchAccounts]);
 
-  // Auto-select first active account if none selected
+  // Auto-select first active account if none selected, fallback to first account
   useEffect(() => {
     if (!value && accounts.length > 0 && !isLoading) {
       const activeAccounts = accounts.filter((a) => a.isActive);
-      if (activeAccounts.length > 0) {
-        onChange(activeAccounts[0].id, activeAccounts[0]);
-      }
+      const accountToSelect = activeAccounts.length > 0 ? activeAccounts[0] : accounts[0];
+      onChange(accountToSelect.id, accountToSelect);
     }
   }, [accounts, value, onChange, isLoading]);
 
-  const accountOptions = accounts
-    .filter((account) => account.isActive)
-    .map((account) => ({
-      value: account.id,
-      label: `${account.name} (${account.exchange})`,
-      disabled: !account.isActive,
-    }));
+  const accountOptions = accounts.map((account) => ({
+    value: account.id,
+    label: `${account.name} (${account.exchange})${!account.isActive ? ` [${t('inactive')}]` : ''}`,
+    disabled: false,
+  }));
 
   const handleChange = (accountId: string | null) => {
     const account = accounts.find((a) => a.id === accountId);

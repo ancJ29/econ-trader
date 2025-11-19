@@ -1,11 +1,11 @@
-import { Stack, Title, Select, Divider, NumberInput, Group, Button, Card } from '@mantine/core';
+import type { CreateReservationInput } from '@/services/reservation';
+import type { Account, TradingMarket, TradingSymbol } from '@/types/account';
+import { Button, Card, Divider, Group, NumberInput, Select, Stack, Title } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 import { AccountSelector } from './AccountSelector';
 import { MarketSelector } from './MarketSelector';
-import { InstrumentSelector } from './InstrumentSelector';
-import type { CreateReservationInput } from '@/services/reservation';
-import type { Account, TradingMarket, TradingSymbol } from '@/types/account';
+import { SymbolSelector } from './SymbolSelector';
 
 interface ReservationFormProps {
   form: UseFormReturnType<CreateReservationInput>;
@@ -13,7 +13,6 @@ interface ReservationFormProps {
   setSelectedAccount: (account: Account | undefined) => void;
   onSubmit: (values: CreateReservationInput) => Promise<void>;
   onCancel: () => void;
-  isLoading: boolean;
   editingId: string | null;
 }
 
@@ -23,7 +22,6 @@ export function ReservationForm({
   setSelectedAccount,
   onSubmit,
   onCancel,
-  isLoading,
   editingId,
 }: ReservationFormProps) {
   const { t } = useTranslation();
@@ -77,10 +75,10 @@ export function ReservationForm({
             onChange={(accountId, account) => {
               form.setFieldValue('accountId', accountId || '');
               setSelectedAccount(account);
-              // Reset market and instrument when account changes
+              // Reset market and symbol when account changes
               if (accountId !== form.values.accountId) {
                 form.setFieldValue('market', '' as TradingMarket);
-                form.setFieldValue('instrument', '' as TradingSymbol);
+                form.setFieldValue('symbol', '' as TradingSymbol);
               }
             }}
             error={form.errors.accountId as string | undefined}
@@ -90,9 +88,9 @@ export function ReservationForm({
             value={form.values.market}
             onChange={(market) => {
               form.setFieldValue('market', market || ('' as TradingMarket));
-              // Reset instrument when market changes
+              // Reset symbol when market changes
               if (market !== form.values.market) {
-                form.setFieldValue('instrument', '' as TradingSymbol);
+                form.setFieldValue('symbol', '' as TradingSymbol);
               }
             }}
             availableMarkets={selectedAccount?.availableMarkets}
@@ -100,12 +98,12 @@ export function ReservationForm({
             error={form.errors.market as string | undefined}
           />
 
-          <InstrumentSelector
-            value={form.values.instrument}
-            onChange={(instrument) => {
-              form.setFieldValue('instrument', instrument || ('' as TradingSymbol));
+          <SymbolSelector
+            value={form.values.symbol}
+            onChange={(symbol) => {
+              form.setFieldValue('symbol', symbol || ('' as TradingSymbol));
             }}
-            availableInstruments={
+            availableSymbols={
               form.values.market && selectedAccount?.availableMarkets
                 ? (selectedAccount.availableMarkets[form.values.market] as
                     | TradingSymbol[]
@@ -113,7 +111,7 @@ export function ReservationForm({
                 : undefined
             }
             disabled={!form.values.market}
-            error={form.errors.instrument as string | undefined}
+            error={form.errors.symbol as string | undefined}
           />
 
           <Divider label={t('action.orderDetails')} />
@@ -121,8 +119,8 @@ export function ReservationForm({
           <Select
             label={t('action.side')}
             data={[
-              { value: 'buy', label: t('action.buy') },
-              { value: 'sell', label: t('action.sell') },
+              { value: 'BUY', label: t('action.BUY') },
+              { value: 'SELL', label: t('action.SELL') },
             ]}
             {...form.getInputProps('side')}
             required
@@ -134,21 +132,21 @@ export function ReservationForm({
             step={0.0001}
             // TODO: load digits from config
             decimalScale={4}
-            {...form.getInputProps('quantity')}
+            {...form.getInputProps('volume')}
             required
           />
 
           <Select
             label={t('action.orderType')}
             data={[
-              { value: 'market', label: t('action.market') },
-              { value: 'limit', label: t('action.limit') },
+              { value: 'MARKET', label: t('action.market') },
+              { value: 'LIMIT', label: t('action.limit') },
             ]}
             {...form.getInputProps('orderType')}
             required
           />
 
-          {form.values.orderType === 'limit' && (
+          {form.values.orderType === 'LIMIT' && (
             <NumberInput
               label={t('action.limitPrice')}
               min={0.0001}
@@ -164,9 +162,7 @@ export function ReservationForm({
             <Button variant="subtle" onClick={onCancel}>
               {t('action.cancel')}
             </Button>
-            <Button type="submit" loading={isLoading}>
-              {editingId ? t('action.update') : t('action.create')}
-            </Button>
+            <Button type="submit">{editingId ? t('action.update') : t('action.create')}</Button>
           </Group>
         </Stack>
       </form>

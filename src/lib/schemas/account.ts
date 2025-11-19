@@ -4,6 +4,7 @@ import { z } from 'zod';
 export const TradingExchangeSchema = z.enum(['Binance', 'Bybit']);
 
 export const TradingMarketSchema = z.enum([
+  // cspell:disable
   'BN_SPOT',
   'BN_USDS_M',
   'BN_COIN_M',
@@ -31,6 +32,7 @@ export const CoinSchema = z.enum([
 ]);
 
 export const TradingSymbolSchema = z.enum([
+  // cspell:disable
   // For Spot
   'BTC_USDT',
   'ETH_USDT',
@@ -91,13 +93,14 @@ export const TradingSymbolSchema = z.enum([
   'XRPUSD',
   'ADAUSD',
   'DOGEUSD',
+  // cspell:enable
 ]);
 
 export const OrderStatusSchema = z.enum(['open', 'filled', 'cancelled', 'partially_filled']);
 
 export const OrderTypeSchema = z.enum(['market', 'limit', 'stop_loss', 'take_profit']);
 
-export const OrderSideSchema = z.enum(['buy', 'sell']);
+export const OrderSideSchema = z.enum(['BUY', 'SELL']);
 
 export const TimeInForceSchema = z.enum(['GTC', 'IOC', 'FOK']);
 
@@ -107,7 +110,7 @@ export const TransactionTypeSchema = z.enum(['trade', 'fee', 'funding', 'swap'])
 
 // Balance Information
 export const BalanceInformationSchema = z.object({
-  symbol: CoinSchema,
+  asset: CoinSchema,
   balance: z.number().nonnegative(),
   available: z.number().nonnegative(),
   inOrder: z.number().nonnegative(),

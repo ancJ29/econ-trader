@@ -1,9 +1,9 @@
-import { Table, Badge, Anchor, Group, Text, Button } from '@mantine/core';
+import { Flag } from '@/components/common/Flag';
+import type { EconomicEvent } from '@/types/calendar';
+import { formatDate, formatValue, getImpactColor, getImpactLabel } from '@/utils/economicCalendar';
+import { Anchor, Badge, Button, Group, Table, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Flag } from '@/components/common/Flag';
-import { getImpactColor, getImpactLabel, formatDate, formatValue } from '@/utils/economicCalendar';
-import type { EconomicEvent } from '@/services/economicCalendar';
 
 interface EventTableProps {
   events: EconomicEvent[];
@@ -30,7 +30,7 @@ export function EventTable({ events, onActionsClick }: EventTableProps) {
       </Table.Thead>
       <Table.Tbody>
         {events.map((event: EconomicEvent) => (
-          <Table.Tr key={event.ts}>
+          <Table.Tr key={event.uniqueCode}>
             <Table.Td>{formatDate(event.ts)}</Table.Td>
             <Table.Td>
               <Group gap={6}>

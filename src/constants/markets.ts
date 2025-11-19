@@ -1,5 +1,6 @@
 import type { TradingExchange, TradingMarket, TradingSymbol } from '@/types/account';
 
+// cspell:disable
 export const EXCHANGE_MARKETS: Record<TradingExchange, TradingMarket[]> = {
   Binance: ['BN_SPOT', 'BN_USDS_M', 'BN_COIN_M'],
   Bybit: ['BB_SPOT', 'BB_USDT_PERP', 'BB_USDC_PERP', 'BB_Perpetual'],

@@ -1,8 +1,9 @@
-import { Table, Text, Paper, Stack, Badge, ScrollArea, Group } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import type { OrderInformation, TradingMarket } from '@/types/account';
 import { MARKET_LABELS } from '@/constants/markets';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import type { OrderInformation, OrderSide, TradingMarket } from '@/types/account';
+import { Badge, Group, Paper, ScrollArea, Stack, Table, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
+import { OrderType } from '../common/OrderType';
 
 interface OrderHistoryTableProps {
   ordersData: Partial<Record<TradingMarket, OrderInformation[]>>;
@@ -38,8 +39,8 @@ export function OrderHistoryTable({ ordersData }: OrderHistoryTableProps) {
     }
   };
 
-  const getSideColor = (side: string) => {
-    return side === 'buy' ? 'green' : 'red';
+  const getSideColor = (side: OrderSide) => {
+    return side === 'BUY' ? 'green' : 'red';
   };
 
   if (markets.length === 0) {
@@ -79,9 +80,7 @@ export function OrderHistoryTable({ ordersData }: OrderHistoryTableProps) {
                           {t('order.type')}
                         </Text>
                         <Text size="sm" fw={500}>
-                          {t(
-                            `order.${order.type === 'stop_loss' ? 'stopLoss' : order.type === 'take_profit' ? 'takeProfit' : order.type}`
-                          )}
+                          <OrderType type={order.type} />
                         </Text>
                       </Group>
                       <Group justify="space-between">
@@ -176,9 +175,7 @@ export function OrderHistoryTable({ ordersData }: OrderHistoryTableProps) {
                         </Badge>
                       </Table.Td>
                       <Table.Td>
-                        {t(
-                          `order.${order.type === 'stop_loss' ? 'stopLoss' : order.type === 'take_profit' ? 'takeProfit' : order.type}`
-                        )}
+                        <OrderType type={order.type} />
                       </Table.Td>
                       <Table.Td>
                         <Badge color={getStatusColor(order.status)} size="sm">

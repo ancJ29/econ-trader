@@ -1,33 +1,185 @@
-import {
-  economicCalendarApi,
-  type EconomicEvent as ApiEconomicEvent,
-  type EconomicIndex as ApiEconomicIndex,
-  type EconomicIndexHistoryData as ApiEconomicIndexHistoryData,
-  type EconomicCalendarResponse as ApiEconomicCalendarResponse,
-  type EconomicCalendarFilters as ApiEconomicCalendarFilters,
-  type PaginationMetadata as ApiPaginationMetadata,
-} from '@/lib/api/economicCalendar';
+import type { EconomicCalendarFilters, EconomicEvent, EconomicIndex } from '@/types/calendar';
+import { cStorageV3 } from '@an-oct/connector';
+import { createBrowserLogger } from '@an-oct/vani-kit';
 
-// Re-export types from API layer
-// This allows frontend code to use stable types while API contract can change
-export type EconomicEvent = ApiEconomicEvent;
-export type EconomicIndex = ApiEconomicIndex;
-export type EconomicIndexHistoryData = ApiEconomicIndexHistoryData;
-export type EconomicCalendarResponse = ApiEconomicCalendarResponse;
-export type EconomicCalendarFilters = ApiEconomicCalendarFilters;
-export type PaginationMetadata = ApiPaginationMetadata;
+const logger = createBrowserLogger('ECONOMIC-CALENDAR-SERVICE', {
+  level: 'silent',
+});
+
+type CStorageEconomicCalendarEvent = {
+  link: string;
+  time: number;
+  countryCode: string;
+  countryName: string;
+  uniqueCode: string;
+  impact: 1 | 2 | 3;
+  name: string;
+  actual?: number | string;
+  forecast?: number | string;
+  previous?: number | string;
+  unit: string;
+};
+
+type Language = 'en' | 'zh';
+type Content = string;
+type EconomicCalendar = {
+  name: string;
+  code: string;
+  isPercentage?: boolean;
+  description: Partial<Record<Language, Content>>;
+  countryCode: string;
+  currency: string;
+  impact: 1 | 2 | 3;
+  interval: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  link: string;
+  source: string;
+};
 
 // Service layer methods
 export const economicCalendarService = {
-  async getEconomicCalendar(filters?: EconomicCalendarFilters): Promise<EconomicCalendarResponse> {
-    const response = await economicCalendarApi.getEconomicCalendar(filters);
-    // Future: Transform API response to frontend-optimized format here if needed
-    return response;
+  allCalendars: new Map<string, EconomicCalendar>(),
+
+  async getallCalendars(): Promise<Map<string, EconomicCalendar>> {
+    if (this.allCalendars.size === 0) {
+      const serviceId = 'economic-calendars';
+      const key = 'all-events';
+      const data = await cStorageV3.get<EconomicCalendar[]>(serviceId, key);
+      this.allCalendars = new Map(data?.map((event) => [event.link, event]) ?? []);
+    }
+    return this.allCalendars;
+  },
+
+  async getEconomicCalendar(_filters?: EconomicCalendarFilters) {
+    // TODO: Implement filters
+    const allCalendars = await this.getallCalendars();
+    logger.debug('allCalendars', allCalendars);
+    const serviceId = 'economic-calendars';
+    const startOfMonth = getStartOfMonth(Date.now());
+    const key = `monthly-events-${startOfMonth}`;
+    logger.debug('getting monthly events', { serviceId, key });
+    let data = (await cStorageV3.get<CStorageEconomicCalendarEvent[]>(serviceId, key)) ?? [];
+    logger.debug('data', JSON.stringify(data, null, 2));
+    data = data.filter((event) => event.link).filter((event) => allCalendars.has(event.link));
+    const events =
+      data?.map((event) => transformCStorageEventToEconomicEvent(event, allCalendars)) ?? [];
+    return {
+      events,
+      pagination: {
+        total: events.length,
+        page: 1,
+        pageSize: events.length,
+        totalPages: 1,
+      },
+    };
   },
 
   async getEconomicIndex(eventCode: string): Promise<EconomicIndex> {
-    const response = await economicCalendarApi.getEconomicIndex(eventCode);
-    // Future: Transform API response here if needed
-    return response;
+    const allCalendars = await this.getallCalendars();
+    const calendar = Array.from(allCalendars.values()).find(
+      (calendar) => calendar.code === eventCode
+    );
+    if (!calendar) {
+      throw new Error(`Calendar not found for event code: ${eventCode}`);
+    }
+    return {
+      code: calendar.code,
+      name: calendar.name,
+      detail: calendar.description.en ?? '',
+      interval: calendar.interval,
+      impact: calendar.impact,
+      countryCode: calendar.countryCode,
+      currencyCode: calendar.currency,
+      source: calendar.source,
+      url: calendar.link,
+      isPercentage: calendar.isPercentage ?? false,
+      historyData: [],
+    } satisfies EconomicIndex;
   },
 };
+
+function transformCStorageEventToEconomicEvent(
+  event: CStorageEconomicCalendarEvent,
+  allCalendars: Map<string, EconomicCalendar>
+): EconomicEvent {
+  const CURRENCY_MAP: Record<string, string> = {
+    US: 'USD',
+    EU: 'EUR',
+    JP: 'JPY',
+    GB: 'GBP',
+    CN: 'CNY',
+  };
+
+  const calendar = allCalendars.get(event.link);
+
+  if (!calendar) {
+    throw new Error(`Calendar not found for link: ${event.link}`);
+  }
+
+  return {
+    ts: event.time,
+    isPercentage: event.unit === '%',
+    countryCode: event.countryCode,
+    currencyCode: CURRENCY_MAP[event.countryCode],
+    impact: event.impact,
+    actual: event.actual ? Number(event.actual) : undefined,
+    forecast: event.forecast ? Number(event.forecast) : undefined,
+    previous: event.previous ? Number(event.previous) : undefined,
+    uniqueCode: event.uniqueCode,
+    name: event.name,
+    period: generatePeriod(event.time, calendar.interval),
+    eventCode: calendar.code,
+    interval: calendar.interval,
+    reference: calendar.link,
+  };
+}
+
+/**
+ * Calculates the start of month (midnight) for a given timestamp
+ * Uses UTC to avoid timezone issues
+ *
+ * @param timestamp - Any timestamp within the target month
+ * @returns Timestamp of the first millisecond of that month
+ */
+function getStartOfMonth(timestamp: number): number {
+  const date = new Date(timestamp);
+  date.setUTCDate(1);
+  date.setUTCHours(0, 0, 0, 0);
+  return date.getTime();
+}
+
+/**
+ * Generates the period for a given timestamp and interval
+ *
+ * @param ts - The timestamp
+ * @param interval - The interval
+ * @returns The period
+ */
+function generatePeriod(ts: number, interval: 'daily' | 'weekly' | 'monthly' | 'yearly'): string {
+  const MONTH_NAMES = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  const date = new Date(ts);
+
+  switch (interval) {
+    case 'weekly':
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    case 'monthly':
+      return `${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
+    case 'yearly':
+      return `${date.getFullYear()}`;
+    default:
+      return '';
+  }
+}

@@ -13,6 +13,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@an-oct/connector": "^1.2.8",
+    "@an-oct/vani-kit": "^1.2.5",
     "@mantine/charts": "^8.3.2",
     "@mantine/core": "^8.3.2",
     "@mantine/dates": "^8.3.2",

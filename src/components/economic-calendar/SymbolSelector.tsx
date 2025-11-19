@@ -1,35 +1,35 @@
+import type { TradingSymbol } from '@/types/account';
 import { Select } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TradingSymbol } from '@/types/account';
 
-interface InstrumentSelectorProps {
+interface SymbolSelectorProps {
   value: TradingSymbol | null;
   onChange: (value: TradingSymbol | null) => void;
-  availableInstruments: TradingSymbol[] | undefined;
+  availableSymbols: TradingSymbol[] | undefined;
   disabled?: boolean;
   error?: string;
 }
 
-export function InstrumentSelector({
+export function SymbolSelector({
   value,
   onChange,
-  availableInstruments,
+  availableSymbols,
   disabled,
   error,
-}: InstrumentSelectorProps) {
+}: SymbolSelectorProps) {
   const { t } = useTranslation();
 
   const instrumentOptions = useMemo(() => {
     return (
-      availableInstruments?.map((instrument) => ({
-        value: instrument,
-        label: instrument,
+      availableSymbols?.map((symbol) => ({
+        value: symbol,
+        label: symbol,
       })) || []
     );
-  }, [availableInstruments]);
+  }, [availableSymbols]);
 
-  // Auto-select first instrument if none selected
+  // Auto-select first symbol if none selected
   useEffect(() => {
     if (!value && instrumentOptions.length > 0) {
       onChange(instrumentOptions[0].value as TradingSymbol);

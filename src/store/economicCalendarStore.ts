@@ -1,10 +1,6 @@
+import { economicCalendarService } from '@/services/economicCalendar';
+import type { EconomicCalendarFilters, EconomicEvent, PaginationMetadata } from '@/types/calendar';
 import { create } from 'zustand';
-import {
-  economicCalendarService,
-  type EconomicEvent,
-  type EconomicCalendarFilters,
-  type PaginationMetadata,
-} from '@/services/economicCalendar';
 
 interface EconomicCalendarState {
   events: EconomicEvent[];

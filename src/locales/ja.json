@@ -18,7 +18,7 @@
     "actual_vs_previous": "結果 vs 前回",
     "actual_vs_specific": "結果 vs 特定値",
     "apply": "適用",
-    "buy": "買い",
+    "BUY": "買い",
     "cancel": "キャンセル",
     "condition": "条件",
     "confirmDelete": "このアクションを削除してもよろしいですか？",
@@ -29,8 +29,8 @@
     "enabled": "有効",
     "enterSpecificValue": "特定値を入力してください",
     "greater": "より大きい",
-    "instrument": "銘柄",
-    "instrumentRequired": "銘柄は必須です",
+    "symbol": "銘柄",
+    "symbolRequired": "銘柄は必須です",
     "less": "より小さい",
     "limit": "指値",
     "limitPrice": "指値価格",
@@ -56,7 +56,7 @@
     "selectInstrumentPlaceholder": "銘柄を選択してください",
     "selectMarket": "取引商品を選択",
     "selectMarketPlaceholder": "取引商品を選択してください",
-    "sell": "売り",
+    "SELL": "売り",
     "side": "売買",
     "specificValue": "特定値",
     "title": "アクション管理",
@@ -73,6 +73,36 @@
   "apiKeyPlaceholder": "APIキーを入力してください",
   "apiKeyRequired": "APIキーは必須です",
   "applyFilters": "フィルターを適用",
+  "auth": {
+    "errors": {
+      "fillAllFields": "すべての項目を入力してください",
+      "passwordMismatch": "パスワードが一致しません",
+      "passwordTooShort": "パスワードは8文字以上である必要があります",
+      "title": "エラー"
+    },
+    "fields": {
+      "confirmPassword": "パスワード確認",
+      "email": "メールアドレス",
+      "password": "パスワード"
+    },
+    "login": {
+      "createAccount": "アカウントを作成",
+      "noAccount": "アカウントをお持ちでないですか？",
+      "submit": "ログイン",
+      "title": "おかえりなさい"
+    },
+    "placeholders": {
+      "confirmPassword": "パスワードを再入力してください",
+      "email": "your@email.com",
+      "password": "パスワード"
+    },
+    "register": {
+      "haveAccount": "既にアカウントをお持ちですか？",
+      "signIn": "ログイン",
+      "submit": "アカウントを作成",
+      "title": "アカウント作成"
+    }
+  },
   "backToAccounts": "アカウント一覧に戻る",
   "backToCalendar": "一覧へ戻る",
   "balance": {
@@ -87,12 +117,11 @@
   "clearFilters": "フィルターをクリア",
   "comingSoon": "近日公開",
   "common": {
-    "instruments": "通貨ペア",
+    "symbols": "通貨ペア",
     "volume": "数量"
   },
   "confirmDelete": "削除の確認",
   "confirmDeleteMessage": "「{{accountName}}」を削除してもよろしいですか？この操作は元に戻せません。",
-  "confirmSecretKeySaved": "シークレットキーを安全に保存したことを確認します",
   "country": "国",
   "createdAt": "作成日",
   "currency": "通貨",
@@ -155,13 +184,34 @@
   "hideFilters": "フィルターを非表示",
   "historicalData": "履歴データ",
   "home": "ホーム",
+  "homePage": {
+    "title": "Econ Trader",
+    "subtitle": "包括的な経済トレーディングプラットフォーム",
+    "description": "世界中の経済イベントを追跡し、精度と効率性を持って取引口座を管理します。",
+    "features": {
+      "economicCalendar": {
+        "title": "経済カレンダー",
+        "description": "リアルタイムデータ、過去のトレンド、自動トレーディングアクションでグローバルな経済イベントを監視します。",
+        "explore": "カレンダーを見る"
+      },
+      "accountManagement": {
+        "title": "口座管理",
+        "description": "Binance と Bybit の複数の取引所口座を包括的な残高とポジション追跡で管理します。",
+        "explore": "口座を管理"
+      }
+    },
+    "cta": {
+      "getStarted": "始める",
+      "login": "サインイン"
+    }
+  },
   "impact": "重要性",
   "impactHigh": "高",
   "impactLow": "低",
   "impactMedium": "中",
   "inactive": "無効",
   "increment": "増加",
-  "instruments": "通貨ペア",
+  "symbols": "通貨ペア",
   "interval": "間隔",
   "language": "言語",
   "light": "ライト",
@@ -169,7 +219,6 @@
   "manageMarkets": "取引商品を管理",
   "marketConfiguration": "取引商品設定",
   "markets": "取引商品",
-  "mustConfirmSecretKeySaved": "シークレットキーを保存したことを確認してください",
   "nextMonth": "来月",
   "nextWeek": "来週",
   "noAccounts": "アカウントがありません",
@@ -188,7 +237,7 @@
     "GTC": "GTC",
     "IOC": "IOC",
     "averagePrice": "平均価格",
-    "buy": "買い",
+    "BUY": "買い",
     "cancelled": "キャンセル",
     "createdAt": "作成日時",
     "filled": "約定済み",
@@ -198,7 +247,7 @@
     "partiallyFilled": "部分約定",
     "price": "価格",
     "quantity": "数量",
-    "sell": "売り",
+    "SELL": "売り",
     "side": "売買",
     "status": "ステータス",
     "stopLoss": "ストップロス",
@@ -242,6 +291,7 @@
   "secretKeyEditPlaceholder": "現在のシークレットキーを保持する場合は空欄のままにしてください",
   "secretKeyPlaceholder": "シークレットキーを入力してください",
   "secretKeyWarning": "シークレットキーは暗号化され、保存後は表示されません。必ず安全に保存してください。",
+  "ipInformation": "{{ip}}からのAPIキーのアクセスを許可してください",
   "securityWarning": "セキュリティ警告",
   "selectAll": "すべて選択",
   "selectCountries": "国を選択",

@@ -5,6 +5,29 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@an-oct/connector@npm:^1.2.8":
+  version: 1.2.8
+  resolution: "@an-oct/connector@npm:1.2.8"
+  dependencies:
+    "@an-oct/vani-kit": "npm:^1.2.6"
+  checksum: 10c0/82bdc843a77e29ad914417b994431753d41d9952491200bc6d1bba9b57e047773d9d4107b1f1ca4a24765053a005d8aaff5030eb3e1337702883dc94df35e699
+  languageName: node
+  linkType: hard
+
+"@an-oct/vani-kit@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "@an-oct/vani-kit@npm:1.2.5"
+  checksum: 10c0/bd36c18d006028e398446e40a4bca289e7ba3ce48b4adb3569fddc53c28660c00489bdefc281489ccdf4ce487b1cd6c9490d237568fa78ba142b7d3300ab265d
+  languageName: node
+  linkType: hard
+
+"@an-oct/vani-kit@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "@an-oct/vani-kit@npm:1.2.6"
+  checksum: 10c0/52776b7c1141a1966c0ed2618cdf43feff3e2fcb8b814b53cc84ed7c5edaa79d77673c8beb890d470c9e59028c095897dd386b4f2b47de5c364297e58c353b1a
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.27.1":
   version: 7.27.1
   resolution: "@babel/code-frame@npm:7.27.1"
@@ -1548,6 +1571,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:."
   dependencies:
+    "@an-oct/connector": "npm:^1.2.8"
+    "@an-oct/vani-kit": "npm:^1.2.5"
     "@eslint/js": "npm:^9.36.0"
     "@mantine/charts": "npm:^8.3.2"
     "@mantine/core": "npm:^8.3.2"

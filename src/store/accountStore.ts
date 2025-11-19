@@ -1,6 +1,6 @@
+import { accountService, type Account } from '@/services/account';
+import type { AccountFormData, TradingMarket, TradingSymbol } from '@/types/account';
 import { create } from 'zustand';
-import { accountService, type Account, type AccountFormData } from '@/services/account';
-import type { TradingMarket, TradingSymbol } from '@/types/account';
 
 interface AccountState {
   accounts: Account[];
@@ -76,11 +76,9 @@ export const useAccountStore = create<AccountState>((set, get) => ({
   createAccount: async (data) => {
     set({ isLoading: true, error: null });
     try {
-      const newAccount = await accountService.createAccount(data);
-      set((state) => ({
-        accounts: [...state.accounts, newAccount],
-        isLoading: false,
-      }));
+      await accountService.createAccount(data);
+      const accounts = await accountService.getAccounts();
+      set({ accounts, isLoading: false });
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : 'Failed to create account',
@@ -93,12 +91,10 @@ export const useAccountStore = create<AccountState>((set, get) => ({
   updateAccount: async (id, data) => {
     set({ isLoading: true, error: null });
     try {
-      const updatedAccount = await accountService.updateAccount(id, data);
-      set((state) => ({
-        accounts: state.accounts.map((acc) => (acc.id === id ? updatedAccount : acc)),
-        selectedAccount: state.selectedAccount?.id === id ? updatedAccount : state.selectedAccount,
-        isLoading: false,
-      }));
+      if (data.name) {
+        await accountService.updateAccount(id, data.name);
+        await get().fetchAccounts();
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : 'Failed to update account',
@@ -129,12 +125,19 @@ export const useAccountStore = create<AccountState>((set, get) => ({
   toggleAccountStatus: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      const updatedAccount = await accountService.toggleAccountStatus(id);
-      set((state) => ({
-        accounts: state.accounts.map((acc) => (acc.id === id ? updatedAccount : acc)),
-        selectedAccount: state.selectedAccount?.id === id ? updatedAccount : state.selectedAccount,
-        isLoading: false,
-      }));
+      const account = get().accounts.find((acc) => acc.id === id);
+      if (!account) {
+        throw new Error('Account not found');
+      }
+      if (account?.isActive !== undefined) {
+        await accountService.toggleAccountStatus(id, !account?.isActive);
+        set((state) => ({
+          accounts: state.accounts.map((acc) =>
+            acc.id === id ? { ...acc, isActive: !acc.isActive } : acc
+          ),
+          isLoading: false,
+        }));
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : 'Failed to toggle account status',
@@ -147,7 +150,8 @@ export const useAccountStore = create<AccountState>((set, get) => ({
   updateMarkets: async (id, availableMarkets) => {
     set({ isLoading: true, error: null });
     try {
-      const updatedAccount = await accountService.updateMarkets(id, availableMarkets);
+      await accountService.updateMarkets(id, availableMarkets);
+      const updatedAccount = await accountService.getAccountById(id);
       set((state) => ({
         accounts: state.accounts.map((acc) => (acc.id === id ? updatedAccount : acc)),
         selectedAccount: state.selectedAccount?.id === id ? updatedAccount : state.selectedAccount,

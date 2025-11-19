@@ -1,6 +1,6 @@
+import { ActionIcon, CopyButton, Group, PasswordInput, TextInput, Tooltip } from '@mantine/core';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { useState } from 'react';
-import { TextInput, PasswordInput, ActionIcon, Group, CopyButton, Tooltip } from '@mantine/core';
-import { IconCopy, IconCheck } from '@tabler/icons-react';
 
 interface ApiKeyInputProps {
   label: string;
@@ -37,8 +37,14 @@ export function ApiKeyInput({
         required={required}
         error={error}
         disabled={disabled}
-        visible={visible}
-        onVisibilityChange={setVisible}
+        visible={isSecret ? visible : undefined}
+        onVisibilityChange={
+          isSecret
+            ? () => {
+                setVisible((v) => !v);
+              }
+            : undefined
+        }
         style={{ flex: 1 }}
       />
       <CopyButton value={value} timeout={2000}>

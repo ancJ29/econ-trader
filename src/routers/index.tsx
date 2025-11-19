@@ -1,20 +1,18 @@
+import { AuthLayout } from '@/components/layouts/AuthLayout';
+import { Layout } from '@/components/layouts/Layout';
+import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
+import { isDevelopment } from '@/utils/env';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
-import { Layout } from '@/components/layouts/Layout';
 
 // Lazy load pages for code splitting
 const Home = lazy(() => import('@/pages/Home'));
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
 const EconomicCalendar = lazy(() => import('@/pages/EconomicCalendar'));
 const EconomicIndexDetail = lazy(() => import('@/pages/EconomicIndexDetail'));
 const Accounts = lazy(() => import('@/pages/Accounts'));
 const AccountDetail = lazy(() => import('@/pages/AccountDetail'));
-const DemoHome = lazy(() => import('@/pages/demo/DemoHome'));
-const DatesDemo = lazy(() => import('@/pages/demo/DatesDemo'));
-const FormDemo = lazy(() => import('@/pages/demo/FormDemo'));
-const HooksDemo = lazy(() => import('@/pages/demo/HooksDemo'));
-const ModalsDemo = lazy(() => import('@/pages/demo/ModalsDemo'));
-const NotificationsDemo = lazy(() => import('@/pages/demo/NotificationsDemo'));
 
 // Loading fallback element
 const loadingFallback = <LoadingOverlay visible={true} />;
@@ -33,7 +31,15 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: withSuspense(Home),
+        element: isDevelopment ? withSuspense(Home) : withSuspense(EconomicCalendar),
+      },
+      {
+        path: '/login',
+        element: withSuspense(Login),
+      },
+      {
+        path: '/register',
+        element: withSuspense(Register),
       },
       {
         path: '/economic-calendar',
@@ -43,6 +49,11 @@ export const router = createBrowserRouter([
         path: '/economic-calendar/:eventCode',
         element: withSuspense(EconomicIndexDetail),
       },
+    ],
+  },
+  {
+    element: <AuthLayout />,
+    children: [
       {
         path: '/accounts',
         element: withSuspense(Accounts),
@@ -50,30 +61,6 @@ export const router = createBrowserRouter([
       {
         path: '/accounts/:accountId',
         element: withSuspense(AccountDetail),
-      },
-      {
-        path: '/demos',
-        element: withSuspense(DemoHome),
-      },
-      {
-        path: '/demos/dates',
-        element: withSuspense(DatesDemo),
-      },
-      {
-        path: '/demos/form',
-        element: withSuspense(FormDemo),
-      },
-      {
-        path: '/demos/hooks',
-        element: withSuspense(HooksDemo),
-      },
-      {
-        path: '/demos/modals',
-        element: withSuspense(ModalsDemo),
-      },
-      {
-        path: '/demos/notifications',
-        element: withSuspense(NotificationsDemo),
       },
     ],
   },

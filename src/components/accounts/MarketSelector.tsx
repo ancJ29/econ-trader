@@ -1,24 +1,30 @@
-import { useState, useEffect } from 'react';
-import { Stack, Accordion, Text, Group, Badge, Button, Checkbox, ScrollArea } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import type { TradingExchange, TradingMarket, TradingSymbol } from '@/types/account';
-import { EXCHANGE_MARKETS, MARKET_SYMBOLS, MARKET_LABELS } from '@/constants/markets';
+import { EXCHANGE_MARKETS, MARKET_LABELS, MARKET_SYMBOLS } from '@/constants/markets';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import type { TradingExchange, TradingMarket, TradingSymbol } from '@/types/account';
+import { Accordion, Badge, Button, Checkbox, Group, ScrollArea, Stack, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface MarketSelectorProps {
   exchange: TradingExchange;
+  availableMarkets?: TradingMarket[];
   value: Partial<Record<TradingMarket, TradingSymbol[]>>;
   onChange: (markets: Partial<Record<TradingMarket, TradingSymbol[]>>) => void;
 }
 
-export const MarketSelector = ({ exchange, value, onChange }: MarketSelectorProps) => {
+export const MarketSelector = ({
+  availableMarkets,
+  exchange,
+  value,
+  onChange,
+}: MarketSelectorProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [selectedMarkets, setSelectedMarkets] = useState<TradingMarket[]>([]);
   const [marketSymbols, setMarketSymbols] =
     useState<Partial<Record<TradingMarket, TradingSymbol[]>>>(value);
 
-  const availableMarkets = EXCHANGE_MARKETS[exchange];
+  const markets = availableMarkets ?? EXCHANGE_MARKETS[exchange];
 
   useEffect(() => {
     const markets = Object.keys(value) as TradingMarket[];
@@ -79,7 +85,7 @@ export const MarketSelector = ({ exchange, value, onChange }: MarketSelectorProp
         {t('selectMarkets')}
       </Text>
       <ScrollArea h={isMobile ? '65vh' : '75vh'} type="auto">
-        {availableMarkets.map((market, index) => {
+        {markets.map((market, index) => {
           const isSelected = selectedMarkets.includes(market);
           const symbols = marketSymbols[market] || [];
           return (

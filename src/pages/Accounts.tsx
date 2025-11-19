@@ -60,101 +60,101 @@ function Accounts() {
     }
   };
 
-  if (isLoading && accounts.length === 0) {
-    return <LoadingOverlay visible={true} message={t('loading')} />;
-  }
-
   return (
-    <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'}>
-      <Group justify="space-between" align="center">
-        <Title order={1}>{t('account.list')}</Title>
-        <Button leftSection={<IconPlus size={18} />} onClick={handleAddAccount}>
-          {t('addAccount')}
-        </Button>
-      </Group>
+    <>
+      <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'}>
+        <Group justify="space-between" align="center">
+          <Title order={1}>{t('account.list')}</Title>
+          <Button leftSection={<IconPlus size={18} />} onClick={handleAddAccount}>
+            {t('addAccount')}
+          </Button>
+        </Group>
 
-      {error && (
-        <Alert icon={<IconAlertCircle size={16} />} title={t('error')} color="red">
-          {error}
-        </Alert>
-      )}
+        {error && (
+          <Alert icon={<IconAlertCircle size={16} />} title={t('error')} color="red">
+            {error}
+          </Alert>
+        )}
 
-      {!isLoading && accounts.length === 0 && (
-        <Alert icon={<IconAlertCircle size={16} />} title={t('noAccounts')} color="blue">
-          <Stack gap="sm">
-            <Text>{t('noAccountsMessage')}</Text>
-            <Button
-              leftSection={<IconPlus size={18} />}
-              onClick={handleAddAccount}
-              style={{ alignSelf: 'flex-start' }}
-            >
-              {t('addFirstAccount')}
-            </Button>
+        {accounts.length === 0 && !isLoading && (
+          <Alert icon={<IconAlertCircle size={16} />} title={t('noAccounts')} color="blue">
+            <Stack gap="sm">
+              <Text>{t('noAccountsMessage')}</Text>
+              <Button
+                leftSection={<IconPlus size={18} />}
+                onClick={handleAddAccount}
+                style={{ alignSelf: 'flex-start' }}
+              >
+                {t('addFirstAccount')}
+              </Button>
+            </Stack>
+          </Alert>
+        )}
+
+        {accounts.length > 0 && (
+          <>
+            {isMobile ? (
+              <SimpleGrid cols={1} spacing="md">
+                {accounts.map((account) => (
+                  <AccountCard
+                    key={account.id}
+                    account={account}
+                    onEdit={handleEditAccount}
+                    onDelete={handleDeleteAccount}
+                    onToggleStatus={handleToggleStatus}
+                  />
+                ))}
+              </SimpleGrid>
+            ) : (
+              <AccountTable
+                accounts={accounts}
+                onEdit={handleEditAccount}
+                onDelete={handleDeleteAccount}
+                onToggleStatus={handleToggleStatus}
+              />
+            )}
+          </>
+        )}
+
+        <AccountFormDrawer
+          opened={formModalOpened}
+          onClose={() => {
+            setFormModalOpened(false);
+            setSelectedAccount(null);
+          }}
+          account={selectedAccount}
+        />
+
+        <Modal
+          opened={deleteModalOpened}
+          onClose={() => {
+            setDeleteModalOpened(false);
+            setAccountToDelete(null);
+          }}
+          title={t('confirmDelete')}
+        >
+          <Stack gap="md">
+            <Text>{t('confirmDeleteMessage', { accountName: accountToDelete?.name || '' })}</Text>
+            <Group justify="flex-end">
+              <Button
+                variant="default"
+                onClick={() => {
+                  setDeleteModalOpened(false);
+                  setAccountToDelete(null);
+                }}
+              >
+                {t('action.cancel')}
+              </Button>
+              <Button color="red" onClick={confirmDelete}>
+                {t('action.delete')}
+              </Button>
+            </Group>
           </Stack>
-        </Alert>
-      )}
+        </Modal>
+      </Stack>
 
-      {accounts.length > 0 && (
-        <>
-          {isMobile ? (
-            <SimpleGrid cols={1} spacing="md">
-              {accounts.map((account) => (
-                <AccountCard
-                  key={account.id}
-                  account={account}
-                  onEdit={handleEditAccount}
-                  onDelete={handleDeleteAccount}
-                  onToggleStatus={handleToggleStatus}
-                />
-              ))}
-            </SimpleGrid>
-          ) : (
-            <AccountTable
-              accounts={accounts}
-              onEdit={handleEditAccount}
-              onDelete={handleDeleteAccount}
-              onToggleStatus={handleToggleStatus}
-            />
-          )}
-        </>
-      )}
-
-      <AccountFormDrawer
-        opened={formModalOpened}
-        onClose={() => {
-          setFormModalOpened(false);
-          setSelectedAccount(null);
-        }}
-        account={selectedAccount}
-      />
-
-      <Modal
-        opened={deleteModalOpened}
-        onClose={() => {
-          setDeleteModalOpened(false);
-          setAccountToDelete(null);
-        }}
-        title={t('confirmDelete')}
-      >
-        <Stack gap="md">
-          <Text>{t('confirmDeleteMessage', { accountName: accountToDelete?.name || '' })}</Text>
-          <Group justify="flex-end">
-            <Button
-              variant="default"
-              onClick={() => {
-                setDeleteModalOpened(false);
-                setAccountToDelete(null);
-              }}
-            >
-              {t('action.cancel')}
-            </Button>
-            <Button color="red" onClick={confirmDelete}>
-              {t('action.delete')}
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
-    </Stack>
+      <LoadingOverlay visible={isLoading} message={t('loading')} />
+    </>
   );
 }
 

@@ -1,3 +1,5 @@
+import { OrderSide } from '@/types/account';
+
 /**
  * Format number with locale-aware formatting and specified decimal places
  */
@@ -49,10 +51,10 @@ export const getOrderStatusColor = (status: string) => {
 };
 
 /**
- * Get color for order side (buy/sell)
+ * Get color for order side (BUY/SELL)
  */
-export const getOrderSideColor = (side: string) => {
-  return side === 'buy' ? 'green' : 'red';
+export const getOrderSideColor = (side: OrderSide) => {
+  return side === 'BUY' ? 'green' : 'red';
 };
 
 /**

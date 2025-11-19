@@ -1,23 +1,12 @@
-import { useEffect, useState } from 'react';
-import {
-  Drawer,
-  Stack,
-  TextInput,
-  Select,
-  Button,
-  Group,
-  Alert,
-  Checkbox,
-  Title,
-  Text,
-} from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { ApiKeyInput } from './ApiKeyInput';
+import type { Account } from '@/services/account';
 import { useAccountStore } from '@/store/accountStore';
-import type { Account, AccountFormData } from '@/services/account';
-import type { TradingExchange } from '@/types/account';
+import type { AccountFormData, TradingExchange } from '@/types/account';
+import { Alert, Button, Drawer, Group, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ApiKeyInput } from './ApiKeyInput';
 
 interface AccountFormDrawerProps {
   opened: boolean;
@@ -39,7 +28,6 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
   const [exchange, setExchange] = useState<TradingExchange>('Binance');
   const [apiKey, setApiKey] = useState('');
   const [secretKey, setSecretKey] = useState('');
-  const [secretKeySaved, setSecretKeySaved] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
   const isEditMode = !!account;
@@ -51,13 +39,11 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
         setExchange(account.exchange);
         setApiKey(account.apiKey);
         setSecretKey('');
-        setSecretKeySaved(true);
       } else {
         setName('');
         setExchange('Binance');
         setApiKey('');
         setSecretKey('');
-        setSecretKeySaved(false);
       }
       setFormError(null);
     }
@@ -69,29 +55,28 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
       return;
     }
 
-    if (!apiKey.trim()) {
-      setFormError(t('apiKeyRequired'));
-      return;
-    }
-
-    if (!isEditMode && !secretKeySaved) {
-      setFormError(t('mustConfirmSecretKeySaved'));
-      return;
+    // In edit mode, only validate name
+    if (!isEditMode) {
+      if (!apiKey.trim()) {
+        setFormError(t('apiKeyRequired'));
+        return;
+      }
     }
 
     setFormError(null);
 
     try {
-      const formData: AccountFormData = {
-        name: name.trim(),
-        exchange,
-        apiKey: apiKey.trim(),
-        ...(secretKey && { secretKey: secretKey.trim() }),
-      };
-
       if (isEditMode && account) {
-        await updateAccount(account.id, formData);
+        // In edit mode, only update name
+        await updateAccount(account.id, { name: name.trim() });
       } else {
+        // In create mode, send all fields
+        const formData: AccountFormData = {
+          name: name.trim(),
+          exchange,
+          apiKey: apiKey.trim(),
+          ...(secretKey && { secretKey: secretKey.trim() }),
+        };
         await createAccount(formData);
       }
       onClose();
@@ -153,6 +138,7 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
           onChange={(value) => setExchange((value as TradingExchange) || 'Binance')}
           data={EXCHANGE_OPTIONS}
           required
+          disabled={isEditMode}
         />
 
         <ApiKeyInput
@@ -161,6 +147,7 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
           value={apiKey}
           onChange={setApiKey}
           required
+          disabled={isEditMode}
         />
 
         <ApiKeyInput
@@ -170,15 +157,13 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
           onChange={setSecretKey}
           isSecret
           required={!isEditMode}
+          disabled={isEditMode}
         />
 
-        {!isEditMode && (
-          <Checkbox
-            label={t('confirmSecretKeySaved')}
-            checked={secretKeySaved}
-            onChange={(e) => setSecretKeySaved(e.currentTarget.checked)}
-          />
-        )}
+        <Text size="xs" c="blue" fw={600} style={{ fontStyle: 'italic' }} w="100%" ta="right">
+          {t('ipInformation', { ip: import.meta.env.VITE_STATIC_IP })}
+        </Text>
+
 
         <Group justify="flex-end" mt="md">
           <Button variant="default" onClick={onClose} disabled={isLoading}>

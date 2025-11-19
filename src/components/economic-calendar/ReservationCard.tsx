@@ -1,17 +1,18 @@
+import type { Reservation } from '@/services/reservation';
+import { formatNumber } from '@/utils/formatters';
 import {
-  Card,
-  Stack,
-  Group,
-  Text,
   Badge,
   Button,
-  Switch,
+  Card,
+  Group,
   SimpleGrid,
+  Stack,
+  Switch,
+  Text,
   Tooltip,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import type { Reservation } from '@/services/reservation';
-import { formatNumber } from '@/utils/formatters';
+import { OrderType } from '../common/OrderType';
 
 interface ReservationCardProps {
   reservation: Reservation;
@@ -19,6 +20,7 @@ interface ReservationCardProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onToggleEnabled: (id: string) => void;
+  isToggling: boolean;
 }
 
 export function ReservationCard({
@@ -27,6 +29,7 @@ export function ReservationCard({
   onEdit,
   onDelete,
   onToggleEnabled,
+  isToggling,
 }: ReservationCardProps) {
   const { t } = useTranslation();
 
@@ -46,6 +49,7 @@ export function ReservationCard({
             label={reservation.enabled ? t('action.enabled') : t('action.disabled')}
             size="sm"
             color={reservation.enabled ? 'green' : 'gray'}
+            disabled={isToggling}
           />
           <Group gap="xs">
             <Tooltip label={t('action.edit')} position="top">
@@ -82,23 +86,23 @@ export function ReservationCard({
             <Text size="sm" c="dimmed">
               {t('order.side')}:
             </Text>
-            <Badge color={reservation.side === 'buy' ? 'green' : 'red'}>
+            <Badge color={reservation.side === 'BUY' ? 'green' : 'red'}>
               {t(`action.${reservation.side}`)}
             </Badge>
           </Group>
 
           <Group gap="xs">
             <Text size="sm" c="dimmed">
-              {t('common.instruments')}:
+              {t('common.symbols')}:
             </Text>
-            <Text size="sm">{reservation.instrument}</Text>
+            <Text size="sm">{reservation.symbol}</Text>
           </Group>
           <Group gap="xs">
             <Text size="sm" c="dimmed">
               {t('common.volume')}:
             </Text>
             {/* TODO: load digits from config */}
-            <Text size="sm">{formatNumber(reservation.quantity, 4)}</Text>
+            <Text size="sm">{formatNumber(reservation.volume, 4)}</Text>
           </Group>
 
           <Group gap="xs">
@@ -117,9 +121,9 @@ export function ReservationCard({
               {t('action.order')}:
             </Text>
             <Text size="sm">
-              {t(`order.${reservation.orderType}`)}
+              <OrderType type={reservation.orderType} />
               {/* TODO: load digits from config */}
-              {reservation.orderType === 'limit' && reservation.limitPrice
+              {reservation.orderType === 'LIMIT' && reservation.limitPrice
                 ? ` @ ${formatNumber(reservation.limitPrice, 4)}`
                 : ''}
             </Text>

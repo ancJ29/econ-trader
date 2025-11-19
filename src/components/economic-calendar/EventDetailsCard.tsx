@@ -1,14 +1,14 @@
-import { Card, Stack, Group, Text, Badge, Timeline, Divider } from '@mantine/core';
+import type { EconomicEvent } from '@/types/calendar';
+import { formatDate, formatValue, getImpactColor, getImpactLabel } from '@/utils/economicCalendar';
+import { Badge, Card, Divider, Group, Stack, Text, Timeline } from '@mantine/core';
 import {
   IconCalendarTime,
   IconChartBar,
-  IconTrendingUp,
-  IconTrendingDown,
   IconMinus,
+  IconTrendingDown,
+  IconTrendingUp,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import type { EconomicEvent } from '@/services/economicCalendar';
-import { formatDate, formatValue, getImpactColor, getImpactLabel } from '@/utils/economicCalendar';
 
 interface EventDetailsCardProps {
   event: EconomicEvent;

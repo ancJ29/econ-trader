@@ -1,19 +1,19 @@
+import { Flag } from '@/components/common/Flag';
+import type { EconomicEvent } from '@/types/calendar';
+import { formatDate, formatValue, getImpactColor, getImpactLabel } from '@/utils/economicCalendar';
 import {
-  Card,
-  Stack,
-  Group,
-  Text,
-  Badge,
   Anchor,
-  Divider,
-  SimpleGrid,
+  Badge,
   Button,
+  Card,
+  Divider,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Flag } from '@/components/common/Flag';
-import { getImpactColor, getImpactLabel, formatDate, formatValue } from '@/utils/economicCalendar';
-import type { EconomicEvent } from '@/services/economicCalendar';
 
 interface EventCardProps {
   event: EconomicEvent;
@@ -24,7 +24,7 @@ export function EventCard({ event, onActionsClick }: EventCardProps) {
   const { t } = useTranslation();
 
   return (
-    <Card key={event.ts} padding="md" radius="md" withBorder>
+    <Card key={event.uniqueCode} padding="md" radius="md" withBorder>
       <Stack gap="xs">
         <Group justify="space-between" align="flex-start">
           <Text size="sm" c="dimmed">

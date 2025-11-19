@@ -1,8 +1,8 @@
-import { Table, Text, Paper, Stack, Badge, ScrollArea, Group } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import type { TransactionHistory, TradingMarket } from '@/types/account';
 import { MARKET_LABELS } from '@/constants/markets';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import type { OrderSide, TradingMarket, TransactionHistory } from '@/types/account';
+import { Badge, Group, Paper, ScrollArea, Stack, Table, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 
 interface TransactionHistoryTableProps {
   transactionData: Partial<Record<TradingMarket, TransactionHistory[]>>;
@@ -40,9 +40,9 @@ export function TransactionHistoryTable({ transactionData }: TransactionHistoryT
     }
   };
 
-  const getSideColor = (side?: string) => {
+  const getSideColor = (side?: OrderSide) => {
     if (!side) return 'gray';
-    return side === 'buy' ? 'green' : 'red';
+    return side === 'BUY' ? 'green' : 'red';
   };
 
   if (markets.length === 0) {

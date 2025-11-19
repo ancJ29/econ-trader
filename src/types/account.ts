@@ -1,4 +1,5 @@
 // Trading exchange types
+// cspell:disable
 export type TradingExchange = 'Binance' | 'Bybit';
 
 // Trading market types
@@ -106,7 +107,7 @@ export type Timestamp = number;
 
 // Balance information for a coin in a specific market
 export type BalanceInformation = {
-  symbol: Coin;
+  asset: Coin;
   balance: number;
   available: number;
   inOrder: number;
@@ -159,10 +160,10 @@ export type AccountFormData = {
 export type OrderStatus = 'open' | 'filled' | 'cancelled' | 'partially_filled';
 
 // Order type
-export type OrderType = 'market' | 'limit' | 'stop_loss' | 'take_profit';
+export type OrderType = 'MARKET' | 'LIMIT' | 'STOP_LOSS' | 'TAKE_PROFIT';
 
 // Order side
-export type OrderSide = 'buy' | 'sell';
+export type OrderSide = 'BUY' | 'SELL';
 
 // Time in force types
 export type TimeInForce = 'GTC' | 'IOC' | 'FOK';
