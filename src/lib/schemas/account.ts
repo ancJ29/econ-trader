@@ -69,6 +69,7 @@ export const TradingSymbolSchema = z.enum([
   'XRPUSDT',
   'ADAUSDT',
   'DOGEUSDT',
+  'SUIUSDC',
   // For BYBIT USDC Perpetual (Linear)
   'BTC-PERP',
   'ETH-PERP',
@@ -96,7 +97,12 @@ export const TradingSymbolSchema = z.enum([
   // cspell:enable
 ]);
 
-export const OrderStatusSchema = z.enum(['open', 'filled', 'cancelled', 'partially_filled']);
+export const OrderStatusSchema = z.enum([
+  'NEW',
+  'FILLED',
+  'CANCELLED',
+  'PARTIALLY_FILLED',
+]);
 
 export const OrderTypeSchema = z.enum(['market', 'limit', 'stop_loss', 'take_profit']);
 

@@ -103,7 +103,7 @@ function AccountDetailContent() {
   }
 
   const getMarketCount = () => {
-    return Object.keys(selectedAccount.availableMarkets || {}).length;
+    return Object.keys(selectedAccount?.availableMarkets ?? {}).length;
   };
 
   return (
@@ -160,7 +160,7 @@ function AccountDetailContent() {
                 {t('apiKey')}
               </Text>
               <Text size="md" fw={500} style={{ fontFamily: 'monospace' }}>
-                {maskString(selectedAccount.apiKey, 8)}
+                {maskString(selectedAccount.apiKey ?? '', 8)}
               </Text>
             </div>
 
@@ -194,13 +194,13 @@ function AccountDetailContent() {
             </Button>
           </Group>
 
-          {Object.keys(selectedAccount.availableMarkets || {}).length === 0 ? (
+          {Object.keys(selectedAccount?.availableMarkets || {}).length === 0 ? (
             <Alert icon={<IconAlertCircle size={16} />} color="blue">
               {t('noMarketsConfigured')}
             </Alert>
           ) : (
             <Stack gap="sm">
-              {Object.entries(selectedAccount.availableMarkets || {}).map(([market, symbols]) => {
+              {Object.entries(selectedAccount?.availableMarkets || {}).map(([market, symbols]) => {
                 const symbolArray = Array.isArray(symbols) ? symbols : [];
                 return (
                   <div key={market}>
@@ -290,7 +290,7 @@ function AccountDetailContent() {
             {selectedAccount && (
               <MarketSelector
                 exchange={selectedAccount.exchange}
-                availableMarkets={Object.keys(selectedAccount.availableMarkets) as TradingMarket[]}
+                availableMarkets={Object.keys(selectedAccount?.availableMarkets ?? {}) as TradingMarket[]}
                 value={tempMarkets}
                 onChange={setTempMarkets}
               />

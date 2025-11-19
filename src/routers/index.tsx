@@ -1,7 +1,6 @@
 import { AuthLayout } from '@/components/layouts/AuthLayout';
 import { Layout } from '@/components/layouts/Layout';
 import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
-import { isDevelopment } from '@/utils/env';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -31,7 +30,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: isDevelopment ? withSuspense(Home) : withSuspense(EconomicCalendar),
+        element: withSuspense(Home),
       },
       {
         path: '/login',

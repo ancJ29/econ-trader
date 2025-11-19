@@ -1,6 +1,6 @@
 import { createBrowserLogger } from '@an-oct/vani-kit';
 import { z } from 'zod';
-import { TradingSymbolSchema } from '../schemas/account';
+import { OrderSideSchema, OrderStatusSchema, TradingSymbolSchema } from '../schemas/account';
 import { BaseApiClient } from './base';
 
 const logger = createBrowserLogger('ECON-TRADER-API', {
@@ -52,6 +52,22 @@ export const PositionSchema = z.object({
   marginAsset: z.string().optional(),
 });
 
+export const OrderSchema = z.object({
+  exchangeOrderId: z.string(),
+  internalOrderId: z.string(),
+  side: OrderSideSchema,
+  symbol: TradingSymbolSchema,
+  volume: z.number(),
+  reduceOnly: z.boolean(),
+  price: z.number().nonnegative().optional(),
+  stopPrice: z.number().nonnegative().optional(),
+  status: OrderStatusSchema,
+  filled: z.number(),
+  avgPrice: z.number().nonnegative(),
+  entryTimestamp: z.number().positive().optional(),
+  filledTimestamp: z.number().positive().optional(),
+  lastUpdateTimestamp: z.number().positive().optional(),
+});
 export const ReservationSchema = z.object({
   id: z.string(),
   uniqueCode: z.string(),
@@ -81,6 +97,8 @@ export const AccountSchema = z.object({
   accountUniqueId: z.string(),
   balances: z.partialRecord(MarketSchema, BalanceSchema.array()),
   positions: z.partialRecord(MarketSchema, PositionSchema.array()),
+  orders: z.partialRecord(MarketSchema, OrderSchema.array()),
+  openOrders: z.partialRecord(MarketSchema, OrderSchema.array()),
   exchange: ExchangeSchema,
   markets: z.array(MarketSchema),
   createdAt: z.number().positive(),
@@ -95,6 +113,8 @@ export const UserDataResponseSchema = z.object({
 export const ExchangeDataSchema = z.object({
   balances: z.partialRecord(MarketSchema, BalanceSchema.array()),
   positions: z.partialRecord(MarketSchema, PositionSchema.array()),
+  orders: z.partialRecord(MarketSchema, OrderSchema.array()),
+  openOrders: z.partialRecord(MarketSchema, OrderSchema.array()),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

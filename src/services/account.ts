@@ -2,10 +2,12 @@ import { econTraderApi } from '@/lib/api/econ-trader';
 import type {
   AccountFormData,
   Coin,
+  OrderInformation,
+  OrderStatus,
   Timestamp,
   TradingExchange,
   TradingMarket,
-  TradingSymbol,
+  TradingSymbol
 } from '@/types/account';
 import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
 import { transformBackendMarket, transformMarket } from './helpers';
@@ -55,6 +57,7 @@ const BN_USDS_M_SYMBOLS: Record<string, boolean> = {
   XRPUSDT: true,
   ADAUSDT: true,
   DOGEUSDT: true,
+  SUIUSDC: true,
   // cspell:enable
 } as const;
 
@@ -85,6 +88,7 @@ const SYMBOL_MAP: Record<string, TradingSymbol> = {
   XRPUSDT: 'XRPUSDT',
   ADAUSDT: 'ADAUSDT',
   DOGEUSDT: 'DOGEUSDT',
+  SUIUSDC: 'SUIUSDC',
   // cspell:enable
 };
 
@@ -144,9 +148,9 @@ export type Account = {
       }[]
     >
   >;
+  openOrders: Partial<Record<TradingMarket, OrderInformation[]>>;
+  orderHistory: Partial<Record<TradingMarket, OrderInformation[]>>;
   // TODO: These fields are not yet implemented in the backend API
-  openOrders: Record<string, never>;
-  orderHistory: Record<string, never>;
   positionHistory: Record<string, never>;
   transactionHistory: Record<string, never>;
 };
@@ -192,7 +196,7 @@ function transformBalanceInformation(
 ): Account['balanceInformation'] {
   return Object.fromEntries(
     Object.entries(balances).map(([market, balances]) => [
-      market,
+      transformMarket(market),
       balances.map((balance) => ({
         asset: balance.asset,
         balance: balance.equity,
@@ -201,6 +205,67 @@ function transformBalanceInformation(
       })),
     ])
   );
+}
+
+/**
+ * Transforms API order data to frontend format
+ */
+function transformOrderInformation(
+  orders: Record<
+    string,
+    Array<{
+      exchangeOrderId: string;
+      internalOrderId: string;
+      side: 'BUY' | 'SELL';
+      symbol: TradingSymbol;
+      volume: number;
+      reduceOnly: boolean;
+      price?: number;
+      stopPrice?: number;
+      status: 'NEW' | 'FILLED' | 'CANCELLED' | 'PARTIALLY_FILLED';
+      filled: number;
+      avgPrice: number;
+      entryTimestamp?: number;
+      filledTimestamp?: number;
+      lastUpdateTimestamp?: number;
+    }>
+  >
+): Partial<Record<TradingMarket, OrderInformation[]>> {
+  const result: Partial<Record<TradingMarket, OrderInformation[]>> = {};
+
+  for (const [market, marketOrders] of Object.entries(orders)) {
+    if (!marketOrders || marketOrders.length === 0) continue;
+
+    result[transformMarket(market)] = marketOrders.map((order) => {
+      // Determine order type based on price and stopPrice
+      let type: 'MARKET' | 'LIMIT' | 'STOP_LOSS' | 'TAKE_PROFIT' = 'MARKET';
+      if (order.stopPrice) {
+        // If it has a stop price, it's either STOP_LOSS or TAKE_PROFIT
+        // We'll use STOP_LOSS as default since we can't determine the intent from the data
+        type = 'STOP_LOSS';
+      } else if (order.price) {
+        type = 'LIMIT';
+      }
+
+      return {
+        id: order.internalOrderId,
+        symbol: order.symbol,
+        market: market as TradingMarket,
+        side: order.side,
+        type,
+        status: order.status,
+        quantity: order.volume,
+        filledQuantity: order.filled,
+        price: order.price,
+        averagePrice: order.avgPrice || undefined,
+        timeInForce: 'GTC' as const, // Default to GTC since not provided by backend
+        createdAt: order.entryTimestamp || Date.now(),
+        updatedAt: order.lastUpdateTimestamp || order.filledTimestamp || Date.now(),
+      };
+    });
+  }
+
+  return result;
 }
 
 /**
@@ -223,7 +288,7 @@ function transformPositionInformation(
 ): Account['positionInformation'] {
   return Object.fromEntries(
     Object.entries(positions).map(([market, positions]) => [
-      market,
+      transformMarket(market),
       positions.map((position) => ({
         symbol: position.symbol,
         side: position.positionSide.toLowerCase() as 'long' | 'short', // Convert 'LONG'/'SHORT'/'BOTH' to 'long'/'short'
@@ -268,6 +333,44 @@ function transformAccount(apiAccount: {
       markPrice?: number;
     }>
   >;
+  openOrders?: Record<
+    string,
+    Array<{
+      exchangeOrderId: string;
+      internalOrderId: string;
+      side: 'BUY' | 'SELL';
+      symbol: TradingSymbol;
+      volume: number;
+      reduceOnly: boolean;
+      price?: number;
+      stopPrice?: number;
+      status: OrderStatus;
+      filled: number;
+      avgPrice: number;
+      entryTimestamp?: number;
+      filledTimestamp?: number;
+      lastUpdateTimestamp?: number;
+    }>
+  >;
+  orders?: Record<
+    string,
+    Array<{
+      exchangeOrderId: string;
+      internalOrderId: string;
+      side: 'BUY' | 'SELL';
+      symbol: TradingSymbol;
+      volume: number;
+      reduceOnly: boolean;
+      price?: number;
+      stopPrice?: number;
+      status: OrderStatus;
+      filled: number;
+      avgPrice: number;
+      entryTimestamp?: number;
+      filledTimestamp?: number;
+      lastUpdateTimestamp?: number;
+    }>
+  >;
 }): Account {
   return {
     id: apiAccount.accountUniqueId,
@@ -281,9 +384,9 @@ function transformAccount(apiAccount: {
     availableMarkets: transformAvailableMarkets(apiAccount.availableSymbols),
     balanceInformation: transformBalanceInformation(apiAccount.balances),
     positionInformation: transformPositionInformation(apiAccount.positions),
+    openOrders: apiAccount.openOrders ? transformOrderInformation(apiAccount.openOrders) : {},
+    orderHistory: apiAccount.orders ? transformOrderInformation(apiAccount.orders) : {},
     // TODO: Implement these transformations when backend API supports them
-    openOrders: {} as Record<string, never>,
-    orderHistory: {} as Record<string, never>,
     positionHistory: {} as Record<string, never>,
     transactionHistory: {} as Record<string, never>,
   };
@@ -329,20 +432,25 @@ export const accountService = {
    * @throws {Error} If account is not found
    */
   async getAccountById(id: string): Promise<Account> {
-    const accounts = await this.getAccounts();
-    const account = accounts.find((account) => account.id === id);
+    return await dedupe.asyncDeduplicator.call('account.getAccounts', async () => {
+      const accounts = await this.getAccounts();
+      const account = accounts.find((account) => account.id === id);
 
-    logger.debug('Getting account by id', { id, account });
+      logger.debug('Getting account by id', { id, account });
 
-    if (!account) {
-      throw new Error(`Account not found: ${id}`);
-    }
+      if (!account) {
+        throw new Error(`Account not found: ${id}`);
+      }
 
-    const exchangeData = await econTraderApi.getExchangeData();
-    account.balanceInformation = transformBalanceInformation(exchangeData.balances);
-    account.positionInformation = transformPositionInformation(exchangeData.positions);
+      const exchangeData = await econTraderApi.getExchangeData();
+      account.balanceInformation = transformBalanceInformation(exchangeData.balances);
+      account.positionInformation = transformPositionInformation(exchangeData.positions);
+      account.openOrders = transformOrderInformation(exchangeData.openOrders);
+      account.orderHistory = transformOrderInformation(exchangeData.orders);
+      logger.debug('Account data', JSON.stringify(account, null, 2));
 
-    return account;
+      return account;
+    });
   },
 
   /**

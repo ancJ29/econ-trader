@@ -164,7 +164,6 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
           {t('ipInformation', { ip: import.meta.env.VITE_STATIC_IP })}
         </Text>
 
-
         <Group justify="flex-end" mt="md">
           <Button variant="default" onClick={onClose} disabled={isLoading}>
             {t('action.cancel')}

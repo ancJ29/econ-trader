@@ -37,13 +37,13 @@ export const getPnlColor = (value: number): string => {
  */
 export const getOrderStatusColor = (status: string) => {
   switch (status) {
-    case 'open':
+    case 'NEW':
       return 'blue';
-    case 'filled':
+    case 'FILLED':
       return 'green';
-    case 'cancelled':
+    case 'CANCELLED':
       return 'red';
-    case 'partially_filled':
+    case 'PARTIALLY_FILLED':
       return 'yellow';
     default:
       return 'gray';
