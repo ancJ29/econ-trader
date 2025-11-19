@@ -1,6 +1,6 @@
 import { createBrowserLogger } from '@an-oct/vani-kit';
 import { z } from 'zod';
-import { OrderSideSchema, OrderStatusSchema, TradingSymbolSchema } from '../schemas/account';
+import { OrderSideSchema, OrderStatusSchema } from '../schemas/account';
 import { BaseApiClient } from './base';
 
 const logger = createBrowserLogger('ECON-TRADER-API', {
@@ -28,6 +28,36 @@ export const CoinSchema = z.enum([
   'ADA',
   'DOGE',
 ]);
+export const SymbolSchema = z.enum([
+  // cspell:disable
+  'BTCUSD_PERP',
+  'ETHUSD_PERP',
+  'BNBUSD_PERP',
+  'SOLUSD_PERP',
+  'LTCUSD_PERP',
+  'HYPEUSD_PERP',
+  'AVAXUSD_PERP',
+  'LINKUSD_PERP',
+  'XRPUSD_PERP',
+  'ADAUSD_PERP',
+  'DOGEUSD_PERP',
+  'BTCUSDT',
+  'ETHUSDT',
+  'BNBUSDT',
+  'SOLUSDT',
+  'LTCUSDT',
+  'HYPEUSDT',
+  'AVAXUSDT',
+  'LINKUSDT',
+  'XRPUSDT',
+  'ADAUSDT',
+  'DOGEUSDT',
+  'SUIUSDC',
+  'LTCUSDC',
+  // cspell:enable
+]);
+
+export type BackendSymbol = z.infer<typeof SymbolSchema>;
 
 export const BalanceSchema = z.object({
   asset: CoinSchema,
@@ -39,7 +69,7 @@ export const BalanceSchema = z.object({
 });
 
 export const PositionSchema = z.object({
-  symbol: TradingSymbolSchema,
+  symbol: SymbolSchema,
   positionSide: z.enum(['LONG', 'SHORT', 'BOTH']),
   volume: z.number(),
   unRealizedProfit: z.number(),
@@ -56,7 +86,7 @@ export const OrderSchema = z.object({
   exchangeOrderId: z.string(),
   internalOrderId: z.string(),
   side: OrderSideSchema,
-  symbol: TradingSymbolSchema,
+  symbol: SymbolSchema,
   volume: z.number(),
   reduceOnly: z.boolean(),
   price: z.number().nonnegative().optional(),
@@ -77,7 +107,7 @@ export const ReservationSchema = z.object({
   market: MarketSchema,
   triggerType: z.enum(['actual_vs_forecast', 'actual_vs_previous', 'actual_vs_specific']),
   condition: z.enum(['greater', 'less']),
-  symbol: TradingSymbolSchema,
+  symbol: SymbolSchema,
   side: z.enum(['BUY', 'SELL']),
   volume: z.number(),
   orderType: z.enum(['LIMIT', 'MARKET']),
@@ -185,12 +215,18 @@ class EconTraderApiClient extends BaseApiClient {
     this.clearCache();
   }
 
-  async getExchangeData() {
+  async getExchangeData(accountUniqueId: string) {
     logger.debug('Getting exchange data...');
-    return this.get('/api/econ-trader/exchange-data', undefined, ExchangeDataSchema, undefined, {
-      cacheKey: 'econ-trader.getExchangeData',
-      ttl: 60_000, // 1 minute cache TTL
-    });
+    return this.get(
+      `/api/econ-trader/exchange-data/${accountUniqueId}`,
+      undefined,
+      ExchangeDataSchema,
+      undefined,
+      {
+        cacheKey: `econ-trader.getExchangeData.${accountUniqueId}`,
+        ttl: 60_000, // 1 minute cache TTL
+      }
+    );
   }
 
   async createReservation(data: Omit<Reservation, 'id' | 'createdAt'>): Promise<void> {

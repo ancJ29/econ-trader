@@ -78,6 +78,7 @@ export type TradingSymbol =
   | 'ADAUSDT'
   | 'DOGEUSDT'
   | 'SUIUSDC'
+  | 'LTCUSDC'
   // For BYBIT USDC Perpetual (Linear)
   | 'BTC-PERP'
   | 'ETH-PERP'
@@ -158,7 +159,7 @@ export type AccountFormData = {
 };
 
 // Order status types
-export type OrderStatus = 'NEW' | 'FILLED' | 'CANCELLED' | 'PARTIALLY_FILLED';;
+export type OrderStatus = 'NEW' | 'FILLED' | 'CANCELLED' | 'PARTIALLY_FILLED';
 
 // Order type
 export type OrderType = 'MARKET' | 'LIMIT' | 'STOP_LOSS' | 'TAKE_PROFIT';

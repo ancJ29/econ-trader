@@ -7,10 +7,10 @@ import type {
   Timestamp,
   TradingExchange,
   TradingMarket,
-  TradingSymbol
+  TradingSymbol,
 } from '@/types/account';
 import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
-import { transformBackendMarket, transformMarket } from './helpers';
+import { transformBackendMarket, transformMarket, transformSymbol } from './helpers';
 
 const logger = createBrowserLogger('ACCOUNT-SERVICE', {
   level: 'debug',
@@ -58,6 +58,7 @@ const BN_USDS_M_SYMBOLS: Record<string, boolean> = {
   ADAUSDT: true,
   DOGEUSDT: true,
   SUIUSDC: true,
+  LTCUSDC: true,
   // cspell:enable
 } as const;
 
@@ -89,6 +90,7 @@ const SYMBOL_MAP: Record<string, TradingSymbol> = {
   ADAUSDT: 'ADAUSDT',
   DOGEUSDT: 'DOGEUSDT',
   SUIUSDC: 'SUIUSDC',
+  LTCUSDC: 'LTCUSDC',
   // cspell:enable
 };
 
@@ -217,7 +219,7 @@ function transformOrderInformation(
       exchangeOrderId: string;
       internalOrderId: string;
       side: 'BUY' | 'SELL';
-      symbol: TradingSymbol;
+      symbol: string;
       volume: number;
       reduceOnly: boolean;
       price?: number;
@@ -249,7 +251,7 @@ function transformOrderInformation(
 
       return {
         id: order.internalOrderId,
-        symbol: order.symbol,
+        symbol: transformSymbol(order.symbol),
         market: market as TradingMarket,
         side: order.side,
         type,
@@ -275,7 +277,7 @@ function transformPositionInformation(
   positions: Record<
     string,
     Array<{
-      symbol: TradingSymbol;
+      symbol: string;
       positionSide: 'LONG' | 'SHORT' | 'BOTH';
       volume: number;
       entryPrice: number;
@@ -290,7 +292,7 @@ function transformPositionInformation(
     Object.entries(positions).map(([market, positions]) => [
       transformMarket(market),
       positions.map((position) => ({
-        symbol: position.symbol,
+        symbol: transformSymbol(position.symbol),
         side: position.positionSide.toLowerCase() as 'long' | 'short', // Convert 'LONG'/'SHORT'/'BOTH' to 'long'/'short'
         quantity: position.volume,
         averagePrice: position.entryPrice,
@@ -323,7 +325,7 @@ function transformAccount(apiAccount: {
   positions: Record<
     string,
     Array<{
-      symbol: TradingSymbol;
+      symbol: string;
       positionSide: 'LONG' | 'SHORT' | 'BOTH';
       volume: number;
       entryPrice: number;
@@ -339,7 +341,7 @@ function transformAccount(apiAccount: {
       exchangeOrderId: string;
       internalOrderId: string;
       side: 'BUY' | 'SELL';
-      symbol: TradingSymbol;
+      symbol: string;
       volume: number;
       reduceOnly: boolean;
       price?: number;
@@ -358,7 +360,7 @@ function transformAccount(apiAccount: {
       exchangeOrderId: string;
       internalOrderId: string;
       side: 'BUY' | 'SELL';
-      symbol: TradingSymbol;
+      symbol: string;
       volume: number;
       reduceOnly: boolean;
       price?: number;
@@ -442,7 +444,7 @@ export const accountService = {
         throw new Error(`Account not found: ${id}`);
       }
 
-      const exchangeData = await econTraderApi.getExchangeData();
+      const exchangeData = await econTraderApi.getExchangeData(account.id);
       account.balanceInformation = transformBalanceInformation(exchangeData.balances);
       account.positionInformation = transformPositionInformation(exchangeData.positions);
       account.openOrders = transformOrderInformation(exchangeData.openOrders);

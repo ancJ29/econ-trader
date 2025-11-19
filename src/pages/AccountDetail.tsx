@@ -27,7 +27,7 @@ import {
   Title,
 } from '@mantine/core';
 import { IconAlertCircle, IconChevronLeft } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Navigate, useParams } from 'react-router-dom';
 
@@ -56,16 +56,17 @@ function AccountDetailContent() {
     setMarketDrawerOpened(true);
   };
 
-  const handleSaveMarkets = async () => {
-    if (!selectedAccount) return;
+  const handleSaveMarkets = useCallback(() => {
+    updateMarkets(selectedAccount?.id ?? '', tempMarkets);
+  }, [selectedAccount, tempMarkets, updateMarkets]);
 
-    try {
-      await updateMarkets(selectedAccount.id, tempMarkets);
-      setMarketDrawerOpened(false);
-    } catch (err) {
-      console.error('Failed to update markets:', err);
-    }
-  };
+  const getMarketCount = useCallback(() => {
+    return Object.keys(selectedAccount?.availableMarkets ?? {}).length;
+  }, [selectedAccount]);
+
+  if (isLoading) {
+    return <LoadingOverlay visible={true} message={t('loading')} />;
+  }
 
   if (!selectedAccount && !isLoading) {
     return (
@@ -94,21 +95,18 @@ function AccountDetailContent() {
     );
   }
 
-  if (isLoading) {
-    return <LoadingOverlay visible={true} message={t('loading')} />;
-  }
-
   if (!selectedAccount) {
     return <Navigate to="/accounts" replace />;
   }
 
-  const getMarketCount = () => {
-    return Object.keys(selectedAccount?.availableMarkets ?? {}).length;
-  };
+  // TODO: remove this after fix the UI issue: ALL LOADED but UI don't react
+  if (!selectedAccount?.name) {
+    return <LoadingOverlay visible={true} message={t('loading')} />;
+  }
 
   return (
     <>
-      <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'}>
+      <Stack gap="lg" py="xl" w={isMobile ? '90vw' : '80vw'} key={selectedAccount?.id ?? 'null'}>
         <Breadcrumbs>
           <Anchor component={Link} to="/accounts">
             {t('account.list')}
@@ -290,7 +288,9 @@ function AccountDetailContent() {
             {selectedAccount && (
               <MarketSelector
                 exchange={selectedAccount.exchange}
-                availableMarkets={Object.keys(selectedAccount?.availableMarkets ?? {}) as TradingMarket[]}
+                availableMarkets={
+                  Object.keys(selectedAccount?.availableMarkets ?? {}) as TradingMarket[]
+                }
                 value={tempMarkets}
                 onChange={setTempMarkets}
               />

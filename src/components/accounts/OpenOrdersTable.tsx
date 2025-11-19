@@ -66,9 +66,7 @@ export function OpenOrdersTable({ ordersData }: OpenOrdersTableProps) {
                           {t('order.status')}
                         </Text>
                         <Badge color={getOrderStatusColor(order.status)} size="sm">
-                          {t(
-                            `order.${order.status === 'partially_filled' ? 'partiallyFilled' : order.status}`
-                          )}
+                          {order.status}
                         </Badge>
                       </Group>
                       <Group justify="space-between">
@@ -166,9 +164,7 @@ export function OpenOrdersTable({ ordersData }: OpenOrdersTableProps) {
                       </Table.Td>
                       <Table.Td>
                         <Badge color={getOrderStatusColor(order.status)} size="sm">
-                          {t(
-                            `order.${order.status === 'partially_filled' ? 'partiallyFilled' : order.status}`
-                          )}
+                          {order.status}
                         </Badge>
                       </Table.Td>
                       <Table.Td style={{ textAlign: 'right', fontFamily: 'monospace' }}>

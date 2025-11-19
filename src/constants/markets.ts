@@ -33,6 +33,7 @@ export const MARKET_SYMBOLS: Record<TradingMarket, TradingSymbol[]> = {
     'ADAUSDT',
     'DOGEUSDT',
     'SUIUSDC',
+    'LTCUSDC',
   ],
   BN_COIN_M: [
     'BTCUSD_PERPETUAL',

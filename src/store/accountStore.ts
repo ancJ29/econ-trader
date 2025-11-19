@@ -47,17 +47,17 @@ export const useAccountStore = create<AccountState>((set, get) => ({
     // First try to find in existing accounts
     const existingAccount = get().accounts.find((acc) => acc.id === id);
     if (existingAccount) {
-      set({ selectedAccount: existingAccount });
-      // return;
+      set({ selectedAccount: existingAccount, isLoading: false, error: null });
     }
 
-    // Then try to fetch the latest data from the API
+    // Then Fetch the latest data from the API and update the store
     try {
       set({ isLoading: true, error: null });
-      const account = await accountService.getAccountById(id);
-
-      // Also fetch all accounts to populate the list
+      // Fetch all accounts to populate the list
       const allAccounts = await accountService.getAccounts();
+
+      // And fetch the latest data for the selected account
+      const account = await accountService.getAccountById(id);
 
       set({
         accounts: allAccounts,

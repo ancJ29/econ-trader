@@ -1,6 +1,6 @@
 import { cleanObj, createBrowserLogger, delay } from '@an-oct/vani-kit';
 import { Md5 } from 'ts-md5';
-import type * as z from 'zod';
+import * as z from 'zod';
 import { isDevelopment } from '../../utils/env';
 
 const logger = createBrowserLogger('API-BASE', {
@@ -454,7 +454,7 @@ export class BaseApiClient {
       logger.debug('Response validated', { validatedData });
       return validatedData;
     } catch (error) {
-      logger.error('Validation failed', { data, error });
+      logger.error('Validation failed', { data, error: z.treeifyError(error as z.ZodError) });
       throw new ApiError(422, 'Invalid response format', {
         received: data,
         error: error instanceof Error ? error.message : 'Validation failed', // TODO: add zod errors

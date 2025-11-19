@@ -1,7 +1,12 @@
 import { econTraderApi, type Reservation as ApiReservation } from '@/lib/api/econ-trader';
 import { OrderSide, TradingMarket, TradingSymbol } from '@/types/account';
 import { dedupe } from '@an-oct/vani-kit';
-import { transformBackendMarket, transformMarket } from './helpers';
+import {
+  transformBackendMarket,
+  transformBackendSymbol,
+  transformMarket,
+  transformSymbol,
+} from './helpers';
 
 // Re-export types from API layer
 export type Reservation = {
@@ -69,7 +74,7 @@ function transformReservation(reservation: ApiReservation): Reservation {
     market: transformMarket(reservation.market),
     triggerType: reservation.triggerType,
     condition: reservation.condition,
-    symbol: reservation.symbol,
+    symbol: transformSymbol(reservation.symbol),
     side: reservation.side,
     volume: reservation.volume,
     orderType: reservation.orderType,
@@ -121,7 +126,7 @@ export const reservationService = {
       market: transformBackendMarket(input.market) as 'Coin-M' | 'USDS-M',
       triggerType: input.triggerType,
       condition: input.condition,
-      symbol: input.symbol,
+      symbol: transformBackendSymbol(input.symbol),
       side: input.side,
       volume: input.volume,
       orderType: input.orderType,
@@ -144,7 +149,7 @@ export const reservationService = {
         : undefined,
       triggerType: input.triggerType,
       condition: input.condition,
-      symbol: input.symbol,
+      symbol: transformBackendSymbol(input.symbol ?? ''),
       side: input.side,
       volume: input.volume,
       orderType: input.orderType,

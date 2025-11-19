@@ -88,9 +88,7 @@ export function OrderHistoryTable({ ordersData }: OrderHistoryTableProps) {
                           {t('order.status')}
                         </Text>
                         <Badge color={getStatusColor(order.status)} size="sm">
-                          {t(
-                            `order.${order.status === 'partially_filled' ? 'partiallyFilled' : order.status}`
-                          )}
+                          {order.status}
                         </Badge>
                       </Group>
                       <Group justify="space-between">
@@ -179,9 +177,7 @@ export function OrderHistoryTable({ ordersData }: OrderHistoryTableProps) {
                       </Table.Td>
                       <Table.Td>
                         <Badge color={getStatusColor(order.status)} size="sm">
-                          {t(
-                            `order.${order.status === 'partially_filled' ? 'partiallyFilled' : order.status}`
-                          )}
+                          {order.status}
                         </Badge>
                       </Table.Td>
                       <Table.Td style={{ textAlign: 'right', fontFamily: 'monospace' }}>
