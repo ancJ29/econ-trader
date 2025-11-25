@@ -8,7 +8,7 @@ import { createBrowserLogger } from '@an-oct/vani-kit';
 import { create } from 'zustand';
 
 const logger = createBrowserLogger('RESERVATION-STORE', {
-  level: 'debug',
+  level: 'silent',
 });
 
 type ReservationState = {

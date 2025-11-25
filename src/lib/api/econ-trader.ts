@@ -259,7 +259,7 @@ class EconTraderApiClient extends BaseApiClient {
 }
 
 export const econTraderApi = new EconTraderApiClient({
-  baseURL: import.meta.env.VITE_ECON_TRADER_API_URL,
+  baseURL: import.meta.env.VITE_ECON_TRADER_API_URL ?? 'https://econ-trader-l3avc.api-bridge.work',
   cacheEnabled: true,
   cacheTTL: 60_000, // 1 minute
 });

@@ -1,6 +1,6 @@
 import type { EconomicCalendarFilters, EconomicEvent, EconomicIndex } from '@/types/calendar';
 import { cStorageV3 } from '@an-oct/connector';
-import { createBrowserLogger } from '@an-oct/vani-kit';
+import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
 
 const logger = createBrowserLogger('ECONOMIC-CALENDAR-SERVICE', {
   level: 'silent',
@@ -40,13 +40,15 @@ export const economicCalendarService = {
   allCalendars: new Map<string, EconomicCalendar>(),
 
   async getallCalendars(): Promise<Map<string, EconomicCalendar>> {
-    if (this.allCalendars.size === 0) {
-      const serviceId = 'economic-calendars';
-      const key = 'all-events';
-      const data = await cStorageV3.get<EconomicCalendar[]>(serviceId, key);
-      this.allCalendars = new Map(data?.map((event) => [event.link, event]) ?? []);
-    }
-    return this.allCalendars;
+    return dedupe.asyncDeduplicator.call('economic-calendar.getallCalendars', async () => {
+      if (this.allCalendars.size === 0) {
+        const serviceId = 'economic-calendars';
+        const key = 'all-events';
+        const data = await cStorageV3.get<EconomicCalendar[]>(serviceId, key);
+        this.allCalendars = new Map(data?.map((event) => [event.link, event]) ?? []);
+      }
+      return this.allCalendars;
+    });
   },
 
   async getEconomicCalendar(_filters?: EconomicCalendarFilters) {
@@ -54,23 +56,28 @@ export const economicCalendarService = {
     const allCalendars = await this.getallCalendars();
     logger.debug('allCalendars', allCalendars);
     const serviceId = 'economic-calendars';
-    const startOfMonth = getStartOfMonth(Date.now());
-    const key = `monthly-events-${startOfMonth}`;
-    logger.debug('getting monthly events', { serviceId, key });
-    let data = (await cStorageV3.get<CStorageEconomicCalendarEvent[]>(serviceId, key)) ?? [];
-    logger.debug('data', JSON.stringify(data, null, 2));
-    data = data.filter((event) => event.link).filter((event) => allCalendars.has(event.link));
-    const events =
-      data?.map((event) => transformCStorageEventToEconomicEvent(event, allCalendars)) ?? [];
-    return {
-      events,
-      pagination: {
-        total: events.length,
-        page: 1,
-        pageSize: events.length,
-        totalPages: 1,
-      },
-    };
+    return await dedupe.asyncDeduplicator.call(
+      'economic-calendar.getEconomicCalendar',
+      async () => {
+        const startOfMonth = getStartOfMonth(Date.now());
+        const key = `monthly-events-${startOfMonth}`;
+        logger.debug('getting monthly events', { serviceId, key });
+        let data = (await cStorageV3.get<CStorageEconomicCalendarEvent[]>(serviceId, key)) ?? [];
+        logger.debug('data', JSON.stringify(data, null, 2));
+        data = data.filter((event) => event.link).filter((event) => allCalendars.has(event.link));
+        const events =
+          data?.map((event) => transformCStorageEventToEconomicEvent(event, allCalendars)) ?? [];
+        return {
+          events,
+          pagination: {
+            total: events.length,
+            page: 1,
+            pageSize: events.length,
+            totalPages: 1,
+          },
+        };
+      }
+    );
   },
 
   async getEconomicIndex(eventCode: string): Promise<EconomicIndex> {

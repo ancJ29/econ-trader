@@ -161,7 +161,7 @@ export function AccountFormDrawer({ opened, onClose, account }: AccountFormDrawe
         />
 
         <Text size="xs" c="blue" fw={600} style={{ fontStyle: 'italic' }} w="100%" ta="right">
-          {t('ipInformation', { ip: import.meta.env.VITE_STATIC_IP })}
+          {t('ipInformation', { ip: import.meta.env.VITE_STATIC_IP ?? '52.77.69.156' })}
         </Text>
 
         <Group justify="flex-end" mt="md">

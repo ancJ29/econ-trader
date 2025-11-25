@@ -149,7 +149,7 @@ export const reservationService = {
         : undefined,
       triggerType: input.triggerType,
       condition: input.condition,
-      symbol: transformBackendSymbol(input.symbol ?? ''),
+      symbol: input.symbol ? transformBackendSymbol(input.symbol ?? '') : undefined,
       side: input.side,
       volume: input.volume,
       orderType: input.orderType,

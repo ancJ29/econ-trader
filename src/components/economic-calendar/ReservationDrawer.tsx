@@ -147,7 +147,7 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
         setUpdatingId(null);
       }
     },
-    [editingId, updatingId, form, createReservation, updateReservation]
+    [event, editingId, updatingId, form, createReservation, updateReservation]
   );
 
   const handleEdit = useCallback(

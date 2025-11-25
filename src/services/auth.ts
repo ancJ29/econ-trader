@@ -5,7 +5,8 @@ const logger = createBrowserLogger('AUTH-SERVICE', {
   level: 'silent',
 });
 
-const clientServiceId = import.meta.env.VITE_CLIENT_SERVICE_ID;
+const clientServiceId = 'econ-trader';
+// const clientServiceId = import.meta.env.VITE_CLIENT_SERVICE_ID;
 
 export const authService = {
   async reconnect(): Promise<{ success: boolean }> {

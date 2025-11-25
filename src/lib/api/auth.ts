@@ -92,6 +92,6 @@ export default class AuthApiClient extends BaseApiClient {
 }
 
 export const authApi = new AuthApiClient({
-  baseURL: import.meta.env.VITE_SSO_API_URL,
+  baseURL: 'https://c-sso-gc2uw.api-bridge.work',
   cacheEnabled: false,
 });

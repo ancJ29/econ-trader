@@ -13,7 +13,7 @@ import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
 import { transformBackendMarket, transformMarket, transformSymbol } from './helpers';
 
 const logger = createBrowserLogger('ACCOUNT-SERVICE', {
-  level: 'debug',
+  level: 'silent',
 });
 
 // ============================================================================

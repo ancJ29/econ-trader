@@ -1,10 +1,9 @@
-import { cleanObj, createBrowserLogger, delay } from '@an-oct/vani-kit';
-import { Md5 } from 'ts-md5';
+import { cleanObj, createBrowserLogger, delay, generateHeaderWithNonce } from '@an-oct/vani-kit';
 import * as z from 'zod';
 import { isDevelopment } from '../../utils/env';
 
 const logger = createBrowserLogger('API-BASE', {
-  level: 'debug',
+  level: 'silent',
 });
 
 type ApiConfig = {
@@ -353,8 +352,10 @@ export class BaseApiClient {
         logger.debug('Added param', { key, value });
       }
     }
-
-    const headers = new Headers(init.headers);
+    const headers = new Headers({
+      ...generateHeaderWithNonce(Math.random().toString(16)),
+      ...init.headers,
+    });
     logger.debug('Headers created', { headers: headers.toString() });
     if (!isGetRequest) {
       headers.set('X-CACHE-CONTROL', 'no-cache');
@@ -373,7 +374,6 @@ export class BaseApiClient {
       headers.set('Content-Type', 'application/json');
     }
 
-    this.buildNonceHeaders(headers);
     logger.debug('Nonce headers built', { headers: headers.toString() });
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
@@ -483,19 +483,6 @@ export class BaseApiClient {
     return undefined;
   }
 
-  private buildNonceHeaders(headers: Headers): void {
-    const timestamp = Date.now().toString();
-    const requestKey = Math.random().toString(16).slice(2);
-    const nonce = this.generateNonce(timestamp, requestKey);
-    if (nonce) {
-      headers.set('X-UNIQ', requestKey);
-      headers.set('X-TIMESTAMP', timestamp);
-      headers.set('X-NONCE', nonce);
-    } else {
-      // alert('nonce is empty');
-    }
-  }
-
   private setCachedData<T>(cacheKey: string, data: T, ttl?: number): void {
     if (!this.cacheEnabled) return;
 
@@ -504,26 +491,5 @@ export class BaseApiClient {
       timestamp: Date.now(),
       ttl: ttl ?? this.cacheTTL,
     });
-  }
-
-  private getMark(requestKey: string): string {
-    return requestKey.slice(9, 10);
-  }
-
-  private generateNonce(timestamp: string, requestKey: string): string {
-    const mark = this.getMark(requestKey);
-    let count = 0;
-    do {
-      const md5 = new Md5();
-      const random = Math.random().toString(36).slice(2, 15);
-      md5.appendStr(`${random}.${timestamp}.${requestKey}`);
-      const nonce = md5.end().toString();
-      if (nonce.endsWith(mark)) {
-        return random;
-      }
-      count++;
-    } while (count < 1000);
-
-    return '';
   }
 }
