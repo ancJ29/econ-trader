@@ -5,26 +5,10 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@an-oct/connector@npm:^1.2.8":
-  version: 1.2.8
-  resolution: "@an-oct/connector@npm:1.2.8"
-  dependencies:
-    "@an-oct/vani-kit": "npm:^1.2.6"
-  checksum: 10c0/82bdc843a77e29ad914417b994431753d41d9952491200bc6d1bba9b57e047773d9d4107b1f1ca4a24765053a005d8aaff5030eb3e1337702883dc94df35e699
-  languageName: node
-  linkType: hard
-
 "@an-oct/vani-kit@npm:^1.2.10":
   version: 1.2.10
   resolution: "@an-oct/vani-kit@npm:1.2.10"
   checksum: 10c0/b430e241d419152f33850daf57119f4c4558766144383b0d18ebb5c3d22dfafbe1300f504dffaf38268781f73c0db4dbe49115e9fcf1b37712fa2ed0323d59b5
-  languageName: node
-  linkType: hard
-
-"@an-oct/vani-kit@npm:^1.2.6":
-  version: 1.2.6
-  resolution: "@an-oct/vani-kit@npm:1.2.6"
-  checksum: 10c0/52776b7c1141a1966c0ed2618cdf43feff3e2fcb8b814b53cc84ed7c5edaa79d77673c8beb890d470c9e59028c095897dd386b4f2b47de5c364297e58c353b1a
   languageName: node
   linkType: hard
 
@@ -1571,7 +1555,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:."
   dependencies:
-    "@an-oct/connector": "npm:^1.2.8"
     "@an-oct/vani-kit": "npm:^1.2.10"
     "@eslint/js": "npm:^9.36.0"
     "@mantine/charts": "npm:^8.3.2"

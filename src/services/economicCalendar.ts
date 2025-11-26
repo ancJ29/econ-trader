@@ -1,5 +1,5 @@
+import { cStorageV3 } from '@/lib/connector/c-storage';
 import type { EconomicCalendarFilters, EconomicEvent, EconomicIndex } from '@/types/calendar';
-import { cStorageV3 } from '@an-oct/connector';
 import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
 
 const logger = createBrowserLogger('ECONOMIC-CALENDAR-SERVICE', {
