@@ -1,6 +1,6 @@
 import { cStorageV3 } from '@/lib/connector/c-storage';
 import type { EconomicCalendarFilters, EconomicEvent, EconomicIndex } from '@/types/calendar';
-import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
+import { createBrowserLogger, dedupe, ONE_DAY } from '@an-oct/vani-kit';
 
 const logger = createBrowserLogger('ECONOMIC-CALENDAR-SERVICE', {
   level: 'silent',
@@ -56,15 +56,25 @@ export const economicCalendarService = {
     const allCalendars = await this.getallCalendars();
     logger.debug('allCalendars', allCalendars);
     const serviceId = 'economic-calendars';
+
+    async function _getData(startOfMonth: number) {
+      const key = `monthly-events-${startOfMonth}`;
+      logger.debug('getting monthly events', { serviceId, key });
+      let data = (await cStorageV3.get<CStorageEconomicCalendarEvent[]>(serviceId, key)) ?? [];
+      return data;
+    }
     return await dedupe.asyncDeduplicator.call(
       'economic-calendar.getEconomicCalendar',
       async () => {
         const startOfMonth = getStartOfMonth(Date.now());
+        const startOfNextMonth = getStartOfMonth(Date.now() + 32 * ONE_DAY);
         const key = `monthly-events-${startOfMonth}`;
         logger.debug('getting monthly events', { serviceId, key });
-        let data = (await cStorageV3.get<CStorageEconomicCalendarEvent[]>(serviceId, key)) ?? [];
-        logger.debug('data', JSON.stringify(data, null, 2));
-        data = data.filter((event) => event.link).filter((event) => allCalendars.has(event.link));
+        const rawData = await Promise.all([_getData(startOfMonth), _getData(startOfNextMonth)]);
+        const data = rawData
+          .flat()
+          .filter((event) => event.link)
+          .filter((event) => allCalendars.has(event.link));
         const events =
           data?.map((event) => transformCStorageEventToEconomicEvent(event, allCalendars)) ?? [];
         return {
