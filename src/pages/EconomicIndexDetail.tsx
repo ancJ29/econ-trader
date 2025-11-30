@@ -156,7 +156,7 @@ function EconomicIndexDetail() {
                           <Text size="xs" c="dimmed">
                             {t('source')}
                           </Text>
-                          <Anchor href={index.url} target="_blank" size="sm">
+                          <Anchor href={index.sourceUrl} target="_blank" size="sm">
                             {index.source}
                           </Anchor>
                         </div>
@@ -309,7 +309,7 @@ function EconomicIndexDetail() {
                             <Text size="xs" c="dimmed">
                               {t('source')}
                             </Text>
-                            <Anchor href={index.url} target="_blank" size="sm">
+                            <Anchor href={index.sourceUrl} target="_blank" size="sm">
                               {index.source}
                             </Anchor>
                           </div>

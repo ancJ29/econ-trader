@@ -24,6 +24,7 @@ export type EconomicIndex = {
   countryCode: string;
   currencyCode: string;
   source: string;
+  sourceUrl: string;
   url: string;
   isPercentage: boolean;
   historyData: {

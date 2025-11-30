@@ -166,12 +166,9 @@
   "eventCodeRequired": "Event code is required",
   "exchange": "Exchange",
   "exchanges": {
-    "BB_Perpetual": "Bybit Perpetual",
-    "BB_SPOT": "Bybit Spot",
-    "BB_USDC_PERP": "Bybit USDC Perpetual",
-    "BB_USDT_PERP": "Bybit USDT Perpetual",
+    "BB_Linear": "Bybit USDT Perpetual",
+    "BB_Inverse": "Bybit Inverse Perpetual",
     "BN_COIN_M": "Binance COIN-M Futures",
-    "BN_SPOT": "Binance Spot",
     "BN_USDS_M": "Binance USDⓈ-M Futures"
   },
   "filterCountry": "Filter by Country",

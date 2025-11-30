@@ -1,5 +1,5 @@
 import type { CreateReservationInput } from '@/services/reservation';
-import type { Account, TradingMarket, TradingSymbol } from '@/types/account';
+import type { Account, TradingMarket } from '@/types/account';
 import { Button, Card, Divider, Group, NumberInput, Select, Stack, Title } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
@@ -78,7 +78,7 @@ export function ReservationForm({
               // Reset market and symbol when account changes
               if (accountId !== form.values.accountId) {
                 form.setFieldValue('market', '' as TradingMarket);
-                form.setFieldValue('symbol', '' as TradingSymbol);
+                form.setFieldValue('symbol', '');
               }
             }}
             error={form.errors.accountId as string | undefined}
@@ -90,7 +90,7 @@ export function ReservationForm({
               form.setFieldValue('market', market || ('' as TradingMarket));
               // Reset symbol when market changes
               if (market !== form.values.market) {
-                form.setFieldValue('symbol', '' as TradingSymbol);
+                form.setFieldValue('symbol', '');
               }
             }}
             availableMarkets={selectedAccount?.availableMarkets}
@@ -101,13 +101,11 @@ export function ReservationForm({
           <SymbolSelector
             value={form.values.symbol}
             onChange={(symbol) => {
-              form.setFieldValue('symbol', symbol || ('' as TradingSymbol));
+              form.setFieldValue('symbol', symbol || '');
             }}
             availableSymbols={
               form.values.market && selectedAccount?.availableMarkets
-                ? (selectedAccount.availableMarkets[form.values.market] as
-                    | TradingSymbol[]
-                    | undefined)
+                ? (selectedAccount.availableMarkets[form.values.market] as string[] | undefined)
                 : undefined
             }
             disabled={!form.values.market}

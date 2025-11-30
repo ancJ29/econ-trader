@@ -11,56 +11,10 @@ export const UserDataSchema = z.object({
 });
 
 export const ExchangeSchema = z.enum(['Binance', 'Bybit']);
-export const MarketSchema = z.enum(['Coin-M', 'USDS-M']);
-export const CoinSchema = z.enum([
-  'USDT',
-  'USDC',
-  'USD',
-  'BTC',
-  'ETH',
-  'BNB',
-  'SOL',
-  'LTC',
-  'HYPE',
-  'AVAX',
-  'LINK',
-  'XRP',
-  'ADA',
-  'DOGE',
-]);
-export const SymbolSchema = z.enum([
-  // cspell:disable
-  'BTCUSD_PERP',
-  'ETHUSD_PERP',
-  'BNBUSD_PERP',
-  'SOLUSD_PERP',
-  'LTCUSD_PERP',
-  'HYPEUSD_PERP',
-  'AVAXUSD_PERP',
-  'LINKUSD_PERP',
-  'XRPUSD_PERP',
-  'ADAUSD_PERP',
-  'DOGEUSD_PERP',
-  'BTCUSDT',
-  'ETHUSDT',
-  'BNBUSDT',
-  'SOLUSDT',
-  'LTCUSDT',
-  'HYPEUSDT',
-  'AVAXUSDT',
-  'LINKUSDT',
-  'XRPUSDT',
-  'ADAUSDT',
-  'DOGEUSDT',
-  'SUIUSDC',
-  'LTCUSDC',
-  // cspell:enable
-]);
-
-export type BackendSymbol = z.infer<typeof SymbolSchema>;
+export const MarketSchema = z.enum(['Coin-M', 'USDS-M', 'Linear', 'Inverse']);
 
 export const BalanceSchema = z.object({
-  asset: CoinSchema,
+  asset: z.string(),
   balance: z.number(),
   equity: z.number(),
   unrealizedPnl: z.number(),
@@ -69,7 +23,7 @@ export const BalanceSchema = z.object({
 });
 
 export const PositionSchema = z.object({
-  symbol: SymbolSchema,
+  symbol: z.string(),
   positionSide: z.enum(['LONG', 'SHORT', 'BOTH']),
   volume: z.number(),
   unRealizedProfit: z.number(),
@@ -86,7 +40,7 @@ export const OrderSchema = z.object({
   exchangeOrderId: z.string(),
   internalOrderId: z.string(),
   side: OrderSideSchema,
-  symbol: SymbolSchema,
+  symbol: z.string(),
   volume: z.number(),
   reduceOnly: z.boolean(),
   price: z.number().nonnegative().optional(),
@@ -107,7 +61,7 @@ export const ReservationSchema = z.object({
   market: MarketSchema,
   triggerType: z.enum(['actual_vs_forecast', 'actual_vs_previous', 'actual_vs_specific']),
   condition: z.enum(['greater', 'less']),
-  symbol: SymbolSchema,
+  symbol: z.string(),
   side: z.enum(['BUY', 'SELL']),
   volume: z.number(),
   orderType: z.enum(['LIMIT', 'MARKET']),

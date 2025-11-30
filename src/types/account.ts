@@ -4,112 +4,19 @@ export type TradingExchange = 'Binance' | 'Bybit';
 
 // Trading market types
 export type TradingMarket =
-  // For Binance
-  // Document: https://developers.binance.com/docs/binance-spot-api-docs/rest-api/general-api-information
-  | 'BN_SPOT' // Spot
-  // USDⓈ-M Futures
-  // Document: https://developers.binance.com/docs/derivatives/usds-margined-futures/general-info
-  | 'BN_USDS_M'
-  // COIN-M Futures
-  // Document: https://developers.binance.com/docs/derivatives/coin-margined-futures/general-info
-  | 'BN_COIN_M'
-  // For Bybit
-  // Document: https://bybit-exchange.github.io/docs/v5/intro#current-api-coverage
-  | 'BB_USDT_PERP' // USDT Perpetual (Linear)
-  | 'BB_USDC_PERP' // USDC Perpetual (Linear)
-  // | 'BB_USDC_Futures' // USDC Futures (Linear) / Not supported yet
-  | 'BB_Perpetual' // Perpetual (Inverse)
-  // | 'BB_Futures' // Futures (Inverse) / Not supported yet
-  | 'BB_SPOT'; // Spot
-
-// Coin types
-export type Coin =
-  | 'USDT'
-  | 'USDC'
-  | 'USD'
-  | 'BTC'
-  | 'ETH'
-  | 'BNB'
-  | 'SOL'
-  | 'LTC'
-  | 'HYPE'
-  | 'AVAX'
-  | 'LINK'
-  | 'XRP'
-  | 'ADA'
-  | 'DOGE';
-
-// Trading symbol types
-export type TradingSymbol =
-  // For Spot
-  | 'BTC_USDT'
-  | 'ETH_USDT'
-  | 'BNB_USDT'
-  | 'SOL_USDT'
-  | 'LTC_USDT'
-  | 'HYPE_USDT'
-  | 'AVAX_USDT'
-  | 'LINK_USDT'
-  | 'XRP_USDT'
-  | 'ADA_USDT'
-  | 'DOGE_USDT'
-  // For Binance COIN-M Futures
-  | 'BTCUSD_PERPETUAL'
-  | 'ETHUSD_PERPETUAL'
-  | 'BNBUSD_PERPETUAL'
-  | 'SOLUSD_PERPETUAL'
-  | 'LTCUSD_PERPETUAL'
-  | 'HYPEUSD_PERPETUAL'
-  | 'AVAXUSD_PERPETUAL'
-  | 'LINKUSD_PERPETUAL'
-  | 'XRPUSD_PERPETUAL'
-  | 'ADAUSD_PERPETUAL'
-  | 'DOGEUSD_PERPETUAL'
-  // For Binance USDⓈ-M Futures and BYBIT USDT Perpetual (Linear)
-  | 'BTCUSDT'
-  | 'ETHUSDT'
-  | 'BNBUSDT'
-  | 'SOLUSDT'
-  | 'LTCUSDT'
-  | 'HYPEUSDT'
-  | 'AVAXUSDT'
-  | 'LINKUSDT'
-  | 'XRPUSDT'
-  | 'ADAUSDT'
-  | 'DOGEUSDT'
-  | 'SUIUSDC'
-  | 'LTCUSDC'
-  // For BYBIT USDC Perpetual (Linear)
-  | 'BTC-PERP'
-  | 'ETH-PERP'
-  | 'BNB-PERP'
-  | 'SOL-PERP'
-  | 'LTC-PERP'
-  | 'HYPE-PERP'
-  | 'AVAX-PERP'
-  | 'LINK-PERP'
-  | 'XRP-PERP'
-  | 'ADA-PERP'
-  | 'DOGE-PERP'
-  // For Perpetual (Inverse)
-  | 'BTCUSD'
-  | 'ETHUSD'
-  | 'BNBUSD'
-  | 'SOLUSD'
-  | 'LTCUSD'
-  | 'HYPEUSD'
-  | 'AVAXUSD'
-  | 'LINKUSD'
-  | 'XRPUSD'
-  | 'ADAUSD'
-  | 'DOGEUSD';
+  // For Binance: https://developers.binance.com/docs/binance-spot-api-docs/rest-api/general-api-information
+  | 'BN_USDS_M' // USDⓈ-M Futures
+  | 'BN_COIN_M' // COIN-M Futures
+  // For Bybit: https://bybit-exchange.github.io/docs/v5/intro#current-api-coverage
+  | 'BB_Linear' // USDT Perpetual (Linear)
+  | 'BB_Inverse'; // Perpetual (Inverse)
 
 // Timestamp type
 export type Timestamp = number;
 
 // Balance information for a coin in a specific market
 export type BalanceInformation = {
-  asset: Coin;
+  asset: string;
   balance: number;
   available: number;
   inOrder: number;
@@ -117,7 +24,7 @@ export type BalanceInformation = {
 
 // Position information for a trading symbol
 export type PositionInformation = {
-  symbol: TradingSymbol;
+  symbol: string;
   side: 'long' | 'short';
   quantity: number;
   averagePrice: number;
@@ -136,7 +43,7 @@ export type Account = {
   id: string; // UUID
   name: string;
   exchange: TradingExchange;
-  availableMarkets: Partial<Record<TradingMarket, TradingSymbol[]>>;
+  availableMarkets: Partial<Record<TradingMarket, string[]>>;
   apiKey: string;
   secretKey?: string; // Optional, should be hidden in UI, but must be provided when registering new account
   balanceInformation?: Partial<Record<TradingMarket, BalanceInformation[]>>;
@@ -173,7 +80,7 @@ export type TimeInForce = 'GTC' | 'IOC' | 'FOK';
 // Order information
 export type OrderInformation = {
   id: string;
-  symbol: TradingSymbol;
+  symbol: string;
   market: TradingMarket;
   side: OrderSide;
   type: OrderType;
@@ -190,7 +97,7 @@ export type OrderInformation = {
 // Position history record
 export type PositionHistory = {
   id: string;
-  symbol: TradingSymbol;
+  symbol: string;
   market: TradingMarket;
   side: 'long' | 'short';
   quantity: number;
@@ -209,10 +116,10 @@ export type TransactionType = 'trade' | 'fee' | 'funding' | 'swap';
 export type TransactionHistory = {
   id: string;
   type: TransactionType;
-  symbol: TradingSymbol;
+  symbol: string;
   market: TradingMarket;
   amount: number;
-  coin: Coin;
+  coin: string;
   side?: OrderSide;
   price?: number;
   quantity?: number;

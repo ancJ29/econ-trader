@@ -5,97 +5,10 @@ export const TradingExchangeSchema = z.enum(['Binance', 'Bybit']);
 
 export const TradingMarketSchema = z.enum([
   // cspell:disable
-  'BN_SPOT',
   'BN_USDS_M',
   'BN_COIN_M',
-  'BB_USDT_PERP',
-  'BB_USDC_PERP',
-  'BB_Perpetual',
-  'BB_SPOT',
-]);
-
-export const CoinSchema = z.enum([
-  'USDT',
-  'USDC',
-  'USD',
-  'BTC',
-  'ETH',
-  'BNB',
-  'SOL',
-  'LTC',
-  'HYPE',
-  'AVAX',
-  'LINK',
-  'XRP',
-  'ADA',
-  'DOGE',
-]);
-
-export const TradingSymbolSchema = z.enum([
-  // cspell:disable
-  // For Spot
-  'BTC_USDT',
-  'ETH_USDT',
-  'BNB_USDT',
-  'SOL_USDT',
-  'LTC_USDT',
-  'HYPE_USDT',
-  'AVAX_USDT',
-  'LINK_USDT',
-  'XRP_USDT',
-  'ADA_USDT',
-  'DOGE_USDT',
-  // For Binance COIN-M Futures
-  'BTCUSD_PERPETUAL',
-  'ETHUSD_PERPETUAL',
-  'BNBUSD_PERPETUAL',
-  'SOLUSD_PERPETUAL',
-  'LTCUSD_PERPETUAL',
-  'HYPEUSD_PERPETUAL',
-  'AVAXUSD_PERPETUAL',
-  'LINKUSD_PERPETUAL',
-  'XRPUSD_PERPETUAL',
-  'ADAUSD_PERPETUAL',
-  'DOGEUSD_PERPETUAL',
-  // For Binance USDⓈ-M Futures and BYBIT USDT Perpetual (Linear)
-  'BTCUSDT',
-  'ETHUSDT',
-  'BNBUSDT',
-  'SOLUSDT',
-  'LTCUSDT',
-  'HYPEUSDT',
-  'AVAXUSDT',
-  'LINKUSDT',
-  'XRPUSDT',
-  'ADAUSDT',
-  'DOGEUSDT',
-  'SUIUSDC',
-  'LTCUSDC',
-  // For BYBIT USDC Perpetual (Linear)
-  'BTC-PERP',
-  'ETH-PERP',
-  'BNB-PERP',
-  'SOL-PERP',
-  'LTC-PERP',
-  'HYPE-PERP',
-  'AVAX-PERP',
-  'LINK-PERP',
-  'XRP-PERP',
-  'ADA-PERP',
-  'DOGE-PERP',
-  // For Perpetual (Inverse)
-  'BTCUSD',
-  'ETHUSD',
-  'BNBUSD',
-  'SOLUSD',
-  'LTCUSD',
-  'HYPEUSD',
-  'AVAXUSD',
-  'LINKUSD',
-  'XRPUSD',
-  'ADAUSD',
-  'DOGEUSD',
-  // cspell:enable
+  'BB_Linear',
+  'BB_Inverse',
 ]);
 
 export const OrderStatusSchema = z.enum(['NEW', 'FILLED', 'CANCELED', 'PARTIALLY_FILLED']);
@@ -112,7 +25,7 @@ export const TransactionTypeSchema = z.enum(['trade', 'fee', 'funding', 'swap'])
 
 // Balance Information
 export const BalanceInformationSchema = z.object({
-  asset: CoinSchema,
+  asset: z.string(),
   balance: z.number().nonnegative(),
   available: z.number().nonnegative(),
   inOrder: z.number().nonnegative(),
@@ -120,7 +33,7 @@ export const BalanceInformationSchema = z.object({
 
 // Position Information
 export const PositionInformationSchema = z.object({
-  symbol: TradingSymbolSchema,
+  symbol: z.string(),
   side: PositionSideSchema,
   quantity: z.number().positive(),
   averagePrice: z.number().positive(),
@@ -137,7 +50,7 @@ export const PositionInformationSchema = z.object({
 // Order Information
 export const OrderInformationSchema = z.object({
   id: z.uuid(),
-  symbol: TradingSymbolSchema,
+  symbol: z.string(),
   market: TradingMarketSchema,
   side: OrderSideSchema,
   type: OrderTypeSchema,
@@ -154,7 +67,7 @@ export const OrderInformationSchema = z.object({
 // Position History
 export const PositionHistorySchema = z.object({
   id: z.uuid(),
-  symbol: TradingSymbolSchema,
+  symbol: z.string(),
   market: TradingMarketSchema,
   side: PositionSideSchema,
   quantity: z.number().positive(),
@@ -170,10 +83,10 @@ export const PositionHistorySchema = z.object({
 export const TransactionHistorySchema = z.object({
   id: z.uuid(),
   type: TransactionTypeSchema,
-  symbol: TradingSymbolSchema,
+  symbol: z.string(),
   market: TradingMarketSchema,
   amount: z.number(),
-  coin: CoinSchema,
+  coin: z.string(),
   side: OrderSideSchema.optional(),
   price: z.number().positive().optional(),
   quantity: z.number().positive().optional(),
@@ -196,7 +109,7 @@ export const AccountSchema = z.object({
   id: z.uuid(),
   name: z.string(),
   exchange: TradingExchangeSchema,
-  availableMarkets: z.partialRecord(TradingMarketSchema, z.array(TradingSymbolSchema)),
+  availableMarkets: z.partialRecord(TradingMarketSchema, z.array(z.string())),
   apiKey: z.string(),
   secretKey: z.string().optional(),
   balanceInformation: z

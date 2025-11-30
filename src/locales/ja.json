@@ -159,12 +159,9 @@
   "eventCodeRequired": "イベントコードが必要です",
   "exchange": "取引所",
   "exchanges": {
-    "BB_Perpetual": "Bybit 先物",
-    "BB_SPOT": "Bybit 現物",
-    "BB_USDC_PERP": "Bybit USDC 先物",
-    "BB_USDT_PERP": "Bybit USDT 先物",
+    "BB_Linear": "Bybit USDT 先物",
+    "BB_Inverse": "Bybit Inverse 先物",
     "BN_COIN_M": "Binance COIN-M 先物",
-    "BN_SPOT": "Binance 現物",
     "BN_USDS_M": "Binance USDⓈ-M 先物"
   },
   "filterCountry": "国",

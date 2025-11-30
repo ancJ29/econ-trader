@@ -2,7 +2,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import type { CreateReservationInput } from '@/services/reservation';
 import { useAccountStore } from '@/store/accountStore';
 import { useReservationStore } from '@/store/reservationStore';
-import type { Account, TradingMarket, TradingSymbol } from '@/types/account';
+import type { Account, TradingMarket } from '@/types/account';
 import type { EconomicEvent } from '@/types/calendar';
 import {
   ActionIcon,
@@ -63,7 +63,7 @@ export function ReservationDrawer({ opened, event, onClose }: ReservationDrawerP
       market: '' as TradingMarket,
       triggerType: 'actual_vs_forecast',
       condition: 'greater',
-      symbol: '' as TradingSymbol,
+      symbol: '',
       side: 'BUY',
       volume: 1,
       orderType: 'MARKET',

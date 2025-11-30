@@ -7,10 +7,21 @@ import * as httpCaller from './internal-http-caller';
 const DEFAULT_HOSTNAME = 'c-storage-cr3xk.api-bridge.work';
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 1000;
+const CIRCUIT_BREAKER_THRESHOLD = 5;
+const CIRCUIT_BREAKER_TIMEOUT = 30_000;
 
 // ============================================================================
 // Types
 // ============================================================================
+
+interface StorageOptions {
+  ssl?: boolean;
+  hostname?: string;
+  serviceCode?: string;
+  timeout?: number;
+  maxRetries?: number;
+  enableCircuitBreaker?: boolean;
+}
 
 interface CallOptions {
   path: `/${string}`;
@@ -155,11 +166,15 @@ export class StorageClient {
   private readonly maxRetries: number;
   private readonly circuitBreaker?: CircuitBreaker;
 
-  constructor() {
-    const hostname = DEFAULT_HOSTNAME;
-    const ssl = true;
+  constructor(options: StorageOptions = {}) {
+    const hostname = options.hostname ?? DEFAULT_HOSTNAME;
+    const ssl = options.ssl ?? true;
     this.url = `${ssl ? 'https' : 'http'}://${hostname}`;
-    this.maxRetries = MAX_RETRIES;
+    this.maxRetries = options.maxRetries ?? MAX_RETRIES;
+
+    if (options.enableCircuitBreaker !== false) {
+      this.circuitBreaker = new CircuitBreaker(CIRCUIT_BREAKER_THRESHOLD, CIRCUIT_BREAKER_TIMEOUT);
+    }
   }
 
   // ==========================================================================
@@ -259,7 +274,8 @@ export class StorageClient {
     validateKey(key);
 
     try {
-      return await this.call<T>({ path: `/api/storage/${serviceId}/${key}` });
+      const res = await this.call<T>({ path: `/api/storage/${serviceId}/${key}` });
+      return (res ?? defaultValue) as T;
     } catch (error) {
       // Only return default for 404, re-throw other errors
       if (error instanceof StorageNotFoundError) {
@@ -377,7 +393,7 @@ export class StorageClient {
   // Internal Methods
   // ==========================================================================
 
-  private async call<T>(options: CallOptions): Promise<T> {
+  private async call<T>(options: CallOptions): Promise<T | undefined> {
     const execute = () => this.executeWithRetry<T>(options);
 
     if (this.circuitBreaker) {
@@ -387,7 +403,10 @@ export class StorageClient {
     return execute();
   }
 
-  private async executeWithRetry<T>(options: CallOptions, attempt: number = 0): Promise<T> {
+  private async executeWithRetry<T>(
+    options: CallOptions,
+    attempt: number = 0
+  ): Promise<T | undefined> {
     try {
       return await this.executeRequest<T>(options);
     } catch (error) {
@@ -416,7 +435,7 @@ export class StorageClient {
     }
   }
 
-  private async executeRequest<T>(options: CallOptions): Promise<T> {
+  private async executeRequest<T>(options: CallOptions): Promise<T | undefined> {
     try {
       const res = await httpCaller.call(`${this.url}${options.path}`, {
         method: options.method ?? 'GET',
@@ -477,12 +496,15 @@ export class StorageClient {
     throw new StorageError(errorMessage, res.status, 'SERVER_ERROR');
   }
 
-  private async parseResponse<T>(res: Response): Promise<T> {
+  private async parseResponse<T>(res: Response): Promise<T | undefined> {
     const response = await res.json();
-
     // Handle standard success response format
     if (response.success === true) {
       return (response.data?.data ?? response.data) as T;
+    }
+
+    if (response.success === false) {
+      return undefined;
     }
 
     // Return raw response if not standard format

@@ -1,12 +1,7 @@
 import { econTraderApi, type Reservation as ApiReservation } from '@/lib/api/econ-trader';
-import { OrderSide, TradingMarket, TradingSymbol } from '@/types/account';
+import { OrderSide, TradingMarket } from '@/types/account';
 import { dedupe } from '@an-oct/vani-kit';
-import {
-  transformBackendMarket,
-  transformBackendSymbol,
-  transformMarket,
-  transformSymbol,
-} from './helpers';
+import { transformBackendMarket, transformMarket } from './helpers';
 
 // Re-export types from API layer
 export type Reservation = {
@@ -18,7 +13,7 @@ export type Reservation = {
   market: TradingMarket;
   triggerType: 'actual_vs_forecast' | 'actual_vs_previous' | 'actual_vs_specific';
   condition: 'greater' | 'less';
-  symbol: TradingSymbol;
+  symbol: string;
   side: OrderSide;
   volume: number;
   orderType: 'LIMIT' | 'MARKET';
@@ -29,7 +24,7 @@ export type Reservation = {
 };
 
 export type CreateReservationInput = {
-  symbol: TradingSymbol;
+  symbol: string;
   market: TradingMarket;
   uniqueCode: string;
   eventCode: string;
@@ -55,7 +50,7 @@ export type UpdateReservationInput = {
   triggerType?: 'actual_vs_forecast' | 'actual_vs_previous' | 'actual_vs_specific' | undefined;
   condition?: 'greater' | 'less' | undefined;
   specificValue?: number | undefined;
-  symbol?: TradingSymbol | undefined;
+  symbol?: string | undefined;
   side?: 'BUY' | 'SELL' | undefined;
   volume?: number | undefined;
   orderType?: 'LIMIT' | 'MARKET' | undefined;
@@ -74,7 +69,7 @@ function transformReservation(reservation: ApiReservation): Reservation {
     market: transformMarket(reservation.market),
     triggerType: reservation.triggerType,
     condition: reservation.condition,
-    symbol: transformSymbol(reservation.symbol),
+    symbol: reservation.symbol,
     side: reservation.side,
     volume: reservation.volume,
     orderType: reservation.orderType,
@@ -126,7 +121,7 @@ export const reservationService = {
       market: transformBackendMarket(input.market) as 'Coin-M' | 'USDS-M',
       triggerType: input.triggerType,
       condition: input.condition,
-      symbol: transformBackendSymbol(input.symbol),
+      symbol: input.symbol,
       side: input.side,
       volume: input.volume,
       orderType: input.orderType,
@@ -149,7 +144,7 @@ export const reservationService = {
         : undefined,
       triggerType: input.triggerType,
       condition: input.condition,
-      symbol: input.symbol ? transformBackendSymbol(input.symbol ?? '') : undefined,
+      symbol: input.symbol ? (input.symbol ?? '') : undefined,
       side: input.side,
       volume: input.volume,
       orderType: input.orderType,

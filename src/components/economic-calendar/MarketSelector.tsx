@@ -1,7 +1,7 @@
+import type { TradingMarket } from '@/types/account';
 import { Select } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TradingMarket } from '@/types/account';
 
 interface MarketSelectorProps {
   value: TradingMarket | null;
@@ -12,13 +12,10 @@ interface MarketSelectorProps {
 }
 
 const MARKET_LABELS: Record<TradingMarket, string> = {
-  BN_SPOT: 'Binance Spot',
   BN_USDS_M: 'Binance USDⓈ-M Futures',
   BN_COIN_M: 'Binance COIN-M Futures',
-  BB_USDT_PERP: 'Bybit USDT Perpetual',
-  BB_USDC_PERP: 'Bybit USDC Perpetual',
-  BB_Perpetual: 'Bybit Perpetual (Inverse)',
-  BB_SPOT: 'Bybit Spot',
+  BB_Linear: 'Bybit USDT Perpetual',
+  BB_Inverse: 'Bybit Inverse Perpetual',
 };
 
 export function MarketSelector({

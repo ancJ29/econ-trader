@@ -1,3 +1,4 @@
+import { MARKET_LABELS } from '@/constants/markets';
 import type { Reservation } from '@/services/reservation';
 import { formatNumber } from '@/utils/formatters';
 import {
@@ -79,7 +80,7 @@ export function ReservationCard({
             <Text size="sm" c="dimmed">
               {t('markets')}:
             </Text>
-            <Text size="sm">{t(`exchanges.${reservation.market}`)}</Text>
+            <Text size="sm">{MARKET_LABELS[reservation.market]}</Text>
           </Group>
 
           <Group gap="xs">

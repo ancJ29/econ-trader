@@ -1,5 +1,5 @@
 import { accountService, type Account } from '@/services/account';
-import type { AccountFormData, TradingMarket, TradingSymbol } from '@/types/account';
+import type { AccountFormData, TradingMarket } from '@/types/account';
 import { create } from 'zustand';
 
 interface AccountState {
@@ -15,7 +15,7 @@ interface AccountState {
   toggleAccountStatus: (id: string) => Promise<void>;
   updateMarkets: (
     id: string,
-    availableMarkets: Partial<Record<TradingMarket, TradingSymbol[]>>
+    availableMarkets: Partial<Record<TradingMarket, string[]>>
   ) => Promise<void>;
 }
 

@@ -32,51 +32,75 @@ type EconomicCalendar = {
   impact: 1 | 2 | 3;
   interval: 'daily' | 'weekly' | 'monthly' | 'yearly';
   link: string;
-  source: string;
+  source: {
+    name: string;
+    url: string;
+  };
 };
 
 // Service layer methods
 export const economicCalendarService = {
   allCalendars: new Map<string, EconomicCalendar>(),
 
-  async getallCalendars(): Promise<Map<string, EconomicCalendar>> {
-    return dedupe.asyncDeduplicator.call('economic-calendar.getallCalendars', async () => {
+  async getAllCalendars(): Promise<Map<string, EconomicCalendar>> {
+    return dedupe.asyncDeduplicator.call('economic-calendar.getAllCalendars', async () => {
       if (this.allCalendars.size === 0) {
         const serviceId = 'economic-calendars';
-        const key = 'all-events';
+        const key = 'all-economic-calendar-events';
         const data = await cStorageV3.get<EconomicCalendar[]>(serviceId, key);
-        this.allCalendars = new Map(data?.map((event) => [event.link, event]) ?? []);
+        this.allCalendars = new Map(data?.map((event) => [event.code, event]) ?? []);
       }
       return this.allCalendars;
     });
   },
 
   async getEconomicCalendar(_filters?: EconomicCalendarFilters) {
+    logger.debug('getEconomicCalendar', JSON.stringify(_filters, null, 2));
     // TODO: Implement filters
-    const allCalendars = await this.getallCalendars();
-    logger.debug('allCalendars', allCalendars);
+    const allCalendars = await this.getAllCalendars();
     const serviceId = 'economic-calendars';
 
-    async function _getData(startOfMonth: number) {
-      const key = `monthly-events-${startOfMonth}`;
-      logger.debug('getting monthly events', { serviceId, key });
-      let data = (await cStorageV3.get<CStorageEconomicCalendarEvent[]>(serviceId, key)) ?? [];
-      return data;
+    async function _getData() {
+      function _start(time: number) {
+        const date = new Date(time);
+        date.setUTCHours(0, 0, 0, 0);
+        date.setUTCDate(1);
+        return date.getTime();
+      }
+      const time = Date.now();
+      const startOfMonth = _start(time);
+      const keys = [
+        `monthly-events-${_start(startOfMonth - 41 * ONE_DAY)}`, // 2 months ago
+        `monthly-events-${_start(startOfMonth - 10 * ONE_DAY)}`, // Last month
+        `monthly-events-${startOfMonth}`, // This month
+        `monthly-events-${_start(startOfMonth + 32 * ONE_DAY)}`, // Next month
+      ];
+      const data =
+        (await cStorageV3.getMany<
+          {
+            data: CStorageEconomicCalendarEvent[];
+          }[]
+        >(serviceId, keys)) ?? [];
+      return data
+        .map((item) => item.data)
+        .flat()
+        .filter((el) => el.link)
+        .map((el) => ({
+          ...el,
+          code: el.link.replace('/economic-calendar/', ''),
+        }));
     }
+
     return await dedupe.asyncDeduplicator.call(
       'economic-calendar.getEconomicCalendar',
       async () => {
-        const startOfMonth = getStartOfMonth(Date.now());
-        const startOfNextMonth = getStartOfMonth(Date.now() + 32 * ONE_DAY);
-        const key = `monthly-events-${startOfMonth}`;
-        logger.debug('getting monthly events', { serviceId, key });
-        const rawData = await Promise.all([_getData(startOfMonth), _getData(startOfNextMonth)]);
-        const data = rawData
-          .flat()
-          .filter((event) => event.link)
-          .filter((event) => allCalendars.has(event.link));
+        const rawData = await _getData();
+        const data = rawData.flat().filter((event) => allCalendars.has(event.code));
+        console.log('allCalendars', JSON.stringify(Array.from(allCalendars.values()), null, 2));
+        console.log('data', JSON.stringify(rawData, null, 2));
         const events =
           data?.map((event) => transformCStorageEventToEconomicEvent(event, allCalendars)) ?? [];
+        events.sort((a, b) => b.ts - a.ts);
         return {
           events,
           pagination: {
@@ -91,12 +115,11 @@ export const economicCalendarService = {
   },
 
   async getEconomicIndex(eventCode: string): Promise<EconomicIndex> {
-    const allCalendars = await this.getallCalendars();
-    const calendar = Array.from(allCalendars.values()).find(
-      (calendar) => calendar.code === eventCode
-    );
+    const allCalendars = await this.getAllCalendars();
+    const code = eventCode.replace('/economic-calendar/', '');
+    const calendar = Array.from(allCalendars.values()).find((calendar) => calendar.code === code);
     if (!calendar) {
-      throw new Error(`Calendar not found for event code: ${eventCode}`);
+      throw new Error(`Calendar not found for event code: ${code}`);
     }
     return {
       code: calendar.code,
@@ -106,7 +129,8 @@ export const economicCalendarService = {
       impact: calendar.impact,
       countryCode: calendar.countryCode,
       currencyCode: calendar.currency,
-      source: calendar.source,
+      source: calendar.source.name,
+      sourceUrl: calendar.source.url,
       url: calendar.link,
       isPercentage: calendar.isPercentage ?? false,
       historyData: [],
@@ -126,10 +150,11 @@ function transformCStorageEventToEconomicEvent(
     CN: 'CNY',
   };
 
-  const calendar = allCalendars.get(event.link);
+  const code = event.link.replace('/economic-calendar/', '');
+  const calendar = allCalendars.get(code);
 
   if (!calendar) {
-    throw new Error(`Calendar not found for link: ${event.link}`);
+    throw new Error(`Calendar not found for link: ${code}`);
   }
 
   return {
@@ -148,20 +173,6 @@ function transformCStorageEventToEconomicEvent(
     interval: calendar.interval,
     reference: calendar.link,
   };
-}
-
-/**
- * Calculates the start of month (midnight) for a given timestamp
- * Uses UTC to avoid timezone issues
- *
- * @param timestamp - Any timestamp within the target month
- * @returns Timestamp of the first millisecond of that month
- */
-function getStartOfMonth(timestamp: number): number {
-  const date = new Date(timestamp);
-  date.setUTCDate(1);
-  date.setUTCHours(0, 0, 0, 0);
-  return date.getTime();
 }
 
 /**

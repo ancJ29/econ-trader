@@ -1,12 +1,11 @@
-import type { TradingSymbol } from '@/types/account';
 import { Select } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SymbolSelectorProps {
-  value: TradingSymbol | null;
-  onChange: (value: TradingSymbol | null) => void;
-  availableSymbols: TradingSymbol[] | undefined;
+  value: string | null;
+  onChange: (value: string | null) => void;
+  availableSymbols: string[] | undefined;
   disabled?: boolean;
   error?: string;
 }
@@ -32,7 +31,7 @@ export function SymbolSelector({
   // Auto-select first symbol if none selected
   useEffect(() => {
     if (!value && instrumentOptions.length > 0) {
-      onChange(instrumentOptions[0].value as TradingSymbol);
+      onChange(instrumentOptions[0].value as string);
     }
   }, [instrumentOptions, value, onChange]);
 
@@ -42,7 +41,7 @@ export function SymbolSelector({
       placeholder={t('action.selectInstrumentPlaceholder')}
       data={instrumentOptions}
       value={value}
-      onChange={(val) => onChange(val as TradingSymbol | null)}
+      onChange={(val) => onChange(val as string | null)}
       disabled={disabled || instrumentOptions.length === 0}
       error={error}
       searchable

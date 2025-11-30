@@ -1,16 +1,14 @@
 import { econTraderApi } from '@/lib/api/econ-trader';
 import type {
   AccountFormData,
-  Coin,
   OrderInformation,
   OrderStatus,
   Timestamp,
   TradingExchange,
   TradingMarket,
-  TradingSymbol,
 } from '@/types/account';
 import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
-import { transformBackendMarket, transformMarket, transformSymbol } from './helpers';
+import { transformBackendMarket, transformMarket } from './helpers';
 
 const logger = createBrowserLogger('ACCOUNT-SERVICE', {
   level: 'silent',
@@ -23,84 +21,62 @@ const logger = createBrowserLogger('ACCOUNT-SERVICE', {
 const MASKED_SECRET_KEY = '************************************';
 
 /**
- * Binance Coin-M futures symbols
+ * Binance string-M futures symbols
  */
-const BN_COIN_M_SYMBOLS: Record<string, boolean> = {
+export const BN_COIN_M_SYMBOLS: Record<string, boolean> = {
   // cspell:disable
-  BTCUSD_PERPETUAL: true,
-  ETHUSD_PERPETUAL: true,
-  BNBUSD_PERPETUAL: true,
-  SOLUSD_PERPETUAL: true,
-  LTCUSD_PERPETUAL: true,
-  HYPEUSD_PERPETUAL: true,
-  AVAXUSD_PERPETUAL: true,
-  LINKUSD_PERPETUAL: true,
-  XRPUSD_PERPETUAL: true,
-  ADAUSD_PERPETUAL: true,
-  DOGEUSD_PERPETUAL: true,
+  BTCUSD_PERP: true,
+  ETHUSD_PERP: true,
+  BNBUSD_PERP: true,
   // cspell:enable
 } as const;
 
 /**
  * Binance USDT-M futures symbols
  */
-const BN_USDS_M_SYMBOLS: Record<string, boolean> = {
+export const BN_USDS_M_SYMBOLS: Record<string, boolean> = {
   // cspell:disable
   BTCUSDT: true,
   ETHUSDT: true,
   BNBUSDT: true,
   SOLUSDT: true,
   LTCUSDT: true,
-  HYPEUSDT: true,
   AVAXUSDT: true,
   LINKUSDT: true,
   XRPUSDT: true,
   ADAUSDT: true,
   DOGEUSDT: true,
-  SUIUSDC: true,
-  LTCUSDC: true,
   // cspell:enable
 } as const;
 
 /**
- * Maps API symbols to frontend trading symbols
+ * Bybit Linear futures symbols
  */
-const SYMBOL_MAP: Record<string, TradingSymbol> = {
+export const BB_LINEAR_SYMBOLS: Record<string, boolean> = {
   // cspell:disable
-  BTCUSD_PERP: 'BTCUSD_PERPETUAL',
-  ETHUSD_PERP: 'ETHUSD_PERPETUAL',
-  BNBUSD_PERP: 'BNBUSD_PERPETUAL',
-  SOLUSD_PERP: 'SOLUSD_PERPETUAL',
-  LTCUSD_PERP: 'LTCUSD_PERPETUAL',
-  HYPEUSD_PERP: 'HYPEUSD_PERPETUAL',
-  AVAXUSD_PERP: 'AVAXUSD_PERPETUAL',
-  LINKUSD_PERP: 'LINKUSD_PERPETUAL',
-  XRPUSD_PERP: 'XRPUSD_PERPETUAL',
-  ADAUSD_PERP: 'ADAUSD_PERPETUAL',
-  DOGEUSD_PERP: 'DOGEUSD_PERPETUAL',
-  BTCUSDT: 'BTCUSDT',
-  ETHUSDT: 'ETHUSDT',
-  BNBUSDT: 'BNBUSDT',
-  SOLUSDT: 'SOLUSDT',
-  LTCUSDT: 'LTCUSDT',
-  HYPEUSDT: 'HYPEUSDT',
-  AVAXUSDT: 'AVAXUSDT',
-  LINKUSDT: 'LINKUSDT',
-  XRPUSDT: 'XRPUSDT',
-  ADAUSDT: 'ADAUSDT',
-  DOGEUSDT: 'DOGEUSDT',
-  SUIUSDC: 'SUIUSDC',
-  LTCUSDC: 'LTCUSDC',
+  BTCUSDT: true,
+  ETHUSDT: true,
+  BNBUSDT: true,
+  SOLUSDT: true,
+  LTCUSDT: true,
+  AVAXUSDT: true,
+  LINKUSDT: true,
+  XRPUSDT: true,
+  ADAUSDT: true,
+  DOGEUSDT: true,
   // cspell:enable
-};
+} as const;
 
 /**
- * Reverse mapping: frontend symbols to API symbols
+ * Bybit Inverse futures symbols
  */
-const REVERSE_SYMBOL_MAP: Record<string, string> = Object.fromEntries(
-  Object.entries(SYMBOL_MAP).map(([key, value]) => [value, key])
-);
-
+export const BB_INVERSE_SYMBOLS: Record<string, boolean> = {
+  // cspell:disable
+  BTCUSD: true,
+  ETHUSD: true,
+  BNBUSD: true,
+  // cspell:enable
+} as const;
 // ============================================================================
 // Types
 // ============================================================================
@@ -119,12 +95,12 @@ export type Account = {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   exchange: TradingExchange;
-  availableMarkets: Partial<Record<TradingMarket, TradingSymbol[]>>;
+  availableMarkets: Partial<Record<TradingMarket, string[]>>;
   balanceInformation: Partial<
     Record<
       TradingMarket,
       {
-        asset: Coin;
+        asset: string;
         balance: number;
         available: number;
         inOrder: number;
@@ -135,7 +111,7 @@ export type Account = {
     Record<
       TradingMarket,
       {
-        symbol: TradingSymbol;
+        symbol: string;
         side: 'long' | 'short';
         quantity: number;
         averagePrice: number;
@@ -164,13 +140,19 @@ export type Account = {
 /**
  * Filters symbols based on market type (Coin-M or USDS-M)
  */
-function filterSymbolsByMarket(symbols: string[], market: TradingMarket): TradingSymbol[] {
-  const isCoinM = market === 'BN_COIN_M';
-  const symbolRegistry = isCoinM ? BN_COIN_M_SYMBOLS : BN_USDS_M_SYMBOLS;
-
-  return symbols
-    .map((symbol) => SYMBOL_MAP[symbol])
-    .filter((symbol): symbol is TradingSymbol => Boolean(symbol && symbolRegistry[symbol]));
+function filterSymbolsByMarket(symbols: string[], market: TradingMarket): string[] {
+  switch (market) {
+    case 'BN_COIN_M':
+      return symbols.filter((symbol) => BN_COIN_M_SYMBOLS[symbol]);
+    case 'BN_USDS_M':
+      return symbols.filter((symbol) => BN_USDS_M_SYMBOLS[symbol]);
+    case 'BB_Linear':
+      return symbols.filter((symbol) => BB_LINEAR_SYMBOLS[symbol]);
+    case 'BB_Inverse':
+      return symbols.filter((symbol) => BB_INVERSE_SYMBOLS[symbol]);
+    default:
+      return symbols;
+  }
 }
 
 /**
@@ -186,7 +168,7 @@ function transformAvailableMarkets(
         const filteredSymbols = filterSymbolsByMarket(symbols, market);
         return [market, filteredSymbols];
       })
-      .filter(([, symbols]) => (symbols as TradingSymbol[]).length > 0) // Remove empty markets
+      .filter(([, symbols]) => (symbols as string[]).length > 0) // Remove empty markets
   );
 }
 
@@ -194,7 +176,7 @@ function transformAvailableMarkets(
  * Transforms API balance data to frontend format
  */
 function transformBalanceInformation(
-  balances: Record<string, Array<{ asset: Coin; equity: number; availableBalance: number }>>
+  balances: Record<string, Array<{ asset: string; equity: number; availableBalance: number }>>
 ): Account['balanceInformation'] {
   return Object.fromEntries(
     Object.entries(balances).map(([market, balances]) => [
@@ -251,7 +233,7 @@ function transformOrderInformation(
 
       return {
         id: order.internalOrderId,
-        symbol: transformSymbol(order.symbol),
+        symbol: order.symbol,
         market: market as TradingMarket,
         side: order.side,
         type,
@@ -292,7 +274,7 @@ function transformPositionInformation(
     Object.entries(positions).map(([market, positions]) => [
       transformMarket(market),
       positions.map((position) => ({
-        symbol: transformSymbol(position.symbol),
+        symbol: position.symbol,
         side: position.positionSide.toLowerCase() as 'long' | 'short', // Convert 'LONG'/'SHORT'/'BOTH' to 'long'/'short'
         quantity: position.volume,
         averagePrice: position.entryPrice,
@@ -321,7 +303,7 @@ function transformAccount(apiAccount: {
   createdAt: number;
   updatedAt: number;
   availableSymbols: Record<string, string[]>;
-  balances: Record<string, Array<{ asset: Coin; equity: number; availableBalance: number }>>;
+  balances: Record<string, Array<{ asset: string; equity: number; availableBalance: number }>>;
   positions: Record<
     string,
     Array<{
@@ -398,12 +380,12 @@ function transformAccount(apiAccount: {
  * Transforms frontend markets to API format for updates
  */
 function transformMarketsForApi(
-  availableMarkets: Partial<Record<TradingMarket, TradingSymbol[]>>
+  availableMarkets: Partial<Record<TradingMarket, string[]>>
 ): Record<string, string[]> {
   return Object.fromEntries(
     Object.entries(availableMarkets).map(([market, symbols]) => [
       transformBackendMarket(market as TradingMarket),
-      symbols.map((symbol) => REVERSE_SYMBOL_MAP[symbol]),
+      symbols,
     ])
   );
 }
@@ -421,6 +403,9 @@ export const accountService = {
    * Uses deduplication to prevent concurrent requests
    */
   async getAccounts(): Promise<Account[]> {
+    if (!sessionStorage.getItem('token')) {
+      return [];
+    }
     const response = await dedupe.asyncDeduplicator.call('account.getAccounts', async () => {
       return econTraderApi.getUserData();
     });
@@ -462,7 +447,7 @@ export const accountService = {
    */
   async updateMarkets(
     id: string,
-    availableMarkets: Partial<Record<TradingMarket, TradingSymbol[]>>
+    availableMarkets: Partial<Record<TradingMarket, string[]>>
   ): Promise<void> {
     const updateData = transformMarketsForApi(availableMarkets);
 

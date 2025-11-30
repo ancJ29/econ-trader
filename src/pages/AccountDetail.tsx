@@ -10,7 +10,7 @@ import { LoadingOverlay } from '@/components/layouts/LoadingOverlay';
 import { MARKET_LABELS } from '@/constants/markets';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useAccountStore } from '@/store/accountStore';
-import type { TradingMarket, TradingSymbol } from '@/types/account';
+import type { TradingMarket } from '@/types/account';
 import { maskString } from '@/utils/string';
 import {
   Alert,
@@ -38,9 +38,7 @@ function AccountDetailContent() {
   const { selectedAccount, selectAccount, updateMarkets, isLoading, error } = useAccountStore();
 
   const [marketDrawerOpened, setMarketDrawerOpened] = useState(false);
-  const [tempMarkets, setTempMarkets] = useState<Partial<Record<TradingMarket, TradingSymbol[]>>>(
-    {}
-  );
+  const [tempMarkets, setTempMarkets] = useState<Partial<Record<TradingMarket, string[]>>>({});
 
   // Removed the fetchAccounts effect - selectAccount now handles fetching if needed
 

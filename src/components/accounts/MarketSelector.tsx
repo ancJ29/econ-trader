@@ -1,6 +1,6 @@
 import { EXCHANGE_MARKETS, MARKET_LABELS, MARKET_SYMBOLS } from '@/constants/markets';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import type { TradingExchange, TradingMarket, TradingSymbol } from '@/types/account';
+import type { TradingExchange, TradingMarket } from '@/types/account';
 import { Accordion, Badge, Button, Checkbox, Group, ScrollArea, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 interface MarketSelectorProps {
   exchange: TradingExchange;
   availableMarkets?: TradingMarket[];
-  value: Partial<Record<TradingMarket, TradingSymbol[]>>;
-  onChange: (markets: Partial<Record<TradingMarket, TradingSymbol[]>>) => void;
+  value: Partial<Record<TradingMarket, string[]>>;
+  onChange: (markets: Partial<Record<TradingMarket, string[]>>) => void;
 }
 
 export const MarketSelector = ({
@@ -22,7 +22,7 @@ export const MarketSelector = ({
   const isMobile = useIsMobile();
   const [selectedMarkets, setSelectedMarkets] = useState<TradingMarket[]>([]);
   const [marketSymbols, setMarketSymbols] =
-    useState<Partial<Record<TradingMarket, TradingSymbol[]>>>(value);
+    useState<Partial<Record<TradingMarket, string[]>>>(value);
 
   const markets = availableMarkets ?? EXCHANGE_MARKETS[exchange];
 
@@ -47,7 +47,7 @@ export const MarketSelector = ({
     }
   };
 
-  const handleSymbolToggle = (market: TradingMarket, symbol: TradingSymbol) => {
+  const handleSymbolToggle = (market: TradingMarket, symbol: string) => {
     const currentSymbols = marketSymbols[market] || [];
     const newSymbols = currentSymbols.includes(symbol)
       ? currentSymbols.filter((s) => s !== symbol)

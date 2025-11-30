@@ -5,10 +5,10 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@an-oct/vani-kit@npm:^1.2.10":
-  version: 1.2.10
-  resolution: "@an-oct/vani-kit@npm:1.2.10"
-  checksum: 10c0/b430e241d419152f33850daf57119f4c4558766144383b0d18ebb5c3d22dfafbe1300f504dffaf38268781f73c0db4dbe49115e9fcf1b37712fa2ed0323d59b5
+"@an-oct/vani-kit@npm:^1.2.11":
+  version: 1.2.11
+  resolution: "@an-oct/vani-kit@npm:1.2.11"
+  checksum: 10c0/f45db5d0010f1572b1ff7b440e0a83e3da765add4b84601ef71128f850b466827d9fc1493a324505cf97de896f6cc788c568090d45dcfafceb8bea5f43343eff
   languageName: node
   linkType: hard
 
@@ -1555,7 +1555,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:."
   dependencies:
-    "@an-oct/vani-kit": "npm:^1.2.10"
+    "@an-oct/vani-kit": "npm:^1.2.11"
     "@eslint/js": "npm:^9.36.0"
     "@mantine/charts": "npm:^8.3.2"
     "@mantine/core": "npm:^8.3.2"
