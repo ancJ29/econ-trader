@@ -70,6 +70,8 @@ export const economicCalendarService = {
       const time = Date.now();
       const startOfMonth = _start(time);
       const keys = [
+        `monthly-events-${_start(startOfMonth - 101 * ONE_DAY)}`, // 4 months ago
+        `monthly-events-${_start(startOfMonth - 71 * ONE_DAY)}`, // 3 months ago
         `monthly-events-${_start(startOfMonth - 41 * ONE_DAY)}`, // 2 months ago
         `monthly-events-${_start(startOfMonth - 10 * ONE_DAY)}`, // Last month
         `monthly-events-${startOfMonth}`, // This month
