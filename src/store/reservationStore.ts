@@ -30,7 +30,7 @@ export const useReservationStore = create<ReservationState>((set, get) => ({
   fetchReservations: async (uniqueCode: string) => {
     set({ isLoading: true, error: null });
     try {
-      const reservations = await reservationService.getReservations(uniqueCode);
+      const reservations = await reservationService.getReservationsByUniqueCode(uniqueCode);
       set({ reservations, isLoading: false });
     } catch (error) {
       set({

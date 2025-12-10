@@ -89,9 +89,15 @@ export const AccountSchema = z.object({
   updatedAt: z.number().positive(),
 });
 
+const ReservationIdSchema = z.string();
+const EconomicCalendarUniqueCodeSchema = z.string();
+
 export const UserDataResponseSchema = z.object({
   reservations: z.record(z.string(), z.array(ReservationSchema)).optional(),
   accounts: z.record(z.string(), AccountSchema),
+  reservationIdsByUniqueCode: z
+    .record(EconomicCalendarUniqueCodeSchema, z.array(ReservationIdSchema))
+    .optional(),
 });
 
 export const ExchangeDataSchema = z.object({
@@ -113,6 +119,9 @@ class EconTraderApiClient extends BaseApiClient {
     });
   }
 
+  // ===============================
+  // API Keys API
+  // ===============================
   async registerApiKey({
     exchange,
     name,
@@ -143,6 +152,9 @@ class EconTraderApiClient extends BaseApiClient {
     this.clearCache();
   }
 
+  // ===============================
+  // Markets API
+  // ===============================
   async updateMarkets(id: string, availableSymbols: Record<string, string[]>): Promise<void> {
     logger.debug('Updating markets...', { id, availableSymbols });
     await this.put('/api/econ-trader/update-market-config', {
@@ -152,6 +164,9 @@ class EconTraderApiClient extends BaseApiClient {
     this.clearCache();
   }
 
+  // ===============================
+  // Accounts API
+  // ===============================
   async toggleAccountStatus(accountUniqueId: string, active: boolean): Promise<void> {
     logger.debug('Toggling account status...', { accountUniqueId });
     await this.put('/api/econ-trader/update-api-keys', {
@@ -169,6 +184,9 @@ class EconTraderApiClient extends BaseApiClient {
     this.clearCache();
   }
 
+  // ===============================
+  // Exchange Data API
+  // ===============================
   async getExchangeData(accountUniqueId: string) {
     logger.debug('Getting exchange data...');
     return this.get(
@@ -181,6 +199,33 @@ class EconTraderApiClient extends BaseApiClient {
         ttl: 60_000, // 1 minute cache TTL
       }
     );
+  }
+
+  // ===============================
+  // Reservations API
+  // ===============================
+  async getAllReservations(): Promise<Reservation[]> {
+    logger.debug('Getting all reservations...');
+    return this.get(
+      '/api/econ-trader/reservations',
+      undefined,
+      z.object({
+        success: z.boolean(),
+        reservations: z.array(ReservationSchema),
+      })
+    ).then((response) => (response.success ? response.reservations : []));
+  }
+
+  async getReservationIdsByUniqueCode(uniqueCode: string): Promise<Reservation[]> {
+    logger.debug('Getting reservation IDs by unique code...', { uniqueCode });
+    return this.get(
+      `/api/econ-trader/reservations`,
+      { uniqueCode },
+      z.object({
+        success: z.boolean(),
+        reservations: z.array(ReservationSchema),
+      })
+    ).then((response) => (response.success ? response.reservations : []));
   }
 
   async createReservation(data: Omit<Reservation, 'id' | 'createdAt'>): Promise<void> {
@@ -207,6 +252,9 @@ class EconTraderApiClient extends BaseApiClient {
     this.clearCache();
   }
 
+  // ===============================
+  // Helper Methods
+  // ===============================
   async clearCache(): Promise<void> {
     this.clearCacheEntry('econ-trader.getUserData');
   }

@@ -98,8 +98,6 @@ export const economicCalendarService = {
       async () => {
         const rawData = await _getData();
         const data = rawData.flat().filter((event) => allCalendars.has(event.code));
-        console.log('allCalendars', JSON.stringify(Array.from(allCalendars.values()), null, 2));
-        console.log('data', JSON.stringify(rawData, null, 2));
         const events =
           data?.map((event) => transformCStorageEventToEconomicEvent(event, allCalendars)) ?? [];
         events.sort((a, b) => b.ts - a.ts);

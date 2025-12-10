@@ -8,7 +8,7 @@ import type {
   TradingMarket,
 } from '@/types/account';
 import { createBrowserLogger, dedupe } from '@an-oct/vani-kit';
-import { transformBackendMarket, transformMarket } from './helpers';
+import { transformBackendMarket, transformMarket } from './_helpers';
 
 const logger = createBrowserLogger('ACCOUNT-SERVICE', {
   level: 'silent',

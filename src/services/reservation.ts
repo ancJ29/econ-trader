@@ -1,7 +1,7 @@
 import { econTraderApi, type Reservation as ApiReservation } from '@/lib/api/econ-trader';
 import { OrderSide, TradingMarket } from '@/types/account';
 import { dedupe } from '@an-oct/vani-kit';
-import { transformBackendMarket, transformMarket } from './helpers';
+import { transformBackendMarket, transformMarket } from './_helpers';
 
 // Re-export types from API layer
 export type Reservation = {
@@ -80,38 +80,74 @@ function transformReservation(reservation: ApiReservation): Reservation {
   };
 }
 
+type UniqueCode = string;
+
 // Service layer methods
 export const reservationService = {
-  // uniqueCode -> reservations
-  reservations: new Map<string, Reservation[]>(),
+  reservations: new Map<UniqueCode, Reservation[]>(),
 
-  async getReservations(uniqueCode: string): Promise<Reservation[]> {
+  // Check if there are any reservations for a given unique code
+  async hasReservations(uniqueCode?: string): Promise<boolean> {
+    const userData = await econTraderApi.getUserData();
+    if (uniqueCode) {
+      const reservationIds = userData.reservationIdsByUniqueCode?.[uniqueCode] ?? [];
+      return reservationIds.length > 0;
+    }
+    const uniqueCodes = Object.keys(userData.reservationIdsByUniqueCode ?? {});
+    return uniqueCodes.length > 0;
+  },
+
+  // Get all reservations
+  async getReservations(): Promise<Reservation[]> {
+    const reservations = await dedupe.asyncDeduplicator.call(
+      'reservation.getReservations',
+      async () => {
+        const hasReservations = await this.hasReservations();
+        if (!hasReservations) {
+          return [];
+        }
+        return econTraderApi
+          .getAllReservations()
+          .then((reservations) => reservations.map(transformReservation));
+      }
+    );
+
+    // Cache the reservations by unique code
+    const groupedReservations = reservations.reduce(
+      (acc, reservation) => {
+        acc[reservation.uniqueCode] = [...(acc[reservation.uniqueCode] ?? []), reservation];
+        return acc;
+      },
+      {} as Record<UniqueCode, Reservation[]>
+    );
+    this.reservations = new Map(Object.entries(groupedReservations));
+
+    return reservations;
+  },
+
+  // Get reservations by unique code
+  async getReservationsByUniqueCode(uniqueCode: string): Promise<Reservation[]> {
     if (this.reservations.has(uniqueCode)) {
       return this.reservations.get(uniqueCode) ?? [];
     }
 
     // If no reservations are cached, fetch them from the API
-    if (this.reservations.size === 0) {
-      const response = await dedupe.asyncDeduplicator.call(
-        'reservation.getReservations',
-        async () => {
-          return econTraderApi.getUserData();
+    const reservations = await dedupe.asyncDeduplicator.call(
+      'reservation.getReservations',
+      async () => {
+        const hasReservations = await this.hasReservations(uniqueCode);
+        if (!hasReservations) {
+          return [];
         }
-      );
-      this.reservations = new Map(
-        Object.entries(response.reservations ?? {}).map(([uniqueCode, reservations]) => {
-          return [uniqueCode, reservations.map(transformReservation)];
-        })
-      );
-
-      if (this.reservations.size === 0) {
-        // make a default reservation
-        this.reservations.set(uniqueCode, []);
+        const reservations = await econTraderApi.getReservationIdsByUniqueCode(uniqueCode);
+        return reservations.map(transformReservation);
       }
-    }
-    return this.reservations.get(uniqueCode) ?? [];
+    );
+
+    return reservations;
   },
 
+  // Create a reservation
   async createReservation(input: CreateReservationInput): Promise<void> {
     await econTraderApi.createReservation({
       uniqueCode: input.uniqueCode,
@@ -129,9 +165,10 @@ export const reservationService = {
       specificValue: input.specificValue,
       limitPrice: input.limitPrice,
     });
-    this.clearCache();
+    this.clearCache(input.uniqueCode);
   },
 
+  // Update a reservation
   async updateReservation(input: UpdateReservationInput): Promise<Reservation> {
     await econTraderApi.updateReservation({
       id: input.id,
@@ -152,10 +189,10 @@ export const reservationService = {
       specificValue: input.specificValue,
       limitPrice: input.limitPrice,
     });
-    this.clearCache();
+    this.clearCache(input.uniqueCode);
 
     // Fetch and return the updated reservation
-    const reservations = await this.getReservations(input.uniqueCode);
+    const reservations = await this.getReservationsByUniqueCode(input.uniqueCode);
     const updated = reservations.find((r) => r.id === input.id);
     if (!updated) {
       throw new Error('Reservation not found after update');
@@ -163,12 +200,18 @@ export const reservationService = {
     return updated;
   },
 
+  // Delete a reservation
   async deleteReservation(uniqueCode: string, id: string): Promise<void> {
     await econTraderApi.deleteReservation({ uniqueCode, id });
-    this.clearCache();
+    this.clearCache(uniqueCode);
   },
 
-  clearCache() {
-    this.reservations.clear();
+  // Clear the cache
+  clearCache(uniqueCode?: string) {
+    if (uniqueCode) {
+      this.reservations.delete(uniqueCode);
+    } else {
+      this.reservations.clear();
+    }
   },
 };

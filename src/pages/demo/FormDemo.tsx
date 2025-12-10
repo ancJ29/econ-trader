@@ -1,13 +1,13 @@
 import {
-  Stack,
-  Title,
-  Text,
-  Paper,
-  TextInput,
   Button,
+  Checkbox,
   Group,
   NumberInput,
-  Checkbox,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -35,7 +35,6 @@ export default function FormDemo() {
       message: `Welcome, ${values.name}!`,
       color: 'green',
     });
-    console.log('Form values:', values);
   });
 
   return (
