@@ -66,6 +66,10 @@ export function ReservationCard({
           </Group>
         </Group>
 
+        <Text size="lg" fw={700}>
+          {reservation.eventName}
+        </Text>
+
         <Group gap="xs">
           <Text size="base" fw="500" c="dimmed">
             {t('account.list')}:

@@ -12,6 +12,7 @@ const EconomicCalendar = lazy(() => import('@/pages/EconomicCalendar'));
 const EconomicIndexDetail = lazy(() => import('@/pages/EconomicIndexDetail'));
 const Accounts = lazy(() => import('@/pages/Accounts'));
 const AccountDetail = lazy(() => import('@/pages/AccountDetail'));
+const Reservations = lazy(() => import('@/pages/Reservations'));
 
 // Loading fallback element
 const loadingFallback = <LoadingOverlay visible={true} />;
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
       {
         path: '/accounts/:accountId',
         element: withSuspense(AccountDetail),
+      },
+      {
+        path: '/reservations',
+        element: withSuspense(Reservations),
       },
     ],
   },

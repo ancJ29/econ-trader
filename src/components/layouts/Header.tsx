@@ -91,6 +91,16 @@ export const Header = () => {
             >
               {t('account.list')}
             </Button>
+            {isAuthenticated && (
+              <Button
+                component={Link}
+                to="/reservations"
+                variant={isActive('/reservations') ? 'filled' : 'subtle'}
+                size="sm"
+              >
+                {t('economicCalendars.myReservations')}
+              </Button>
+            )}
           </Group>
 
           <Group gap="sm">

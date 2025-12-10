@@ -15,6 +15,7 @@ type ReservationState = {
   reservations: Reservation[];
   isLoading: boolean;
   error: string | null;
+  fetchAllReservations: () => Promise<void>;
   fetchReservations: (uniqueCode: string) => Promise<void>;
   createReservation: (input: CreateReservationInput) => Promise<void>;
   updateReservation: (input: UpdateReservationInput) => Promise<void>;
@@ -26,6 +27,19 @@ export const useReservationStore = create<ReservationState>((set, get) => ({
   reservations: [],
   isLoading: false,
   error: null,
+
+  fetchAllReservations: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const reservations = await reservationService.getReservations();
+      set({ reservations, isLoading: false });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to fetch reservations',
+        isLoading: false,
+      });
+    }
+  },
 
   fetchReservations: async (uniqueCode: string) => {
     set({ isLoading: true, error: null });
